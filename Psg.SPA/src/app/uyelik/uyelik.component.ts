@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
+import { AlertifyService } from '../_services/alertify.service';
 
 
 @Component({
@@ -11,15 +12,18 @@ export class UyelikComponent implements OnInit {
 
   @Output() iptal = new EventEmitter();
   model: any = { kullaniciadi: '', sifre: '' }
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private uyarici: AlertifyService) { }
 
   ngOnInit() {
   }
   uyeol() {
-    this.authService.register(this.model).subscribe(()=>{console.log("Üyelik başarılı")},error=>console.log(error));
+    this.authService.register(this.model).subscribe(() =>
+      this.uyarici.success('Üyelik başarılı.'),
+      error => this.uyarici.error(error));
   }
   vazgec() {
     this.iptal.emit(false);
+    this.uyarici.message('Üyelik isteği iptal edildi...');
   }
 
 }

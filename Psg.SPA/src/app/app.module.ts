@@ -1,3 +1,4 @@
+import { AlertifyService } from './_services/alertify.service';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
@@ -22,7 +23,7 @@ import { UyelikComponent } from './uyelik/uyelik.component';
     HttpModule,
     FormsModule
   ],
-  providers: [AuthService],
+  providers: [AuthService,AlertifyService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
