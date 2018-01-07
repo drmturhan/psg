@@ -55,8 +55,8 @@ namespace Psg.Api.Controllers
 
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenstring = tokenHandler.WriteToken(token);
-            return Ok(new { tokenstring });
+            var tokenString = tokenHandler.WriteToken(token);
+            return Ok(new { tokenString });
         }
         [HttpGet("{id}", Name = "KullanicBul")]
         public async Task<IActionResult> KullaniciBul(int id)

@@ -1,0 +1,13 @@
+<div *ngIf="!registerMode" class="text-center">
+    <h1>Uyku testi ara</h1>
+    <p class="lead">İstediğiniz kriterleri yazın ve aramayı başlatın</p>
+    <div class="text-center">
+        <button class="btn btn-primary btn-lg" (click)="registerToogle()">Üyelik</button>
+        <button class="btn btn-info btn-lg">Daha Fazla Bilgi</button>
+    </div>
+</div>
+<div *ngIf="registerMode" class="container">
+    <div class="col-md-4 col-md-offset-4">
+        <app-uyelik (iptal)=uyeligiIptalEt($event)></app-uyelik>
+    </div>
+</div>

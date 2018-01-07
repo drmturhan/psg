@@ -1,0 +1,18 @@
+<form #uyelikForm="ngForm" (ngSubmit)="uyeol()">
+
+    <h2 class="text-center text-primary">Sign Up</h2>
+
+    <hr>
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Kullanıcı adı" name="kullaniciadi" required [(ngModel)]="model.kullaniciadi">
+    </div>
+
+    <div class="form-group">
+        <input type="password" class="form-control" placeholder="Şifre" name="sifre" required [(ngModel)]="model.sifre">
+    </div>
+
+    <div class="form-group text-center">
+        <button class="btn btn-success" type="submit">Üye Ol</button>
+        <button class="btn btn-default" type="button" (click)="vazgec()">Vazgeç</button>
+    </div>
+</form>
