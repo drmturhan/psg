@@ -1,29 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response } from '@angular/http/';
+import { Response } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { HttpClient } from '@angular/common/http';
 
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class AuthService {
   baseUrl = 'http://localhost:55126/api/auth/';
   userToken: any;
-  constructor(private http: Http) { }
+
+  constructor(private authHttp: HttpClient, private helper: JwtHelperService) { }
   login(model: any) {
 
-    return this.http.post(this.baseUrl + 'girisyap', model, this.requetsOptions()).map((response: Response) => {
-      const user = response.json();
-      if (user) {
-        localStorage.setItem('token', user.tokenString);
-        this.userToken = user.tokenString;
+    return this.authHttp.post(this.baseUrl + 'girisyap', model).map((response: Response) => {
+      const token = response['tokenString'];
+      if (token) {
+        localStorage.setItem('access_token', token);
+        this.userToken = token;
+        console.log(this.helper.decodeToken(token));
       }
     });
   }
-  register(model: any) {
-    return this.http.post(this.baseUrl + 'uyeol', model, this.requetsOptions());
+  kullaniciAdiniAl(): string {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      console.log(this.helper.getTokenExpirationDate(token));
+      return this.helper.decodeToken(token)['unique_name'];
+    }
   }
-  private requetsOptions() {
-    const headers = new Headers({ 'Content-type': 'application/json' });
-    const options = new RequestOptions({ headers: headers });
-    return options;
+  register(model: any) {
+    return this.authHttp.post(this.baseUrl + 'uyeol', model);
+  }
+  loggedIn(): boolean {
+    return localStorage.getItem('access_token') != null;
   }
 }

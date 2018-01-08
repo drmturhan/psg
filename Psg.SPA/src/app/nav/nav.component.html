@@ -1,31 +1,29 @@
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-default">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-                aria-controls="navbar">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Polisomnografiler</a>
+            <a class="navbar-brand" [routerLink]="['/anasayfa']">Polisomnografiler</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="#">Testler </a>
+            <ul class="nav navbar-nav" *ngIf="loggedIn()">
+                <li routerLinkActive="active">
+                    <a [routerLink]="['/uyeler']">Üyeler </a>
                 </li>
-                <li>
-                    <a href="#">Bul </a>
+                <li routerLinkActive="active">
+                    <a [routerLink]="['/listeler']">Listeler </a>
                 </li>
-                <li>
-                    <a href="#">Randevu </a>
+                <li routerLinkActive="active">
+                    <a [routerLink]="['/mesajlar']">Mesajlar </a>
                 </li>
             </ul>
             <form *ngIf="!loggedIn()" #loginForm="ngForm" class="navbar-form navbar-right" (ngSubmit)="login()">
                 <div class="form-group">
-                    <input type="text" placeholder="Kullanıcı adı" class="form-control" name="kullaniciadi" [(ngModel)]="model.kullaniciadi"
-                        required>
+                    <input type="text" placeholder="Kullanıcı adı" class="form-control" name="kullaniciadi" [(ngModel)]="model.kullaniciadi" required>
                 </div>
                 <div class="form-group">
                     <input type="password" placeholder="Şifre" class="form-control" name="sifre" [(ngModel)]="model.sifre" required>
@@ -33,14 +31,11 @@
                 <button type="submit" class="btn btn-success" [disabled]="!loginForm.valid">Giriş Yap</button>
             </form>
             <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
-                <li>
-                    <a (click)="logout()">Çıkış Yap</a>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hoşgeldiniz
+                <li class="dropdown" ngbDropdown>
+                    <a class="dropdown-toggle" ngbDropdownToggle data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{kullaniciAdi}}
                         <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" ngbDropdownMenu>
                         <li>
                             <a href="#">
                                 <i class="fa fa-user"></i> Profil Düzenle</a>
@@ -49,7 +44,7 @@
                         <li role="separator" class="divider"></li>
                         <li>
                             <a (click)="logout()">
-                                <i class="fa fa-signt-out"></i> Çıkış Yap</a>
+                                <i class="fa fa-sign-out"></i> Çıkış Yap</a>
                         </li>
                     </ul>
                 </li>
