@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { ListelerComponent } from './listeler.component';
+import { RandevuComponent } from './randevu.component';
 
-describe('ListelerComponent', () => {
-  let component: ListelerComponent;
-  let fixture: ComponentFixture<ListelerComponent>;
+describe('RandevuComponent', () => {
+  let component: RandevuComponent;
+  let fixture: ComponentFixture<RandevuComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ListelerComponent ]
+      declarations: [ RandevuComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ListelerComponent);
+    fixture = TestBed.createComponent(RandevuComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

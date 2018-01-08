@@ -16,8 +16,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { UyeListesiComponent } from './uye-listesi/uye-listesi.component';
 import { MesajlarComponent } from './mesajlar/mesajlar.component';
 import { appRoot } from './route';
-import { ListelerComponent } from './listeler/listeler.component';
 import { AuthGuard } from './_guards/auth.guard';
+import { RandevuComponent } from './randevu/randevu.component';
+import { YukleComponent } from './yukle/yukle.component';
+import { BulComponent } from './bul/bul.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { AuthGuard } from './_guards/auth.guard';
     UyelikComponent,
     UyeListesiComponent,
     MesajlarComponent,
-    ListelerComponent
+    RandevuComponent,
+    YukleComponent,
+    BulComponent
 ],
   imports: [
     BrowserModule,

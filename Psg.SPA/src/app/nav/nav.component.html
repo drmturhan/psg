@@ -12,13 +12,19 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav" *ngIf="loggedIn()">
                 <li routerLinkActive="active">
-                    <a [routerLink]="['/uyeler']">Üyeler </a>
+                    <a [routerLink]="['/yukle']">PSG Yükle </a>
                 </li>
                 <li routerLinkActive="active">
-                    <a [routerLink]="['/listeler']">Listeler </a>
+                    <a [routerLink]="['/bul']">Hasta Bul </a>
+                </li>
+                <li routerLinkActive="active">
+                    <a [routerLink]="['/randevu']">Randevu </a>
                 </li>
                 <li routerLinkActive="active">
                     <a [routerLink]="['/mesajlar']">Mesajlar </a>
+                </li>
+                <li routerLinkActive="active">
+                    <a [routerLink]="['/uyelistesi']">Üye Listesi </a>
                 </li>
             </ul>
             <form *ngIf="!loggedIn()" #loginForm="ngForm" class="navbar-form navbar-right" (ngSubmit)="login()">
