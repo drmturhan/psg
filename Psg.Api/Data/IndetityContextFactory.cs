@@ -6,9 +6,9 @@ using System.IO;
 
 namespace Psg.Api.Data
 {
-    public class DataContextFactory : IDesignTimeDbContextFactory<DataContext>
+    public class IndetityContextFactory : IDesignTimeDbContextFactory<IdentityContext>
     {
-        public DataContext CreateDbContext(string[] args)
+        public IdentityContext CreateDbContext(string[] args)
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -31,10 +31,10 @@ namespace Psg.Api.Data
             }
             else
             {
-                builder = new DbContextOptionsBuilder<DataContext>();
+                builder = new DbContextOptionsBuilder<IdentityContext>();
                 builder.UseSqlServer(baglantiSatiri);
             }
-            return new DataContext(builder.Options as DbContextOptions<DataContext>);
+            return new IdentityContext(builder.Options as DbContextOptions<IdentityContext>);
         }
     }
 }

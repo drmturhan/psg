@@ -1,0 +1,58 @@
+<div class="container">
+    <div class="row">
+        <h1>{{kullanici?.tamAdi}} Profili</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="panel panel-default">
+                <img class="profile-image thumbnail" src="{{kullanici?.asilFotoUrl}}" alt="{{kullanici?.tamAdi}}">
+                <div class="panel-body">
+                    <div>
+                        <strong>Yaşı</strong>
+                        <p>{{kullanici?.yasi}}</p>
+                    </div>
+                    <div>
+                        <strong>Eposta</strong>
+                        <p>{{kullanici?.eposta}}</p>
+                    </div>
+                    <div>
+                        <strong>Telefonu</strong>
+                        <p>{{kullanici?.telefonNumarasi}}</p>
+                    </div>
+                    <div>
+                        <strong>Son aktif olduğu tarih</strong>
+                        <p>{{kullanici?.sonaktifOlma}}</p>
+                    </div>
+                    <div>
+                        <strong>Üye olduğu tarih</strong>
+                        <p>{{kullanici?.yaratilmaTarihi}}</p>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="btn-group-justified">
+                        <div class="btn-group">
+                            <button class="btn btn-primary">Beğen</button>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-success">Mesajlari</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="tab-panel">
+                <tabset class="kullanici-tabset">
+                    <tab heading="Roller">
+                        <h4>Kullanıcı Rolleriniz</h4>
+                    </tab>
+                    <tab heading="Resimler">
+                        <h4>Fotoğraflarınız</h4>
+                        <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+                    </tab>
+
+                </tabset>
+            </div>
+        </div>
+    </div>

@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import 'rxjs/add/operator/map';
@@ -34,5 +35,20 @@ export class AuthService {
   }
   loggedIn(): boolean {
     return localStorage.getItem('access_token') != null;
+  }
+  hataYoneti(hata: any) {
+    const uygulamaHatasi = hata.headers.get('Uygulama-Hatasi');
+    if (uygulamaHatasi) {
+      return Observable.throw(uygulamaHatasi);
+    }
+    const serverHatalari = hata.json();
+    let modelDurumHatalari = '';
+    if (serverHatalari) {
+      for (const key in serverHatalari) {
+        if (serverHatalari[key]) {
+          modelDurumHatalari += serverHatalari[key] + '\n';
+        }
+      }
+    }
   }
 }

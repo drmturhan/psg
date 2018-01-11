@@ -15,7 +15,7 @@ namespace Psg.Api.Profiles
 
         private void CreateResourceToEntityMap()
         {
-            CreateMap<UykuTestYazDto, UykuTest>()
+            CreateMap<UyeDto, UykuTest>()
                 .AfterMap((d, e) => {
                     if (string.IsNullOrWhiteSpace(d.Ad) && string.IsNullOrWhiteSpace(d.Soyad))
                         e.Hasta = null;

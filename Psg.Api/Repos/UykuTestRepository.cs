@@ -12,9 +12,9 @@ namespace Psg.Api.Repos
     }
     public class UykuTestRepository : IUykuTestRepository
     {
-        private readonly DataContext db;
+        private readonly PsgContext db;
 
-        public UykuTestRepository(DataContext db)
+        public UykuTestRepository(PsgContext db)
         {
             this.db = db;
         }

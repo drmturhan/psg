@@ -48,7 +48,7 @@ namespace Psg.Api.Controllers
                 Subject = new ClaimsIdentity(
                     new Claim[] {
                         new Claim(ClaimTypes.NameIdentifier,bulunanKullanici.Id.ToString()),
-                        new Claim(ClaimTypes.Name,bulunanKullanici.Username),
+                        new Claim(ClaimTypes.Name,bulunanKullanici.KullaniciAdi),
                     }),
                 Expires=DateTime.Now.AddHours(1),
                 SigningCredentials=new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha512)

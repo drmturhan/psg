@@ -24,7 +24,7 @@
                     <a [routerLink]="['/mesajlar']">Mesajlar </a>
                 </li>
                 <li routerLinkActive="active">
-                    <a [routerLink]="['/uyelistesi']">Üye Listesi </a>
+                    <a [routerLink]="['/kullanicilar']">Kullanıcı Listesi </a>
                 </li>
             </ul>
             <form *ngIf="!loggedIn()" #loginForm="ngForm" class="navbar-form navbar-right" (ngSubmit)="login()">
@@ -37,25 +37,14 @@
                 <button type="submit" class="btn btn-success" [disabled]="!loginForm.valid">Giriş Yap</button>
             </form>
             <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
-                <li class="dropdown" ngbDropdown>
-                    <a class="dropdown-toggle" ngbDropdownToggle data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{kullaniciAdi}}
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" ngbDropdownMenu>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-user"></i> Profil Düzenle</a>
-                        </li>
-
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a (click)="logout()">
-                                <i class="fa fa-sign-out"></i> Çıkış Yap</a>
-                        </li>
+                <li class="dropdown" dropdown>
+                    <a class="dropdown-toggle" dropdownToggle>{{kullaniciAdi}}<span class="caret"></span></a>
+                    <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li role="menuitem"><a class="dropdown-item" href="#">Profile</a></li>
+                        <li class="divider dropdown-divider"></li>
+                        <li role="menuitem"><a class="dropdown-item" (click)="logout()">Çıkış Yap</a></li>
                     </ul>
-                </li>
             </ul>
         </div>
-        <!--/.navbar-collapse -->
     </div>
 </nav>

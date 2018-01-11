@@ -1,7 +1,7 @@
+import { KullaniciService } from './_services/kullanici.service';
 import { AlertifyService } from './_services/alertify.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router/';
-import { HttpClientModule } from '@angular/common/http'
 import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -12,14 +12,19 @@ import { UyelikComponent } from './uyelik/uyelik.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { RequestOptions, Http } from '@angular/http/';
 import { AuthService } from './_services/auth.service';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { UyeListesiComponent } from './uye-listesi/uye-listesi.component';
 import { MesajlarComponent } from './mesajlar/mesajlar.component';
+import { NgxGalleryModule } from 'ngx-gallery';
 import { appRoot } from './route';
 import { AuthGuard } from './_guards/auth.guard';
 import { RandevuComponent } from './randevu/randevu.component';
 import { YukleComponent } from './yukle/yukle.component';
 import { BulComponent } from './bul/bul.component';
+import { KullaniciListesiComponent } from './kullanicilar/kullanici-listesi/kullanici-listesi.component';
+import { HttpClientModule } from '@angular/common/http';
+import { KullaniciKartiComponent } from './kullanicilar/kullanici-karti/kullanici-karti.component';
+import { KullaniciDetayComponent } from './kullanicilar/kullanici-detay/kullanici-detay.component';
+import { TabsModule,BsDropdownModule } from 'ngx-bootstrap';
+import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-resolver';
 
 @NgModule({
   declarations: [
@@ -27,34 +32,42 @@ import { BulComponent } from './bul/bul.component';
     NavComponent,
     AnasayfaComponent,
     UyelikComponent,
-    UyeListesiComponent,
     MesajlarComponent,
     RandevuComponent,
     YukleComponent,
-    BulComponent
-],
+    BulComponent,
+    KullaniciListesiComponent,
+    KullaniciKartiComponent,
+    KullaniciDetayComponent,
+    
+  ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoot),
-    NgbModule.forRoot(),
+    TabsModule.forRoot(),
+    BsDropdownModule.forRoot(),
+    HttpModule,
     HttpClientModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: () => {
           return localStorage.getItem('access_token');
         },
-        whitelistedDomains: ['localhost:4200'],
+        whitelistedDomains: ['http://localhost:55126'],
         skipWhenExpired: true,
       }
     }),
     FormsModule,
+    NgxGalleryModule
   ],
-  
+
 
   providers: [
     AuthService,
+    KullaniciService,
     AlertifyService,
-    AuthGuard
+    AuthGuard,
+    KullaniciDetayResolver
   ],
   bootstrap: [AppComponent]
 })
