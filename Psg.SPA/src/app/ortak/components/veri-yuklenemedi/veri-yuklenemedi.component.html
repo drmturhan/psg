@@ -1,0 +1,11 @@
+<div class="container">
+    <div class="row">
+        <ul *ngFor="let hata of hataMesajlari">
+            <li *ngIf="hataMesajlari">
+                <div class="alert alert-warning">
+                    {{hata}}
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

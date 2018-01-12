@@ -2,6 +2,7 @@
 using Psg.Api.Dtos;
 using Psg.Api.Extensions;
 using Psg.Api.Models;
+using System;
 using System.Linq;
 
 namespace Psg.Api.Profiles
@@ -25,6 +26,8 @@ namespace Psg.Api.Profiles
             CreateMap<Kullanici, KullaniciListeDto>()
                 .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.DogumTarihi.YasHesapla()))
                 .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
+            CreateMap<Kullanici, KullaniciYazDto>()
+                .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
             CreateMap<Kullanici, KullaniciDetayDto>()
                 .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.DogumTarihi.YasHesapla()))
                 .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
@@ -42,6 +45,32 @@ namespace Psg.Api.Profiles
 
             CreateMap<UyeOkuDto, Kullanici>()
                 .ForMember(kaynak => kaynak.KullaniciAdi, islem => islem.MapFrom(source => source.KullaniciAdi));
+
+            CreateMap<KullaniciBaseDto, Kullanici>()
+                .ForMember(k => k.SifreHash, islem => islem.Ignore())
+                .ForMember(k => k.SifreSalt, islem => islem.Ignore())
+                .ForMember(k => k.TamAdi, islem => islem.Ignore())
+                .AfterMap((d, e) =>
+                {
+                    foreach (var eFoto in e.Fotograflari)
+                    {
+                        eFoto.KullaniciNo = d.Id;
+                    }
+                });
+
+            CreateMap<KullaniciYazDto, Kullanici>()
+                .ForMember(k => k.Id, islem => islem.Ignore())
+                .ForMember(k => k.SifreHash, islem => islem.Ignore())
+                .ForMember(k => k.SifreSalt, islem => islem.Ignore())
+                .ForMember(k => k.TamAdi, islem => islem.Ignore())
+                .AfterMap((d, e) =>
+                {
+                    foreach (var eFoto in e.Fotograflari)
+                    {
+                        eFoto.KullaniciNo = d.Id;
+                    }
+                });
+            CreateMap<FotoDetayDto, Foto>().ForMember(k => k.Id, islem => islem.Ignore());
         }
     }
 }

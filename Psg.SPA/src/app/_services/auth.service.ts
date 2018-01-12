@@ -23,6 +23,13 @@ export class AuthService {
       }
     });
   }
+  kullaniciNumarasiniAl(): number {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      console.log(this.helper.getTokenExpirationDate(token));
+      return +this.helper.decodeToken(token)['nameid'];
+    }
+  }
   kullaniciAdiniAl(): string {
     const token = localStorage.getItem('access_token');
     if (token) {

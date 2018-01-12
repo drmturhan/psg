@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { Kullanici } from './../../_models/kullanici';
 import { Component, OnInit } from '@angular/core';
 import { KullaniciService } from '../../_services/kullanici.service';
@@ -11,22 +12,13 @@ import { AlertifyService } from '../../_services/alertify.service';
 export class KullaniciListesiComponent implements OnInit {
 
   kullanicilar: Kullanici[]
-  constructor(private kulServisi: KullaniciService, private uyarici: AlertifyService) { }
+  constructor(
+    private uyarici: AlertifyService,
+    private acRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    this.kullanicilariYukle();
+    this.acRoute.data.subscribe(data => {
+      this.kullanicilar = data['kullanicilar'];
+    })
   }
-
-  kullanicilariYukle() {
-    this.kulServisi.listeGetirKullanicilarTumu()
-      .subscribe((kullanicilar: Kullanici[]) => {
-        this.kullanicilar = kullanicilar
-      },
-      hatalar => {
-        this.uyarici.error(hatalar)
-      }
-      );
-
-  }
-
 }

@@ -39,7 +39,7 @@ namespace Psg.Api
             {
                 setup.AddPolicy("psg", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
             services.AddDbContext<IdentityContext>(options =>

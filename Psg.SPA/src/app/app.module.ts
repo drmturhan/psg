@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router/';
 import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { AnasayfaComponent } from './anasayfa/anasayfa.component';
@@ -25,6 +24,13 @@ import { KullaniciKartiComponent } from './kullanicilar/kullanici-karti/kullanic
 import { KullaniciDetayComponent } from './kullanicilar/kullanici-detay/kullanici-detay.component';
 import { TabsModule,BsDropdownModule } from 'ngx-bootstrap';
 import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-resolver';
+import { KullaniciDuzeltComponent } from './kullanicilar/kullanici-duzelt/kullanici-duzelt.component';
+import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/veri-yuklenemedi.component';
+import { KullaniciListesiResolver } from './_resolvers/kullanici/kullanici-listesi-resolver.';
+import { ProfilimResolver } from './_resolvers/kullanici/profilim-resolver';
+import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/kullanicidaki-degisiklikler-kaybolsunmu.service';
+import { NgModule } from '@angular/core';
+
 
 @NgModule({
   declarations: [
@@ -39,6 +45,8 @@ import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-r
     KullaniciListesiComponent,
     KullaniciKartiComponent,
     KullaniciDetayComponent,
+    VeriYuklenemediComponent,
+    KullaniciDuzeltComponent
     
   ],
   imports: [
@@ -67,7 +75,10 @@ import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-r
     KullaniciService,
     AlertifyService,
     AuthGuard,
-    KullaniciDetayResolver
+    KullaniciDetayResolver,
+    KullaniciListesiResolver,
+    ProfilimResolver,
+    KullanicidakiDegisikliklerKaybolsunmuGuard
   ],
   bootstrap: [AppComponent]
 })

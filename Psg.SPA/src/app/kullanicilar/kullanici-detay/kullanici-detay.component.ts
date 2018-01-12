@@ -1,5 +1,5 @@
 import { AlertifyService } from './../../_services/alertify.service';
-import { KullaniciService } from './../../_services/kullanici.service';
+
 import { Component, OnInit } from '@angular/core';
 import { Kullanici } from '../../_models/kullanici';
 import { ActivatedRoute } from '@angular/router';
@@ -16,7 +16,7 @@ export class KullaniciDetayComponent implements OnInit {
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
 
-  constructor(private kulServisi: KullaniciService,
+  constructor(
     private uyarici: AlertifyService,
     private acRoute: ActivatedRoute) { }
 
@@ -35,16 +35,16 @@ export class KullaniciDetayComponent implements OnInit {
     }]
     this.galleryImages = this.getImages();
   }
-  getImages():NgxGalleryImage[] {
+  getImages(): NgxGalleryImage[] {
     var imageUrls: NgxGalleryImage[] = [];
     for (let i = 0; i < this.kullanici.fotograflari.length; i++) {
-      var yeni:NgxGalleryImage={};
-      var item=this.kullanici.fotograflari[i];
-      yeni.small=item.url;
-      yeni.medium=item.url;
-      yeni.big=item.url;
-      yeni.description=item.aciklama;
-      yeni.url=item.url;
+      var yeni: NgxGalleryImage = {};
+      var item = this.kullanici.fotograflari[i];
+      yeni.small = item.url;
+      yeni.medium = item.url;
+      yeni.big = item.url;
+      yeni.description = item.aciklama;
+      yeni.url = item.url;
       imageUrls.push(yeni);
     }
     return imageUrls;

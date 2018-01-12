@@ -5,6 +5,7 @@ import 'rxjs/operator/map';
 import { Kullanici } from './../_models/kullanici';
 import { environment } from './../../environments/environment';
 import { HttpRequest } from '@angular/common/http/src/request';
+import { KullaniciYaz } from '../_models/kullanici';
 
 
 @Injectable()
@@ -16,7 +17,7 @@ export class KullaniciService {
             .get(this.baseUrl + 'kullanicilar', this.jwt())
             .map(
             response => {
-                console.log(response.json());
+                // console.log(response.json());
                 return <Kullanici[]>response.json();
             },
             hatalar => this.hatalariYonet(hatalar));
@@ -25,13 +26,25 @@ export class KullaniciService {
         return this.http.get(this.baseUrl + `kullanicilar/${id}`, this.jwt())
             .map(
             response => {
-                console.log(response);
+                // console.log(response);
                 return <Kullanici>response.json();
             },
             hatalar => this.hatalariYonet(hatalar)
             );
     }
-
+    kullaniciBulDegistirmekIcin(id: number): Observable<KullaniciYaz> {
+        return this.http.get(this.baseUrl + `kullanicilar/${id}?neden=yaz`, this.jwt())
+            .map(
+            response => {
+                // console.log(response);
+                return <KullaniciYaz>response.json();
+            },
+            hatalar => this.hatalariYonet(hatalar)
+            );
+    }
+    guncelle(id: number, kullanici: Kullanici) {
+        return this.http.put(this.baseUrl + 'kullanicilar/' + id, kullanici,this.jwt());
+    }
     private jwt() {
         let token = localStorage.getItem('access_token');
         if (token) {
