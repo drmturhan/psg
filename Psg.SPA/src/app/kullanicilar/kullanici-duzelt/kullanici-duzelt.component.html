@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-sm-4">
             <div class="panel panel-default">
-                <img class="profile-image thumbnail" src="{{kullanici?.asilFotoUrl}}" alt="{{kullanici?.kullaniciAdi}}">
+                <img class="profile-image thumbnail" src="{{fotoUrl}}" alt="{{kullanici?.kullaniciAdi}}">
                 <div class="panel-body">
 
                     <div>
@@ -70,8 +70,8 @@
                         </form>
                     </tab>
                     <tab heading="Resimleri Düzelt">
-                        <h4>Fotoğraflarınız</h4>
-                        <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+                        <fotograf-duzenleyici [fotograflar]="kullanici.fotograflari" (asilFotoDegisti)="asilFotoDegisti($event)"> </fotograf-duzenleyici>
+
                     </tab>
 
                 </tabset>

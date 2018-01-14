@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Psg.Api.Base;
 using Psg.Api.Data;
+using Psg.Api.Helpers;
 using Psg.Api.Repos;
 using Psg.Api.Seeds;
 using System.Text;
@@ -35,11 +36,13 @@ namespace Psg.Api
             bool.TryParse(Configuration["Data:useSqLite"], out useSqLite);
             string baglantiSatiri = useSqLite ? Configuration["Data:SqlLiteConnectionString"] : Configuration["Data:SqlServerConnectionString"];
             services.AddAutoMapper();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddCors(setup =>
             {
                 setup.AddPolicy("psg", policy =>
                 {
-                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                    
                 });
             });
             services.AddDbContext<IdentityContext>(options =>

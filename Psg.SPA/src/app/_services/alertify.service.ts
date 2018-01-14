@@ -5,13 +5,25 @@ declare let alertify: any;
 export class AlertifyService {
 
     constructor() { }
-    confirm(message: string, okCallback: () => any) {
-        alertify.confirm(message, function (e) {
-            if (e) {
-                okCallback();
-            }
-            else { }
-        })
+    confirm(message: string, okCallback: () => any, title?: string, evet?: string, iptal?: string) {
+        let evetStr: string = 'Evet';
+        let iptalStr: string = 'iptal';
+        if (evet)
+            evetStr = evet;
+        if (iptal)
+            iptalStr = iptal;
+
+        if (!title)
+            title = 'Onay';
+
+        alertify.confirm()
+        .setting({
+            'labels':{ ok: evetStr, cancel: iptalStr },
+            'message': message,
+            'title':title,
+            'onok':okCallback,
+            'transition':'zoom'
+          }).show();
     }
 
     success(message: string) {

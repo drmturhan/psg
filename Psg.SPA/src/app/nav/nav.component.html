@@ -37,6 +37,9 @@
                 <button type="submit" class="btn btn-success" [disabled]="!loginForm.valid">Giriş Yap</button>
             </form>
             <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
+                <li>
+                    <img src="{{fotoUrl}}" alt="{{authService.suankiKullanici.kullaniciAdi}}">
+                </li>
                 <li class="dropdown" dropdown>
                     <a class="dropdown-toggle" dropdownToggle>{{kullaniciAdi}}<span class="caret"></span></a>
                     <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">

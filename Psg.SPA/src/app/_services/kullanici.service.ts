@@ -43,8 +43,16 @@ export class KullaniciService {
             );
     }
     guncelle(id: number, kullanici: Kullanici) {
-        return this.http.put(this.baseUrl + 'kullanicilar/' + id, kullanici,this.jwt());
+        return this.http.put(this.baseUrl + 'kullanicilar/' + id, kullanici, this.jwt());
     }
+    asilFotoYap(kullaniciNo: number, fotoId: number) {
+        return this.http.post(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId +'/asilYap', {},this.jwt());
+
+    }
+    sil(kullaniciNo: number, fotoId: number) {
+        return this.http.delete(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId , this.jwt());
+    }
+    
     private jwt() {
         let token = localStorage.getItem('access_token');
         if (token) {

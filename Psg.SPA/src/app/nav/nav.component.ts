@@ -12,30 +12,35 @@ import { AuthService } from '../_services/auth.service';
 })
 export class NavComponent implements OnInit {
   model: any = {};
-  kullaniciAdi:string='Hoşgeldiniz';
-  
-   
-  constructor(private authService: AuthService, private uyarici: AlertifyService,private router:Router) { }
+  kullaniciAdi: string = '';
+  fotoUrl: string;
 
-  ngOnInit() { 
-    this.kullaniciAdi=this.authService.kullaniciAdiniAl();
+  constructor(public authService: AuthService, private uyarici: AlertifyService, private router: Router) { }
+
+  ngOnInit() {
+    if (this.authService.suankiKullanici != null)
+      this.kullaniciAdi = this.authService.suankiKullanici.kullaniciAdi;
+    this.authService.suankiFotoUrl.subscribe(fotoUrl => {
+      this.fotoUrl = fotoUrl;
+    });
   }
   login() {
     this.authService.login(this.model).subscribe(data => {
       this.uyarici.success('Giriş başarılı');
-      this.model={};
-      this.kullaniciAdi=this.authService.kullaniciAdiniAl();
+      this.model = {};
+      this.kullaniciAdi = this.authService.kullaniciAdiniAl();
     },
       error => this.uyarici.warning('Giriş başarısız!'),
-      ()=>this.router.navigate(['/uyeler'])
+      () => this.router.navigate(['/uyeler'])
     );
   }
   logout() {
-
     this.authService.userToken = null;
+    this.authService.suankiKullanici = null;
     localStorage.removeItem('access_token');
+    localStorage.removeItem('kullanici');
     this.uyarici.warning('Çıkış yapıldı');
-    ()=>this.router.navigate(['/anasayfa'])
+    () => this.router.navigate(['/anasayfa'])
   }
   loggedIn(): boolean {
     return this.authService.loggedIn();

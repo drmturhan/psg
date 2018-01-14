@@ -33,6 +33,7 @@ namespace Psg.Api.Profiles
                 .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
 
             CreateMap<Foto, FotoDetayDto>();
+            CreateMap<Foto, FotoOkuDto>();
 
         }
 
@@ -71,6 +72,7 @@ namespace Psg.Api.Profiles
                     }
                 });
             CreateMap<FotoDetayDto, Foto>().ForMember(k => k.Id, islem => islem.Ignore());
+            CreateMap<FotografYazDto, Foto>();
         }
     }
 }

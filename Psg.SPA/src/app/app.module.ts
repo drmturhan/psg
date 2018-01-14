@@ -30,7 +30,8 @@ import { KullaniciListesiResolver } from './_resolvers/kullanici/kullanici-liste
 import { ProfilimResolver } from './_resolvers/kullanici/profilim-resolver';
 import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/kullanicidaki-degisiklikler-kaybolsunmu.service';
 import { NgModule } from '@angular/core';
-
+import { FotografDuzenleyiciComponent } from './ortak/components/fotograf-duzenleyici/fotograf-duzenleyici.component';
+import { FileUploadModule } from 'ng2-file-upload';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { NgModule } from '@angular/core';
     KullaniciKartiComponent,
     KullaniciDetayComponent,
     VeriYuklenemediComponent,
-    KullaniciDuzeltComponent
+    KullaniciDuzeltComponent,
+    FotografDuzenleyiciComponent
     
   ],
   imports: [
@@ -61,12 +63,14 @@ import { NgModule } from '@angular/core';
         tokenGetter: () => {
           return localStorage.getItem('access_token');
         },
-        whitelistedDomains: ['http://localhost:55126'],
+        whitelistedDomains: ['http://localhost:4200'],
         skipWhenExpired: true,
       }
     }),
     FormsModule,
-    NgxGalleryModule
+    NgxGalleryModule,
+    FileUploadModule 
+    
   ],
 
 

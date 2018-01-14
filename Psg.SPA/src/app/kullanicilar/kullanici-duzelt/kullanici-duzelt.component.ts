@@ -21,6 +21,7 @@ export class KullaniciDuzeltComponent implements OnInit {
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
 
+  fotoUrl:string;
   constructor(
     private route: ActivatedRoute,
     private servis: KullaniciService,
@@ -29,6 +30,7 @@ export class KullaniciDuzeltComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(data => this.kullanici = data['kullanici']);
+    this.auth.suankiFotoUrl.subscribe(fotoUrl=>this.fotoUrl=fotoUrl);
     this.galleryOptions = [{
       width: '100%',
       height: '100%',
@@ -67,16 +69,19 @@ export class KullaniciDuzeltComponent implements OnInit {
       hata => {
         if (!hata['ok']) {
           if (hata['status'] == 401) {
-              this.uyarici.warning("Sisteme giriş yapmadınız veya oturum süresi dolmuş..");
-              this.uyarici.message("Lütfen sisteme giriş yapın!");
+            this.uyarici.warning("Sisteme giriş yapmadınız veya oturum süresi dolmuş..");
+            this.uyarici.message("Lütfen sisteme giriş yapın!");
           }
-          else 
-          {
+          else {
 
             this.uyarici.error("Kayıp yapılamadı! Kayıt yapılırken bir hata oluştu. ");
           }
         }
 
       });
+  }
+  asilFotoDegisti(url: string) {
+    this.kullanici.asilFotoUrl = url;
+    this.auth.kullaniciFotografiniDegistir(url);
   }
 }

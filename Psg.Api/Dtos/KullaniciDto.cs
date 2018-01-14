@@ -48,13 +48,4 @@ namespace Psg.Api.Dtos
     {
         public int Yasi { get; set; }
     }
-    public class FotoDetayDto
-    {
-        public int Id { get; set; }
-        public string Url { get; set; }
-        public string Aciklama { get; set; }
-        public DateTime EklenmeTarihi { get; set; }
-        public bool IlkTercihmi { get; set; }
-
-    }
 }

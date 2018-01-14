@@ -9,6 +9,7 @@ namespace Psg.Api.Models
         public string Aciklama { get; set; }
         public DateTime EklenmeTarihi { get; set; }
         public bool IlkTercihmi { get; set; }
+        public string PublicId { get; set; }
         public int KullaniciNo { get; set; }
         public Kullanici Kullanici { get; set; }
     }

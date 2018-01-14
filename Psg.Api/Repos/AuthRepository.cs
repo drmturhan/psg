@@ -4,6 +4,7 @@ using Psg.Api.Data;
 using Psg.Api.Extensions;
 using Psg.Api.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ namespace Psg.Api.Repos
     {
         Task<Kullanici> BulAsync(int id);
         Task<IEnumerable<Kullanici>> ListeGetirKullanicilarTumuAsync();
+        Task<Foto> FotografBulAsync(int id);
+        Task<Foto> KullanicininAsilFotosunuGetirAsync(int kullaniciNo);
     }
     public class KullaniciRepository : IKullaniciRepository
     {
@@ -31,6 +34,17 @@ namespace Psg.Api.Repos
         public async Task Ekle<T>(T entity) where T : class
         {
             await db.AddAsync<T>(entity);
+        }
+
+        public async Task<Foto> FotografBulAsync(int id)
+        {
+            var foto = await db.Fotograflar.FirstOrDefaultAsync(p => p.Id == id);
+            return foto;
+        }
+        public async Task<Foto> KullanicininAsilFotosunuGetirAsync(int kullaniciNo)
+        {
+            var foto = await db.Fotograflar.Where(p => p.KullaniciNo== kullaniciNo).FirstOrDefaultAsync(p=>p.IlkTercihmi);
+            return foto;
         }
 
         public async Task<bool> Kaydet()
@@ -58,16 +72,7 @@ namespace Psg.Api.Repos
         {
             this.db = db;
         }
-        public async Task<Kullanici> GirisYap(string kullaniciadi, string sifre)
-        {
-            var kullanici = await db.Kullanicilar.FirstOrDefaultAsync(k => k.KullaniciAdi == kullaniciadi);
-            if (kullanici == null)
-                return null;
-            bool sonuc = false;
-            sifre.VerifyPasswordHash(kullanici.SifreHash, kullanici.SifreSalt, out sonuc);
-            if (!sonuc) return null;
-            return kullanici;
-        }
+      
 
 
 
@@ -87,12 +92,10 @@ namespace Psg.Api.Repos
             return kullanici;
         }
 
-
-
         public async Task<Kullanici> GirisYapAsync(string kullaniciadi, string sifre)
         {
 
-            var kullanici = await db.Kullanicilar.SingleOrDefaultAsync(k => k.KullaniciAdi == kullaniciadi);
+            var kullanici = await db.Kullanicilar.Include(k=>k.Fotograflari).SingleOrDefaultAsync(k => k.KullaniciAdi == kullaniciadi);
             if (kullanici == null) return null;
 
             bool sonuc = false;

@@ -1,25 +1,36 @@
+import { Kullanici } from './../_models/kullanici';
 import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { Response } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { HttpClient } from '@angular/common/http';
-
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class AuthService {
   baseUrl = 'http://localhost:55126/api/auth/';
   userToken: any;
-
+  suankiKullanici: Kullanici
+  private fotoUrl = new BehaviorSubject<string>("../../assets/images/user.png");
+  suankiFotoUrl = this.fotoUrl.asObservable();
   constructor(private authHttp: HttpClient, private helper: JwtHelperService) { }
+
+  kullaniciFotografiniDegistir(fotoUrl: string) {
+    this.fotoUrl.next(fotoUrl);
+  }
+
   login(model: any) {
 
     return this.authHttp.post(this.baseUrl + 'girisyap', model).map((response: Response) => {
       const token = response['tokenString'];
+      const kullanici = response["kullanici"];
       if (token) {
         localStorage.setItem('access_token', token);
+        localStorage.setItem('kullanici', JSON.stringify(kullanici));
         this.userToken = token;
-        console.log(this.helper.decodeToken(token));
+        this.suankiKullanici = kullanici;
+        this.kullaniciFotografiniDegistir(this.suankiKullanici.asilFotoUrl);
       }
     });
   }
