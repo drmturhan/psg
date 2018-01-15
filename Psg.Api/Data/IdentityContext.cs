@@ -12,17 +12,39 @@ namespace Psg.Api.Data
         { }
 
         public DbSet<Kullanici> Kullanicilar { get; set; }
+        public DbSet<Kisi> Kisiler { get; set; }
+        public DbSet<Cinsiyet> Cinsiyetler { get; set; }
         public DbSet<Foto> Fotograflar { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("Polisomnografi");
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Kullanici>(entity =>
+            {
+                entity.ToTable("Kullanicilar");
+                entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.KisiBilgisi).WithMany(h => h.Kullanicilar).HasForeignKey(fk => fk.KisiNo);
+
+            });
             modelBuilder.Entity<Foto>(entity =>
             {
+                entity.ToTable("KullaniciFotograflari");
                 entity.HasKey(e => e.Id);
-                entity.HasOne(e => e.Kullanici).WithMany(h => h.Fotograflari).HasForeignKey(fk => fk.KullaniciNo).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.Kullanici).WithMany(h => h.Fotograflari).HasForeignKey(fk => fk.KullaniciNo);
 
+            });
+            modelBuilder.Entity<Kisi>(entity =>
+            {
+                entity.ToTable("Kisiler");
+                entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.Cinsiyeti).WithMany(h => h.Kisiler).HasForeignKey(fk => fk.CinsiyetNo);
+
+            });
+            modelBuilder.Entity<Cinsiyet>(entity =>
+            {
+                entity.ToTable("Cinsiyetler");
+                entity.HasKey(e => e.Id);
             });
         }
     }

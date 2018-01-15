@@ -24,12 +24,12 @@ namespace Psg.Api.Profiles
             .ForMember(des => des.KullaniciAdi, islem => islem.MapFrom(source => source.KullaniciAdi));
 
             CreateMap<Kullanici, KullaniciListeDto>()
-                .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.DogumTarihi.YasHesapla()))
+                .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.KisiBilgisi.DogumTarihi.YasHesapla()))
                 .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
             CreateMap<Kullanici, KullaniciYazDto>()
                 .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
             CreateMap<Kullanici, KullaniciDetayDto>()
-                .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.DogumTarihi.YasHesapla()))
+                .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.KisiBilgisi.DogumTarihi.YasHesapla()))
                 .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
 
             CreateMap<Foto, FotoDetayDto>();
@@ -50,7 +50,6 @@ namespace Psg.Api.Profiles
             CreateMap<KullaniciBaseDto, Kullanici>()
                 .ForMember(k => k.SifreHash, islem => islem.Ignore())
                 .ForMember(k => k.SifreSalt, islem => islem.Ignore())
-                .ForMember(k => k.TamAdi, islem => islem.Ignore())
                 .AfterMap((d, e) =>
                 {
                     foreach (var eFoto in e.Fotograflari)
@@ -63,7 +62,6 @@ namespace Psg.Api.Profiles
                 .ForMember(k => k.Id, islem => islem.Ignore())
                 .ForMember(k => k.SifreHash, islem => islem.Ignore())
                 .ForMember(k => k.SifreSalt, islem => islem.Ignore())
-                .ForMember(k => k.TamAdi, islem => islem.Ignore())
                 .AfterMap((d, e) =>
                 {
                     foreach (var eFoto in e.Fotograflari)
@@ -73,6 +71,14 @@ namespace Psg.Api.Profiles
                 });
             CreateMap<FotoDetayDto, Foto>().ForMember(k => k.Id, islem => islem.Ignore());
             CreateMap<FotografYazDto, Foto>();
+            CreateMap<UyelikYaratDto, Kullanici>()
+                .ForPath(d => d.KisiBilgisi.Unvan, opt => opt.MapFrom(s => s.Unvan))
+                .ForPath(d => d.KisiBilgisi.Ad, opt => opt.MapFrom(s => s.Ad))
+                .ForPath(d => d.KisiBilgisi.DigerAd, opt => opt.MapFrom(s => s.DigerAd))
+                .ForPath(d => d.KisiBilgisi.Soyad, opt => opt.MapFrom(s => s.Soyad))
+                .ForPath(d => d.KisiBilgisi.CinsiyetNo, opt => opt.MapFrom(s => s.CinsiyetNo))
+                .ForPath(d => d.KisiBilgisi.DogumTarihi, opt => opt.MapFrom(s => s.DogumTarihi));
+
         }
     }
 }

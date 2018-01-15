@@ -2,7 +2,7 @@
     <h1>Uyku testi ara</h1>
     <p class="lead">İstediğiniz kriterleri yazın ve aramayı başlatın</p>
     <div class="text-center">
-        <button class="btn btn-primary btn-lg" (click)="registerToogle()">Üyelik</button>
+        <button class="btn btn-primary btn-lg" *ngIf="!authService.suankiKullanici" (click)="registerToogle()">Üyelik</button>
         <button class="btn btn-info btn-lg">Daha Fazla Bilgi</button>
     </div>
 </div>

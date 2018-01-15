@@ -6,12 +6,20 @@ img.thumbnail {
 
 .my-drop-zone {
     border: dotted 3px lightgray;
+    background-color: antiquewhite;
 }
 
 .nv-file-over {
-    border: dotted 3px red;
+    border: dashed 3px green;
+    background-color: chartreuse;
 }
 
 input[type=file] {
     color: transparent;
+}
+
+.yukleme {
+    margin-top: 20px;
+    border-top: solid 1px black;
+    padding: 10px;
 }

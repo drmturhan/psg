@@ -28,7 +28,9 @@ namespace Psg.Api.Repos
 
         public async Task<Kullanici> BulAsync(int id)
         {
-            return await db.Kullanicilar.Include(k=>k.Fotograflari).FirstOrDefaultAsync(k=>k.Id==id);
+            return await db.Kullanicilar
+                .Include(k => k.KisiBilgisi).ThenInclude(kisi=>kisi.Cinsiyeti)
+                .Include(k=>k.Fotograflari).FirstOrDefaultAsync(k=>k.Id==id);
         }
 
         public async Task Ekle<T>(T entity) where T : class
@@ -55,7 +57,9 @@ namespace Psg.Api.Repos
 
         public async Task<IEnumerable<Kullanici>> ListeGetirKullanicilarTumuAsync()
         {
-            return await db.Kullanicilar.Include(k=>k.Fotograflari).ToListAsync<Kullanici>();
+            return await db.Kullanicilar
+                .Include(k=>k.KisiBilgisi).ThenInclude(kisi=>kisi.Cinsiyeti)
+                .Include(k=>k.Fotograflari).ToListAsync<Kullanici>();
         }
 
         public void Sil<T>(T entity) where T : class
@@ -95,7 +99,9 @@ namespace Psg.Api.Repos
         public async Task<Kullanici> GirisYapAsync(string kullaniciadi, string sifre)
         {
 
-            var kullanici = await db.Kullanicilar.Include(k=>k.Fotograflari).SingleOrDefaultAsync(k => k.KullaniciAdi == kullaniciadi);
+            var kullanici = await db.Kullanicilar
+                .Include(k => k.KisiBilgisi).ThenInclude(kisi=>kisi.Cinsiyeti)
+                .Include(k=>k.Fotograflari).SingleOrDefaultAsync(k => k.KullaniciAdi == kullaniciadi);
             if (kullanici == null) return null;
 
             bool sonuc = false;

@@ -5,5 +5,6 @@
 
 export const environment = {
   production: false,
-  apiUrl:'http://localhost:55126/api/'
+  apiUrl:'http://localhost:55126/api/',
+  bosFotoUrl:'../../assets/images/user.png'
 };

@@ -35,10 +35,7 @@ export class NavComponent implements OnInit {
     );
   }
   logout() {
-    this.authService.userToken = null;
-    this.authService.suankiKullanici = null;
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('kullanici');
+    this.authService.logout();
     this.uyarici.warning('Çıkış yapıldı');
     () => this.router.navigate(['/anasayfa'])
   }

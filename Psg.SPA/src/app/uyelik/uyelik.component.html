@@ -1,14 +1,43 @@
-<form #uyelikForm="ngForm" (ngSubmit)="uyeol()">
+<form [formGroup]="uyelikFormu" (ngSubmit)="uyeol()" *ngIf="!uyelikBasvurusuTamam">
 
-    <h2 class="text-center text-primary">Sign Up</h2>
+    <h2 class="text-center text-primary">Üyelik Başvurusu</h2>
 
     <hr>
-    <div class="form-group">
-        <input type="text" class="form-control" placeholder="Kullanıcı adı" name="kullaniciadi" required [(ngModel)]="model.kullaniciadi">
-    </div>
+    <div class="row">
 
-    <div class="form-group">
-        <input type="password" class="form-control" placeholder="Şifre" name="sifre" required [(ngModel)]="model.sifre">
+        <div class="col-sm-6">
+            <h4>Kişi bilgileri</h4>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Adı" formControlName="ad">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Soyadı" formControlName="soyad">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Cinsiyet" formControlName="cinsiyetNo">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi" formControlName="dogumTarihi">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <h4>Güvenlik bilgileri</h4>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Kullanıcı adı" formControlName="kullaniciAdi">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Şifre" formControlName="sifre">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Şifre kontrol" formControlName="sifreKontrol">
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" placeholder="Eposta adresi" formControlName="ePosta">
+            </div>
+            <div class="form-group">
+                <input type="phone" class="form-control" placeholder="Telefon Numarası" formControlName="telefonNumarasi">
+            </div>
+        </div>
     </div>
 
     <div class="form-group text-center">
@@ -16,3 +45,7 @@
         <button class="btn btn-default" type="button" (click)="vazgec()">Vazgeç</button>
     </div>
 </form>
+
+<uyelik-basarili *ngIf="uyelikBasvurusuTamam">
+</uyelik-basarili>
+<a class="btn btn-info" (click)="kapat()" *ngIf="uyelikBasvurusuTamam">Kapat</a>

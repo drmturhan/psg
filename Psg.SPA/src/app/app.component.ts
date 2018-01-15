@@ -1,3 +1,4 @@
+import { environment } from './../environments/environment';
 import { Kullanici } from './_models/kullanici';
 import { AuthService } from './_services/auth.service';
 import { Component, OnInit } from '@angular/core';
@@ -21,6 +22,9 @@ export class AppComponent implements OnInit {
     const kullanici:Kullanici = JSON.parse(localStorage.getItem('kullanici'));
     if (kullanici) {
       this.authService.suankiKullanici = kullanici;
+      let url = environment.bosFotoUrl;
+      if (this.authService.suankiKullanici.asilFotoUrl !== '')
+        url = this.authService.suankiKullanici.asilFotoUrl;
       this.authService.kullaniciFotografiniDegistir(kullanici.asilFotoUrl);
     }
   }

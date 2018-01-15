@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../_services/auth.service';
 
 @Component({
   selector: 'app-anasayfa',
@@ -8,15 +9,15 @@ import { Component, OnInit } from '@angular/core';
 export class AnasayfaComponent implements OnInit {
 
   registerMode: boolean = false;
-  constructor() { }
+  constructor(public authService: AuthService) { }
 
   ngOnInit() {
+    this.authService.suankiFotoUrl.subscribe(() => this.registerMode = false);
   }
   registerToogle() {
     this.registerMode = !this.registerMode;
   }
   uyeligiIptalEt(durum: boolean) {
-
     this.registerMode = durum;
   }
 

@@ -2,15 +2,20 @@
   {
     "KullaniciAdi": "mturhan",
     "Sifre": "akd3463",
-    "Unvan": "Doç.Dr.",
-    "Ad": "Murat",
-    "Soyad": "Turhan",
+    "KisiBilgisi": {
+      "Unvan": "Doç.Dr.",
+      "Ad": "Murat",
+      "DigerAd": null,
+      "Soyad": "Turhan",
+      "DogumTarihi": "1970-11-15",
+      "CinsiyetNo": 1
+    },
     "Eposta": "drmturhan@hotmail.com",
     "TelefonNumarasi": "5057271818",
-    "DogumTarihi": "1970-11-15",
     "Fotograflari": [
       {
-        "url": "https://drmturhan.blob.core.windows.net/mtcdn/drmturhan_beyaz_gomlek.jpg/",
+        "url": "http://res.cloudinary.com/drmturhan/image/upload/v1515951404/pzttedocsm6ccl9fx8ct.jpg",
+        "publicId": "pzttedocsm6ccl9fx8ct.jpg",
         "aciklma": "Akdeniz Üniversitesi Tıp Fakültesi KBB Anabilim Dalı",
         "eklenmeTarihi": "2018-1-10",
         "ilkTercihMi": true

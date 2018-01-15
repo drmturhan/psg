@@ -1,6 +1,7 @@
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { KullaniciService } from './_services/kullanici.service';
 import { AlertifyService } from './_services/alertify.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router/';
 import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
@@ -32,6 +33,7 @@ import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/
 import { NgModule } from '@angular/core';
 import { FotografDuzenleyiciComponent } from './ortak/components/fotograf-duzenleyici/fotograf-duzenleyici.component';
 import { FileUploadModule } from 'ng2-file-upload';
+import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-basarili.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,8 @@ import { FileUploadModule } from 'ng2-file-upload';
     KullaniciDetayComponent,
     VeriYuklenemediComponent,
     KullaniciDuzeltComponent,
-    FotografDuzenleyiciComponent
+    FotografDuzenleyiciComponent,
+    UyelikBasariliComponent
     
   ],
   imports: [
@@ -56,6 +59,7 @@ import { FileUploadModule } from 'ng2-file-upload';
     RouterModule.forRoot(appRoot),
     TabsModule.forRoot(),
     BsDropdownModule.forRoot(),
+    BsDatepickerModule.forRoot(),
     HttpModule,
     HttpClientModule,
     JwtModule.forRoot({
@@ -68,6 +72,7 @@ import { FileUploadModule } from 'ng2-file-upload';
       }
     }),
     FormsModule,
+    ReactiveFormsModule,
     NgxGalleryModule,
     FileUploadModule 
     

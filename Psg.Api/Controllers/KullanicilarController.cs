@@ -36,7 +36,7 @@ namespace Psg.Api.Controllers
             var resources = mapper.Map<IEnumerable<KullaniciListeDto>>(kayitlar);
             return Ok(resources);
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}",Name ="KullaniciGetir")]
         public async Task<IActionResult> Get(int id, [FromQuery] string neden)
         {
             var kayit = await kullaniciRepo.BulAsync(id);

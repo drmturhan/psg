@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -24,7 +21,7 @@ namespace Psg.Api.Controllers
         private readonly IMapper mapper;
         private readonly IConfiguration configuration;
 
-        public AuthController(IAuthRepository repo, IMapper mapper,IConfiguration configuration)
+        public AuthController(IAuthRepository repo, IMapper mapper, IConfiguration configuration)
         {
             this.repo = repo;
             this.mapper = mapper;
@@ -50,13 +47,14 @@ namespace Psg.Api.Controllers
                         new Claim(ClaimTypes.NameIdentifier,bulunanKullanici.Id.ToString()),
                         new Claim(ClaimTypes.Name,bulunanKullanici.KullaniciAdi),
                     }),
-                Expires=DateTime.Now.AddHours(1),
-                SigningCredentials=new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha512)
+                Expires = DateTime.Now.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512)
 
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
             var kullanici = mapper.Map<KullaniciDetayDto>(bulunanKullanici);
+
             return Ok(new { tokenString, kullanici });
         }
         [HttpGet("{id}", Name = "KullanicBul")]
@@ -66,18 +64,19 @@ namespace Psg.Api.Controllers
         }
 
         [HttpPost("uyeol")]
-        public async Task<IActionResult> Uyeol([FromBody] UyeYazDto model)
+        public async Task<IActionResult> Uyeol([FromBody] UyelikYaratDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            model.KullaniciAdi = model.KullaniciAdi.ToLower();
-            if (await repo.KullaniciVarAsync(model.KullaniciAdi))
+            dto.KullaniciAdi = dto.KullaniciAdi.ToLower();
+            if (await repo.KullaniciVarAsync(dto.KullaniciAdi))
                 ModelState.AddModelError(nameof(UyeYazDto.KullaniciAdi), "Kullanıcı adı alınmış");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var yaratilacakKullanici = mapper.Map<Kullanici>(model);
-            var yaratilanKullanici = await repo.UyeOlAsync(yaratilacakKullanici, model.Sifre);
-            return StatusCode(201);
+            var yaratilacakKullanici = mapper.Map<Kullanici>(dto);
+            var yaratilanKullanici = await repo.UyeOlAsync(yaratilacakKullanici, dto.Sifre);
+            var donecekKullanici = mapper.Map<KullaniciDetayDto>(yaratilanKullanici);
+            return CreatedAtRoute("KullaniciGetir", new { controller = "Kullanicilar", id = yaratilanKullanici.Id }, donecekKullanici);
         }
     }
 }

@@ -15,7 +15,8 @@ export class FotografDuzenleyiciComponent implements OnInit {
   @Input() fotograflar: Foto[];
   @Output() asilFotoDegisti = new EventEmitter<string>();
   uploader: FileUploader = new FileUploader({});
-  hasBaseDropZone = false;
+
+  hasBaseDropZoneOver = false;
   baseUrl = environment.apiUrl;
   suankiAsil: Foto;
   constructor(private authService: AuthService,
@@ -27,7 +28,7 @@ export class FotografDuzenleyiciComponent implements OnInit {
     this.initializeUploader();
   }
   public fileOverBase(e: any): void {
-    this.hasBaseDropZone = e;
+    this.hasBaseDropZoneOver = e;
   }
   initializeUploader() {
     this.uploader = new FileUploader({
@@ -51,8 +52,17 @@ export class FotografDuzenleyiciComponent implements OnInit {
           ilkTercih: res.ilkTercihmi
         }
         this.fotograflar.push(foto);
+        if (foto.ilkTercih) {
+          this.fotoUrlAyarla(foto.url);
+        }
       };
     }
+  }
+  public fotoUrlAyarla(fotoUrl: string) {
+    let url = environment.bosFotoUrl;
+    if (this.authService.suankiKullanici.asilFotoUrl !== '')
+      url = this.authService.suankiKullanici.asilFotoUrl;
+    this.authService.kullaniciFotografiniDegistir(fotoUrl);
   }
   asilFotoYap(foto: Foto) {
     this.kullaniciService.asilFotoYap(this.authService.kullaniciNumarasiniAl(), foto.id)
@@ -60,7 +70,7 @@ export class FotografDuzenleyiciComponent implements OnInit {
         this.suankiAsil = _.findWhere(this.fotograflar, { ilkTercihmi: true })
         this.suankiAsil.ilkTercihmi = false;
         foto.ilkTercihmi = true;
-        this.authService.kullaniciFotografiniDegistir(foto.url);
+        this.fotoUrlAyarla(foto.url);
         this.authService.suankiKullanici.asilFotoUrl = foto.url;
         localStorage.setItem('kullanici', JSON.stringify(this.authService.suankiKullanici));
         this.uyarici.success('Asıl foto yapıldı.')
@@ -71,8 +81,8 @@ export class FotografDuzenleyiciComponent implements OnInit {
     this.uyarici.confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?',
       () => {
         this.sil(foto.id);
-      },'Emin misiniz?','Evet','Hayır'
-      );
+      }, 'Emin misiniz?', 'Evet', 'Hayır'
+    );
   }
   sil(id: number) {
     this.kullaniciService.sil(this.authService.kullaniciNumarasiniAl(), id)

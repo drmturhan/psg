@@ -6,13 +6,14 @@ import 'rxjs/add/operator/map';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class AuthService {
-  baseUrl = 'http://localhost:55126/api/auth/';
+  baseUrl = environment.apiUrl;
   userToken: any;
   suankiKullanici: Kullanici
-  private fotoUrl = new BehaviorSubject<string>("../../assets/images/user.png");
+  private fotoUrl = new BehaviorSubject<string>(environment.bosFotoUrl);
   suankiFotoUrl = this.fotoUrl.asObservable();
   constructor(private authHttp: HttpClient, private helper: JwtHelperService) { }
 
@@ -22,7 +23,7 @@ export class AuthService {
 
   login(model: any) {
 
-    return this.authHttp.post(this.baseUrl + 'girisyap', model).map((response: Response) => {
+    return this.authHttp.post(this.baseUrl + 'auth/girisyap', model).map((response: Response) => {
       const token = response['tokenString'];
       const kullanici = response["kullanici"];
       if (token) {
@@ -30,7 +31,10 @@ export class AuthService {
         localStorage.setItem('kullanici', JSON.stringify(kullanici));
         this.userToken = token;
         this.suankiKullanici = kullanici;
-        this.kullaniciFotografiniDegistir(this.suankiKullanici.asilFotoUrl);
+        let url = environment.bosFotoUrl;
+        if (this.suankiKullanici.asilFotoUrl !=='')
+          url = this.suankiKullanici.asilFotoUrl;
+        this.kullaniciFotografiniDegistir(url);
       }
     });
   }
@@ -53,6 +57,15 @@ export class AuthService {
   }
   loggedIn(): boolean {
     return localStorage.getItem('access_token') != null;
+  }
+
+
+  logout() {
+    this.userToken = null;
+    this.suankiKullanici = null;
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('kullanici');
+
   }
   hataYoneti(hata: any) {
     const uygulamaHatasi = hata.headers.get('Uygulama-Hatasi');
