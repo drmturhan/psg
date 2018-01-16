@@ -48,8 +48,8 @@ export class FotografDuzenleyiciComponent implements OnInit {
           id: res.id,
           url: res.url,
           aciklama: res.aciklama,
-          eklemeTarihi: res.eklemTarihi,
-          ilkTercih: res.ilkTercihmi
+          eklemeTarihi: res.eklenmeTarihi,
+          ilkTercih: res.profilFotografi
         }
         this.fotograflar.push(foto);
         if (foto.ilkTercih) {
@@ -60,18 +60,18 @@ export class FotografDuzenleyiciComponent implements OnInit {
   }
   public fotoUrlAyarla(fotoUrl: string) {
     let url = environment.bosFotoUrl;
-    if (this.authService.suankiKullanici.asilFotoUrl !== '')
-      url = this.authService.suankiKullanici.asilFotoUrl;
+    if (this.authService.suankiKullanici.profilFotoUrl !== '')
+      url = this.authService.suankiKullanici.profilFotoUrl;
     this.authService.kullaniciFotografiniDegistir(fotoUrl);
   }
   asilFotoYap(foto: Foto) {
     this.kullaniciService.asilFotoYap(this.authService.kullaniciNumarasiniAl(), foto.id)
       .subscribe(() => {
-        this.suankiAsil = _.findWhere(this.fotograflar, { ilkTercihmi: true })
-        this.suankiAsil.ilkTercihmi = false;
-        foto.ilkTercihmi = true;
+        this.suankiAsil = _.findWhere(this.fotograflar, { profilFotografi: true })
+        this.suankiAsil.profilFotografi = false;
+        foto.profilFotografi = true;
         this.fotoUrlAyarla(foto.url);
-        this.authService.suankiKullanici.asilFotoUrl = foto.url;
+        this.authService.suankiKullanici.profilFotoUrl = foto.url;
         localStorage.setItem('kullanici', JSON.stringify(this.authService.suankiKullanici));
         this.uyarici.success('Asıl foto yapıldı.')
       },

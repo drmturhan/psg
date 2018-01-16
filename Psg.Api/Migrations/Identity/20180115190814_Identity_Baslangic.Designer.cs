@@ -11,7 +11,7 @@ using System;
 namespace Psg.Api.Migrations.Identity
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20180115002246_Identity_Baslangic")]
+    [Migration("20180115190814_Identity_Baslangic")]
     partial class Identity_Baslangic
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,9 +43,9 @@ namespace Psg.Api.Migrations.Identity
 
                     b.Property<DateTime>("EklenmeTarihi");
 
-                    b.Property<bool>("IlkTercihmi");
-
                     b.Property<int>("KullaniciNo");
+
+                    b.Property<bool>("ProfilFotografi");
 
                     b.Property<string>("PublicId");
 

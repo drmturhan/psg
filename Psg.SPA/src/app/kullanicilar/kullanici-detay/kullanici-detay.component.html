@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-sm-4">
             <div class="panel panel-default">
-                <img class="profile-image thumbnail" src="{{kullanici?.asilFotoUrl}}" alt="{{kullanici?.tamAdi}}">
+                <img class="profile-image thumbnail" src="{{kullanici?.profilFotoUrl}}" alt="{{kullanici?.tamAdi}}">
                 <div class="panel-body">
                     <div>
                         <strong>Yaşı</strong>
@@ -21,11 +21,11 @@
                     </div>
                     <div>
                         <strong>Son aktif olduğu tarih</strong>
-                        <p>{{kullanici?.sonaktifOlma}}</p>
+                        <p>{{kullanici?.sonaktifOlma| timeAgo}}</p>
                     </div>
                     <div>
                         <strong>Üye olduğu tarih</strong>
-                        <p>{{kullanici?.yaratilmaTarihi}}</p>
+                        <p>{{kullanici?.yaratilmaTarihi | date:'longDate' }}</p>
                     </div>
                 </div>
                 <div class="panel-footer">

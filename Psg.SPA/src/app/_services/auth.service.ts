@@ -32,8 +32,8 @@ export class AuthService {
         this.userToken = token;
         this.suankiKullanici = kullanici;
         let url = environment.bosFotoUrl;
-        if (this.suankiKullanici.asilFotoUrl !=='')
-          url = this.suankiKullanici.asilFotoUrl;
+        if (this.suankiKullanici.profilFotoUrl !== '')
+          url = this.suankiKullanici.profilFotoUrl;
         this.kullaniciFotografiniDegistir(url);
       }
     });
@@ -56,7 +56,12 @@ export class AuthService {
     return this.authHttp.post(this.baseUrl + 'uyeol', model);
   }
   loggedIn(): boolean {
-    return localStorage.getItem('access_token') != null;
+    let token = localStorage.getItem('access_token') ;
+    if (token) {
+      if (!this.helper.isTokenExpired(token))
+      return true;
+    }
+    return false;
   }
 
 

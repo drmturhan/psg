@@ -11,7 +11,7 @@ namespace Psg.Api.Profiles
         public static string AsilFotografUrlGetir(this Kullanici entity)
         {
             if (entity == null || entity.Fotograflari.Count == 0) return string.Empty;
-            Foto asilFoto = entity.Fotograflari.FirstOrDefault(f => f.IlkTercihmi);
+            Foto asilFoto = entity.Fotograflari.FirstOrDefault(f => f.ProfilFotografi);
             return asilFoto != null ? asilFoto.Url : string.Empty;
         }
     }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -21,12 +23,16 @@ namespace Psg.Api.Controllers
     public class KullaniciFotograflariController : Controller
     {
         private readonly KullaniciRepository repo;
+        private readonly FotografAyarlari fotografAyarlari;
+        private readonly IHostingEnvironment host;
         private readonly IMapper mapper;
         private readonly IOptions<CloudinarySettings> cloudinaryConfig;
         private readonly Cloudinary cloudinary;
-        public KullaniciFotograflariController(KullaniciRepository repo, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig)
+        public KullaniciFotograflariController(KullaniciRepository repo, IOptions<FotografAyarlari> fotografAyarlari, IHostingEnvironment host, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig)
         {
             this.repo = repo;
+            this.fotografAyarlari = fotografAyarlari.Value;
+            this.host = host;
             this.mapper = mapper;
             this.cloudinaryConfig = cloudinaryConfig;
             Account acc = new Account(cloudinaryConfig.Value.CloudName, cloudinaryConfig.Value.ApiKey, cloudinaryConfig.Value.ApiSecret);
@@ -43,13 +49,62 @@ namespace Psg.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> KullaniciyaFotografEkle(int kullaniciNo, FotografYazDto dto)
         {
+
+            if (dto.File == null)
+                return BadRequest("Fotoğraf yok!");
+            if (dto.File.Length == 0)
+                return BadRequest("Fotoğraf dosyası boş!");
+            if (dto.File.Length > fotografAyarlari.MaxBytes) return BadRequest($"Dosya çok büyük. En fazla {fotografAyarlari.MaxBytes / (1024 * 1024)} MB resim yükleyebilirsiniz");
+            if (!fotografAyarlari.DosyaTipUygunmu(dto.File.FileName))
+                return BadRequest("Dosya tipini yükleme izni yok! Sadece resim dosyalarını yükleyebilirsiniz.");
+
             var kullanici = await repo.BulAsync(kullaniciNo);
             if (kullanici == null)
                 return BadRequest("Kullanıcı bulunamadı!");
             var aktifKullaniciNo = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (aktifKullaniciNo != kullanici.Id)
                 return Unauthorized();
+            string dosyaAdi = string.Empty;
+            if (!fotografAyarlari.SadeceBulutaYukle)
+                dosyaAdi = await LokaldeKaydet(dto);
 
+            if (!fotografAyarlari.SadeceLokaldeTut)
+                BulutaYukle(dto);
+
+            var foto = mapper.Map<Foto>(dto);
+            foto.Kullanici = kullanici;
+
+            if (!kullanici.Fotograflari.Any(m => m.ProfilFotografi))
+                foto.ProfilFotografi = true;
+
+            foto.DosyaAdi = dosyaAdi;
+            kullanici.Fotograflari.Add(foto);
+            if (await repo.Kaydet())
+            {
+                var donecekDto = mapper.Map<FotoOkuDto>(foto);
+                return CreatedAtRoute("KullaniciFotografiniAl", new { id = foto.Id }, donecekDto);
+            }
+            return BadRequest("Fotoğraf eklenemedi!");
+        }
+
+        private async Task<string> LokaldeKaydet(FotografYazDto dto)
+        {
+            var yuklemeYolu = Path.Combine(host.WebRootPath, "Resimler");
+            if (!Directory.Exists(yuklemeYolu))
+                Directory.CreateDirectory(yuklemeYolu);
+            var dosyaAdi = Guid.NewGuid().ToString() + Path.GetExtension(dto.File.FileName);
+            var dosyaYolu = Path.Combine(yuklemeYolu, dosyaAdi);
+
+            using (var stream = new FileStream(dosyaYolu, FileMode.Create))
+            {
+                await dto.File.CopyToAsync(stream);
+            }
+
+            return dosyaAdi;
+        }
+
+        private void BulutaYukle(FotografYazDto dto)
+        {
             var dosya = dto.File;
             var yuklemeSonucu = new ImageUploadResult();
             if (dosya.Length > 0)
@@ -65,22 +120,8 @@ namespace Psg.Api.Controllers
                     yuklemeSonucu = cloudinary.Upload(yuklemePrametreleri);
                 }
             }
-
             dto.Url = yuklemeSonucu.Uri.ToString();
             dto.PublicId = yuklemeSonucu.PublicId;
-
-            var foto = mapper.Map<Foto>(dto);
-            foto.Kullanici = kullanici;
-            if (!kullanici.Fotograflari.Any(m => m.IlkTercihmi))
-                foto.IlkTercihmi = true;
-
-            kullanici.Fotograflari.Add(foto);
-            if (await repo.Kaydet())
-            {
-                var donecekDto = mapper.Map<FotoOkuDto>(foto);
-                return CreatedAtRoute("KullaniciFotografiniAl", new { id = foto.Id }, donecekDto);
-            }
-            return BadRequest("Fotoğraf eklenemedi!");
         }
 
         [HttpPost("{id}/asilYap")]
@@ -92,12 +133,12 @@ namespace Psg.Api.Controllers
             if (dbdekiKayit == null)
                 return NotFound("Fotoğraf bulunamadı!");
 
-            if (dbdekiKayit.IlkTercihmi)
+            if (dbdekiKayit.ProfilFotografi)
                 return BadRequest("Bu fotoğraf zaten asıl fotoğraf!");
             var suankiAsilFoto = await repo.KullanicininAsilFotosunuGetirAsync(kullaniciNo);
             if (suankiAsilFoto != null)
-                suankiAsilFoto.IlkTercihmi = false;
-            dbdekiKayit.IlkTercihmi = true;
+                suankiAsilFoto.ProfilFotografi = false;
+            dbdekiKayit.ProfilFotografi = true;
             if (await repo.Kaydet())
                 return NoContent();
             return BadRequest("Asıl foto yapılamadı!");
@@ -112,7 +153,7 @@ namespace Psg.Api.Controllers
             if (dbdekiKayit == null)
                 return NotFound("Fotoğraf bulunamadı!");
 
-            if (dbdekiKayit.IlkTercihmi)
+            if (dbdekiKayit.ProfilFotografi)
                 return BadRequest("Asıl fotoğrafı silemezsiniz!");
             if (dbdekiKayit.PublicId != null)
             {

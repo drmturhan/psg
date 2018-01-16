@@ -23,7 +23,7 @@ export const appRoot: Routes = [
         children: [
             { path: 'kullanicilar', component: KullaniciListesiComponent, resolve: { kullanicilar: KullaniciListesiResolver } },
             { path: 'kullanicilar/:id', component: KullaniciDetayComponent, resolve: { kullanici: KullaniciDetayResolver } },
-            { path: 'profilim', component: KullaniciDuzeltComponent, canDeactivate: [KullanicidakiDegisikliklerKaybolsunmuGuard], resolve: { kullanici: ProfilimResolver } },
+            { path: 'profilim', component: KullaniciDuzeltComponent, canDeactivate: [KullanicidakiDegisikliklerKaybolsunmuGuard], resolve: { kullaniciVeriSeti: ProfilimResolver } },
             { path: 'mesajlar', component: MesajlarComponent },
             { path: 'bul', component: BulComponent },
             { path: 'yukle', component: YukleComponent },

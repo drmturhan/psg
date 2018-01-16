@@ -37,6 +37,7 @@ namespace Psg.Api
             string baglantiSatiri = useSqLite ? Configuration["Data:SqlLiteConnectionString"] : Configuration["Data:SqlServerConnectionString"];
             services.AddAutoMapper();
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+            services.Configure<FotografAyarlari>(Configuration.GetSection("FotografAyarlari"));
             services.AddCors(setup =>
             {
                 setup.AddPolicy("psg", policy =>
@@ -59,6 +60,7 @@ namespace Psg.Api
 
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IKullaniciRepository, KullaniciRepository>();
+            services.AddScoped<ICinsiyetRepository, CinsiyetRepository>();
             services.AddScoped<IUykuTestRepository, UykuTestRepository>();
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

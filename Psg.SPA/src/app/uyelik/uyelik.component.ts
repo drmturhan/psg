@@ -9,8 +9,6 @@ import { defineLocale } from 'ngx-bootstrap/bs-moment';
 import { tr } from 'ngx-bootstrap/locale';
 
 
-
-
 @Component({
   selector: 'app-uyelik',
   templateUrl: './uyelik.component.html',

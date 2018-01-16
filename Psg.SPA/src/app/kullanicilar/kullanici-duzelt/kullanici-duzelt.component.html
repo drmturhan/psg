@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-4">
             <h1> Profiliniz</h1>
@@ -9,8 +9,13 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-4  col-lg-3">
             <div class="panel panel-default">
+                <div style="margin-bottom:-16px;">
+                    <h4 class="text-center">
+                        <strong>{{kullanici?.tamAdi}}</strong>
+                    </h4>
+                </div>
                 <img class="profile-image thumbnail" src="{{fotoUrl}}" alt="{{kullanici?.kullaniciAdi}}">
                 <div class="panel-body">
 
@@ -24,11 +29,11 @@
                     </div>
                     <div>
                         <strong>Son aktif olduğu tarih</strong>
-                        <p>{{kullanici?.sonaktifOlma}}</p>
+                        <p>{{kullanici?.sonAktifOlma|timeAgo}}</p>
                     </div>
                     <div>
                         <strong>Üye olduğu tarih</strong>
-                        <p>{{kullanici?.yaratilmaTarihi}}</p>
+                        <p>{{kullanici?.yaratilmaTarihi| date:'longDate'}}</p>
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -37,33 +42,64 @@
             </div>
         </div>
 
-        <div class="col-sm-8">
+        <div class="col-sm-8 col-lg-9">
             <div class="tab-panel">
                 <tabset class="kullanici-tabset">
                     <tab heading="Profil Bilgileri">
                         <form #editForm="ngForm" id="editForm" (ngSubmit)="kaydet()">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="unvan">Ünvan</label>
-                                            <input type="text" class="form-control" id="unvan" name="unvan" [(ngModel)]="kullanici.unvan" placeholder="Ünvanı">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="ad">Adı</label>
-                                            <input type="text" class="form-control" id="ad" name="ad" [(ngModel)]="kullanici.ad" placeholder="Adı">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="digerAd">İkinci Adı</label>
-                                            <input type="text" class="form-control" id="digerAd" name="digerAd" [(ngModel)]="kullanici.digerAd" placeholder="İkinci adı">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="soyad">Soyadı</label>
-                                            <input type="text" class="form-control" id="soyad" name="soyad" [(ngModel)]="kullanici.soyad" placeholder="Soyadı">
+                            <div class="row" style="margin:4px">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="unvan">Ünvan</label>
+                                        <input type="text" class="form-control" id="unvan" name="unvan" [(ngModel)]="kullanici.unvan" placeholder="Ünvanı">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ad">Adı</label>
+                                        <input type="text" class="form-control" id="ad" name="ad" [(ngModel)]="kullanici.ad" placeholder="Adı">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="digerAd">İkinci Adı</label>
+                                        <input type="text" class="form-control" id="digerAd" name="digerAd" [(ngModel)]="kullanici.digerAd" placeholder="İkinci adı">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="soyad">Soyadı</label>
+                                        <input type="text" class="form-control" id="soyad" name="soyad" [(ngModel)]="kullanici.soyad" placeholder="Soyadı">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dogumTarihi">Doğum Tarihi</label>
+                                        <input type="text" class="form-control" id="dogumTarihi" name="dogumTarihi" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi" [(ngModel)]="kullanici.dogumTarihi">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cinsiyetId">Cinsiyeti</label>
+                                        <select id="cinsiyetId" class="form-control" name="cinsiyetNo" id="cinsiyetNo" [(ngModel)]="kullanici.cinsiyetNo">
+                                        <option value=""></option>
+                                        <option *ngFor="let c of cinsiyetler" value="{{ c.id }}">{{ c.cinsiyetAdi}}</option>
+                                    </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="unvan">Eposta adresi</label>
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control" id="eposta" readonly name="eposta" [(ngModel)]="kullanici.eposta" placeholder="Eposta">
+                                            <button class="btn btn-info" type="button" *ngIf="!kullanici.epostaOnaylandi">Onayla</button>
                                         </div>
                                     </div>
-                                    <div class="col-md-6"></div>
+                                    <div class="form-group">
+                                        <label for="unvan">Telefonu</label>
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control" id="telefonNumarasi" [disabled]="kullanici.telefonOnaylandi" name="telefonNumarasi" [(ngModel)]="kullanici.telefonNumarasi" placeholder="Eposta">
+                                            <button class="btn btn-info" type="button" *ngIf="!kullanici.telefonOnaylandi">Onayla</button>
+                                            <button class="btn btn-danger" type="button" *ngIf="!kullanici.telefonOnaylandi">Sil</button>
+                                        </div>
+                                    </div>
+                                    <fieldset>
+                                        <legend>What is Your Favorite Pet?</legend>
+                                        <input type="radio" name="animal" value="Cat" />Cats<br />
+                                        <input type="radio" name="animal" value="Dog" />Dogs<br />
+                                        <input type="radio" name="animal" value="Bird" />Birds<br />
+                                        <input type="submit" value="Submit now" />
+                                    </fieldset>
                                 </div>
                             </div>
 
@@ -71,9 +107,7 @@
                     </tab>
                     <tab heading="Resimleri Düzelt">
                         <fotograf-duzenleyici [fotograflar]="kullanici.fotograflari" (asilFotoDegisti)="asilFotoDegisti($event)"> </fotograf-duzenleyici>
-
                     </tab>
-
                 </tabset>
             </div>
         </div>

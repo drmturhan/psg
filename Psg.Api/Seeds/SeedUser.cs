@@ -13,6 +13,7 @@ namespace Psg.Api.Seeds
 {
     public interface ISeeder
     {
+        int Oncelik { get; }
         Task Seed();
     }
 
@@ -28,6 +29,8 @@ namespace Psg.Api.Seeds
         {
             this.idDb = idDb;
         }
+
+        public int Oncelik { get { return 10; } }
 
         public void GetContext() { }
         public async Task Seed()

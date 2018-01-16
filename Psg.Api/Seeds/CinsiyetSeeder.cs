@@ -22,6 +22,8 @@ namespace Psg.Api.Seeds
             this.idDb = idDb;
         }
 
+        public int Oncelik { get { return 5; } }
+
         public void GetContext() { }
         public async Task Seed()
         {

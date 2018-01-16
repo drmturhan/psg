@@ -1,3 +1,4 @@
+import { Cinsiyet } from './../../_models/foto';
 import { AuthService } from './../../_services/auth.service';
 import { KullaniciService } from './../../_services/kullanici.service';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
@@ -5,9 +6,9 @@ import { Component, OnInit, ViewChild, QueryList } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { KullaniciYaz } from '../../_models/kullanici';
 import { AlertifyService } from '../../_services/alertify.service';
-
-
-
+import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap';
+import { defineLocale } from 'ngx-bootstrap/bs-moment';
+import { tr } from 'ngx-bootstrap/locale';
 @Component({
   selector: 'app-kullanici-duzelt',
   templateUrl: './kullanici-duzelt.component.html',
@@ -16,21 +17,33 @@ import { AlertifyService } from '../../_services/alertify.service';
 export class KullaniciDuzeltComponent implements OnInit {
 
   @ViewChild('editForm') duzenlemeFormu;
-
+  bsConfig: Partial<BsDatepickerConfig>;
   kullanici: KullaniciYaz;
+  cinsiyetler: Cinsiyet[]
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
+  
 
-  fotoUrl:string;
+  fotoUrl: string;
   constructor(
     private route: ActivatedRoute,
     private servis: KullaniciService,
     private auth: AuthService,
-    private uyarici: AlertifyService) { }
+    private uyarici: AlertifyService,
+    private _localeService: BsLocaleService) { }
 
   ngOnInit() {
-    this.route.data.subscribe(data => this.kullanici = data['kullanici']);
-    this.auth.suankiFotoUrl.subscribe(fotoUrl=>this.fotoUrl=fotoUrl);
+    defineLocale('tr', tr);
+    this._localeService.use('tr');
+    this.bsConfig = { containerClass: 'theme-red' }
+    this.route.data.subscribe(data => {
+      let kullaniciVeriSeti=data['kullaniciVeriSeti'];
+      if (kullaniciVeriSeti){
+      this.kullanici = kullaniciVeriSeti['kullanici'];
+      this.cinsiyetler = kullaniciVeriSeti['cinsiyetler'];
+      }
+    });
+    this.auth.suankiFotoUrl.subscribe(fotoUrl => this.fotoUrl = fotoUrl);
     this.galleryOptions = [{
       width: '100%',
       height: '100%',
@@ -81,7 +94,7 @@ export class KullaniciDuzeltComponent implements OnInit {
       });
   }
   asilFotoDegisti(url: string) {
-    this.kullanici.asilFotoUrl = url;
+    this.kullanici.profilFotoUrl = url;
     this.auth.kullaniciFotografiniDegistir(url);
   }
 }

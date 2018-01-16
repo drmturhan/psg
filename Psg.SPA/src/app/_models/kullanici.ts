@@ -1,13 +1,13 @@
-import { Foto } from './foto';
+import { Foto, Cinsiyet } from './foto';
 export class Kullanici {
     id?: number;
     kullaniciAdi?: string;
     tamAdi?: string;
-    cinsiyeti?: string;
+    cinsiyetNo?: string;
     yasi?: number;
     eposta?: string;
     telefonNumarasi?: string;
-    asilFotoUrl?: string;
+    profilFotoUrl?: string;
     yaratilmaTarihi?: Date;
     sonaktifOlma?: Date;
     fotograflari?: Foto[]
@@ -19,15 +19,22 @@ export class KullaniciYaz {
     kullaniciAdi?: string;
     unvan?: string;
     ad?: string;
-    digerAd?:string;
+    digerAd?: string;
     soyad?: string;
-    cinsiyeti?: string;
-    dogumTarihi:Date;
+    cinsiyetNo?: string;
+    dogumTarihi: Date;
     eposta?: string;
+    epostaOnaylandi?: boolean;
     telefonNumarasi?: string;
-    aktif?:boolean;
-    asilFotoUrl?: string;
+    telefonOnaylandi?: boolean;
+    aktif?: boolean;
+    profilFotoUrl?: string;
     yaratilmaTarihi?: Date;
-    sonaktifOlma?: Date;
+    sonAktifOlma?: Date;
+    tamAdi?:string; 
     fotograflari?: Foto[]
+}
+export class KullaniciVeriSeti {
+    kullanici: Kullanici;
+    cinsiyetler: Cinsiyet[];
 }

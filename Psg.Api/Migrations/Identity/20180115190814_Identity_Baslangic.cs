@@ -92,8 +92,8 @@ namespace Psg.Api.Migrations.Identity
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Aciklama = table.Column<string>(nullable: true),
                     EklenmeTarihi = table.Column<DateTime>(nullable: false),
-                    IlkTercihmi = table.Column<bool>(nullable: false),
                     KullaniciNo = table.Column<int>(nullable: false),
+                    ProfilFotografi = table.Column<bool>(nullable: false),
                     PublicId = table.Column<string>(nullable: true),
                     Url = table.Column<string>(nullable: true)
                 },

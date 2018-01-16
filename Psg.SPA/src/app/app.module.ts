@@ -1,3 +1,4 @@
+
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { KullaniciService } from './_services/kullanici.service';
 import { AlertifyService } from './_services/alertify.service';
@@ -30,11 +31,16 @@ import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/ve
 import { KullaniciListesiResolver } from './_resolvers/kullanici/kullanici-listesi-resolver.';
 import { ProfilimResolver } from './_resolvers/kullanici/profilim-resolver';
 import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/kullanicidaki-degisiklikler-kaybolsunmu.service';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { FotografDuzenleyiciComponent } from './ortak/components/fotograf-duzenleyici/fotograf-duzenleyici.component';
 import { FileUploadModule } from 'ng2-file-upload';
 import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-basarili.component';
+import { registerLocaleData } from '@angular/common';
+import localeTr from '@angular/common/locales/tr';
+import localeTrExtra from '@angular/common/locales/extra/tr';
+import {TimeAgoPipe}from 'time-ago-pipe';
 
+registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
 @NgModule({
   declarations: [
     AppComponent,
@@ -51,7 +57,8 @@ import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-ba
     VeriYuklenemediComponent,
     KullaniciDuzeltComponent,
     FotografDuzenleyiciComponent,
-    UyelikBasariliComponent
+    UyelikBasariliComponent,
+    TimeAgoPipe
     
   ],
   imports: [
@@ -80,6 +87,7 @@ import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-ba
 
 
   providers: [
+    {provide: LOCALE_ID, useValue: 'tr-TR'},
     AuthService,
     KullaniciService,
     AlertifyService,

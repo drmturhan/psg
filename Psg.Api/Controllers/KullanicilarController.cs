@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Psg.Api.Dtos;
-using Psg.Api.Models;
 using Psg.Api.Repos;
 
 namespace Psg.Api.Controllers
@@ -36,7 +33,7 @@ namespace Psg.Api.Controllers
             var resources = mapper.Map<IEnumerable<KullaniciListeDto>>(kayitlar);
             return Ok(resources);
         }
-        [HttpGet("{id}",Name ="KullaniciGetir")]
+        [HttpGet("{id}", Name = "KullaniciGetir")]
         public async Task<IActionResult> Get(int id, [FromQuery] string neden)
         {
             var kayit = await kullaniciRepo.BulAsync(id);

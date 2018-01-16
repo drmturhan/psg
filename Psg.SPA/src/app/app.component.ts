@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
 
 
   constructor(private authService: AuthService) {
-
+    
   }
 
 
@@ -23,9 +23,9 @@ export class AppComponent implements OnInit {
     if (kullanici) {
       this.authService.suankiKullanici = kullanici;
       let url = environment.bosFotoUrl;
-      if (this.authService.suankiKullanici.asilFotoUrl !== '')
-        url = this.authService.suankiKullanici.asilFotoUrl;
-      this.authService.kullaniciFotografiniDegistir(kullanici.asilFotoUrl);
+      if (this.authService.suankiKullanici.profilFotoUrl !== '')
+        url = this.authService.suankiKullanici.profilFotoUrl;
+      this.authService.kullaniciFotografiniDegistir(kullanici.profilFotoUrl);
     }
   }
 }

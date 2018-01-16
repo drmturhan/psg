@@ -1,11 +1,12 @@
+import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/operator/map';
 import { Kullanici } from './../_models/kullanici';
 import { environment } from './../../environments/environment';
 import { HttpRequest } from '@angular/common/http/src/request';
 import { KullaniciYaz } from '../_models/kullanici';
+import { Cinsiyet } from '../_models/foto';
 
 
 @Injectable()
@@ -42,17 +43,25 @@ export class KullaniciService {
             hatalar => this.hatalariYonet(hatalar)
             );
     }
+
+    listeGetirCinsiyetler(): Observable<Cinsiyet[]> {
+        return this.http.get(this.baseUrl + 'cinsiyetler', this.jwt()).map(sonuc => {
+            return <Cinsiyet[]>sonuc.json();
+        },
+            hatalar => this.hatalariYonet(hatalar));
+
+    }
     guncelle(id: number, kullanici: Kullanici) {
         return this.http.put(this.baseUrl + 'kullanicilar/' + id, kullanici, this.jwt());
     }
     asilFotoYap(kullaniciNo: number, fotoId: number) {
-        return this.http.post(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId +'/asilYap', {},this.jwt());
+        return this.http.post(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId + '/asilYap', {}, this.jwt());
 
     }
     sil(kullaniciNo: number, fotoId: number) {
-        return this.http.delete(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId , this.jwt());
+        return this.http.delete(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId, this.jwt());
     }
-    
+
     private jwt() {
         let token = localStorage.getItem('access_token');
         if (token) {
