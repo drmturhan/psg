@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Psg.Api.Dtos;
+using Psg.Api.Helpers;
 using Psg.Api.Models;
 using Psg.Api.Repos;
 
@@ -15,6 +16,7 @@ namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/Auth")]
+    
     public class AuthController : Controller
     {
         private readonly IAuthRepository repo;
@@ -29,6 +31,7 @@ namespace Psg.Api.Controllers
         }
 
         [HttpPost("girisyap")]
+        
         public async Task<IActionResult> GirisYap([FromBody] GirisDto dto)
         {
             if (!ModelState.IsValid)

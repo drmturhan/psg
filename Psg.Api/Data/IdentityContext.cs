@@ -15,6 +15,8 @@ namespace Psg.Api.Data
         public DbSet<Kisi> Kisiler { get; set; }
         public DbSet<Cinsiyet> Cinsiyetler { get; set; }
         public DbSet<Foto> Fotograflar { get; set; }
+        public DbSet<ArkadaslikTeklif> ArkadaslikTeklifleri { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +47,13 @@ namespace Psg.Api.Data
             {
                 entity.ToTable("Cinsiyetler");
                 entity.HasKey(e => e.Id);
+            });
+            modelBuilder.Entity<ArkadaslikTeklif>(entity =>
+            {
+                entity.ToTable("ArkadaslikTeklifleri");
+                entity.HasKey(e => new { e.ArkadaslikIsteyenNo, e.TeklifEdilenNo });
+                entity.HasOne(e => e.ArkadaslikIsteyen).WithMany(m => m.GelenTeklifler).HasForeignKey(fk => fk.TeklifEdilenNo).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.TeklifEdilen).WithMany(m => m.YapilanTeklifler).HasForeignKey(fk => fk.ArkadaslikIsteyenNo).OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

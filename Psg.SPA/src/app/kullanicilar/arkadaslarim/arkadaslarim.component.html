@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="row esit">
+        <div *ngFor="let teklif of arkadasliklarim" class="col-lg-2 col-md-3 sm-col-6">
+            <p>{{teklif.arkadaslikIsteyen.tamAdi}} </p>
+            <p>{{teklif.teklifEdilen.tamAdi}} </p>
+            <p>{{teklif.istekTarihi}} </p>
+            <p>{{teklif.cevapTarihi}} </p>
+            <p>{{teklif.karar}} </p>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="btn-group">
+            <button class="btn btn-primary" [(ngModel)]="aramaParametreleri" btnRadio="TeklifEdenler" (click)="yukle()">Arkadaşlık Teklif Edenler</button>
+            <button class="btn btn-primary" [(ngModel)]="aramaParametreleri" btnRadio="TeklifEttiklerimr" (click)="yukle()">Arkadaşlık Teklif Ettiklerim</button>
+        </div>
+    </div>
+    <h2>{{aramaParametreleri==='TeklifEdenler' ? 'Benimle arkadaş olmak isteyenler':'Benim arkadaş olmak istediklerim'}}</h2>
+</div>
+<div class="row equal">
+    <div *ngFor="let teklif of arkadasliklarim" class="col-lg-2 col-md-3 col-sm-6">
+        <mt-kullanici-karti [kullanici]="teklif.arkadaslikIsteyen"></mt-kullanici-karti>
+    </div>
+</div>

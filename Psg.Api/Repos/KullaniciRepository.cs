@@ -1,28 +1,36 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Psg.Api.Base;
+using Psg.Api.Controllers;
 using Psg.Api.Data;
+using Psg.Api.Dtos;
 using Psg.Api.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Psg.Api.Extensions;
 namespace Psg.Api.Repos
 {
     public interface IKullaniciRepository : IRepository
     {
         Task<Kullanici> BulAsync(int id);
-        Task<IEnumerable<Kullanici>> ListeGetirKullanicilarTumuAsync();
+        Task<SayfaliListe<Kullanici>> ListeGetirKullanicilarTumuAsync(KullaniciSorgu  sorgu);
         Task<Foto> FotografBulAsync(int id);
         Task<Foto> KullanicininAsilFotosunuGetirAsync(int kullaniciNo);
+        void KisileriniSil(Kisi entity);
+        
     }
 
     public class KullaniciRepository : IKullaniciRepository
     {
         private readonly IdentityContext db;
+        private readonly IPropertyMappingService propertyMappingService;
 
-        public KullaniciRepository(IdentityContext db)
+        public KullaniciRepository(IdentityContext db, IPropertyMappingService propertyMappingService)
         {
             this.db = db;
+            this.propertyMappingService = propertyMappingService;
+            propertyMappingService.AddMap<KullaniciListeDto, Kullanici>(KullaniciPropertyMap.Values);
         }
 
         public async Task<Kullanici> BulAsync(int id)
@@ -32,7 +40,7 @@ namespace Psg.Api.Repos
                 .Include(k=>k.Fotograflari).FirstOrDefaultAsync(k=>k.Id==id);
         }
 
-        public async Task Ekle<T>(T entity) where T : class
+        public async Task EkleAsync<T>(T entity) where T : class
         {
             await db.AddAsync<T>(entity);
         }
@@ -48,22 +56,38 @@ namespace Psg.Api.Repos
             return foto;
         }
 
-        public async Task<bool> Kaydet()
+        public async Task<bool> KaydetAsync()
         {
             var sonuc = await db.SaveChangesAsync();
             return sonuc > 0;
         }
-
-        public async Task<IEnumerable<Kullanici>> ListeGetirKullanicilarTumuAsync()
+        public IQueryable<Kullanici> Sorgu { get { return db.Kullanicilar.Include(kul => kul.KisiBilgisi).ThenInclude(k => k.Cinsiyeti).Include(kul=>kul.Fotograflari); } }
+        public async Task<SayfaliListe<Kullanici>> ListeGetirKullanicilarTumuAsync(KullaniciSorgu sorguNesnesi)
         {
-            return await db.Kullanicilar
-                .Include(k=>k.KisiBilgisi).ThenInclude(kisi=>kisi.Cinsiyeti)
-                .Include(k=>k.Fotograflari).ToListAsync<Kullanici>();
+            var siralamaBilgisi = propertyMappingService.GetPropertyMapping<KullaniciListeDto, Kullanici>();
+            var siralanmisSorgu = Sorgu.SiralamayiAyarla(sorguNesnesi.SiralamaCumlesi, siralamaBilgisi);
+            var sonuc = await SayfaliListe<Kullanici>.SayfaListesiYarat(siralanmisSorgu, sorguNesnesi.Sayfa, sorguNesnesi.SayfaBuyuklugu);
+            return sonuc;
         }
-
-        public void Sil<T>(T entity) where T : class
+        public void Sil<T>(T entity) where T:class
         {
             db.Remove<T>(entity);
         }
+        public void KisileriniSil(Kisi entity)
+        {
+            db.Kisiler.Remove(entity);
+        }
+
+      
+    }
+    public class KullaniciPropertyMap
+    {
+
+        public static Dictionary<string, PropertyMappingValue> Values = new Dictionary<string, PropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Id",new PropertyMappingValue(new List<string>{"Id" })},
+            { "AdSoyad",new PropertyMappingValue(new List<string>{"Ad","Soyad"})}
+        };
+
     }
 }

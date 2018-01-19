@@ -28,7 +28,7 @@ export class NavComponent implements OnInit {
     this.authService.login(this.model).subscribe(data => {
       this.uyarici.success('Giriş başarılı');
       this.model = {};
-      this.kullaniciAdi = this.authService.kullaniciAdiniAl();
+      this.kullaniciAdi = this.authService.suankiKullanici.tamAdi;
     },
       error => this.uyarici.warning('Giriş başarısız!'),
       () => this.router.navigate(['/uyeler'])
@@ -36,8 +36,7 @@ export class NavComponent implements OnInit {
   }
   logout() {
     this.authService.logout();
-    this.uyarici.warning('Çıkış yapıldı');
-    () => this.router.navigate(['/anasayfa'])
+    
   }
   loggedIn(): boolean {
     return this.authService.loggedIn();

@@ -1,10 +1,11 @@
 import { AlertifyService } from './../../_services/alertify.service';
-
 import { Component, OnInit } from '@angular/core';
 import { Kullanici } from '../../_models/kullanici';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
 import { Foto } from '../../_models/foto';
+import { environment } from '../../../environments/environment';
+import { KullaniciService } from '../../_services/kullanici.service';
 @Component({
   selector: 'app-kullanici-detay',
   templateUrl: './kullanici-detay.component.html',
@@ -13,16 +14,25 @@ import { Foto } from '../../_models/foto';
 export class KullaniciDetayComponent implements OnInit {
 
   kullanici: Kullanici;
+  profilFotoUrl:string;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
 
   constructor(
     private uyarici: AlertifyService,
-    private acRoute: ActivatedRoute) { }
+    private kullaniciService: KullaniciService,
+    private acRoute: ActivatedRoute,
+    private router:Router
+    ) { }
 
   ngOnInit() {
     this.acRoute.data.subscribe(data => {
       this.kullanici = data['kullanici'];
+
+      if (this.kullanici.profilFotoUrl)
+      this.profilFotoUrl=this.kullanici.profilFotoUrl;
+      else 
+      this.profilFotoUrl=environment.bosFotoUrl;
     })
     this.galleryOptions = [{
       width: '500px',
@@ -48,6 +58,24 @@ export class KullaniciDetayComponent implements OnInit {
       imageUrls.push(yeni);
     }
     return imageUrls;
+
+  }
+  silmeOnayiIste(kullanici: Kullanici) {
+    this.uyarici.confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?',
+      () => {
+        this.sil(kullanici.id);
+      }, 'Emin misiniz?', 'Evet', 'Hayır'
+    );
+  }
+  sil(id: number) {
+    this.kullaniciService.sil(id)
+      .subscribe(() => {
+        
+        this.uyarici.success("Kullanıcı silindi!");
+        this.router.navigate(['/kullanicilar'])
+      },
+      hata => this.uyarici.error(hata._body)
+      );
 
   }
 }

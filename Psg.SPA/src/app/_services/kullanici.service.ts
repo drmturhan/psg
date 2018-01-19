@@ -1,3 +1,4 @@
+import { ArkadaslikListe } from './../_models/arkadaslik-liste';
 import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
@@ -20,6 +21,16 @@ export class KullaniciService {
             response => {
                 // console.log(response.json());
                 return <Kullanici[]>response.json();
+            },
+            hatalar => this.hatalariYonet(hatalar));
+    }
+    arkadasliklariGetir(): Observable<ArkadaslikListe[]> {
+        return this.http
+            .get(this.baseUrl + 'arkadasliklar', this.jwt())
+            .map(
+            response => {
+                // console.log(response.json());
+                return <ArkadaslikListe[]>response.json();
             },
             hatalar => this.hatalariYonet(hatalar));
     }
@@ -58,10 +69,16 @@ export class KullaniciService {
         return this.http.post(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId + '/asilYap', {}, this.jwt());
 
     }
-    sil(kullaniciNo: number, fotoId: number) {
+    fotografSil(kullaniciNo: number, fotoId: number) {
         return this.http.delete(this.baseUrl + 'kullanicilar/' + kullaniciNo + '/fotograflari/' + fotoId, this.jwt());
     }
-
+    sil(kullaniciNo: number) {
+        return this.http.delete(this.baseUrl + 'kullanicilar/' + kullaniciNo, this.jwt());
+    }
+arkadaslikteklifEt(isteyenId:number, cevaplayanId:number)
+{
+    return this.http.post(this.baseUrl+'kullanicilar/'+isteyenId+'/teklif/'+cevaplayanId,{},this.jwt());
+}
     private jwt() {
         let token = localStorage.getItem('access_token');
         if (token) {

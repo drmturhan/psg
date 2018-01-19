@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Psg.Api.Base;
 using Psg.Api.Data;
 using Psg.Api.Models;
 using System.Collections.Generic;
@@ -23,4 +24,5 @@ namespace Psg.Api.Repos
             return await db.UykuTestleri.Include(test=>test.Hasta).ToListAsync();
         }
     }
+
 }

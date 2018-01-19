@@ -25,6 +25,7 @@ namespace Psg.Api.Models
         [NotMapped]
         public string TamAdi { get { return $"{Unvan} {Ad} {DigerAd} {Soyad}".Trim(); } }
         public ICollection<Kullanici> Kullanicilar { get; set; } = new List<Kullanici>();
+        
 
 
     }
@@ -44,6 +45,8 @@ namespace Psg.Api.Models
         public DateTime YaratilmaTarihi { get; set; }
         public DateTime? SonAktifOlma { get; set; }
         public ICollection<Foto> Fotograflari { get; set; } = new List<Foto>();
+        public ICollection<ArkadaslikTeklif> YapilanTeklifler { get; set; } = new List<ArkadaslikTeklif>();
+        public ICollection<ArkadaslikTeklif> GelenTeklifler { get; set; } = new List<ArkadaslikTeklif>();
 
     }
     public class UykuTest
@@ -55,5 +58,18 @@ namespace Psg.Api.Models
         public double Ahi { get; set; }
         public double St90 { get; set; }
     }
+
+    public class ArkadaslikTeklif
+    {
+        public int ArkadaslikIsteyenNo { get; set; }
+        public Kullanici ArkadaslikIsteyen { get; set; }
+        public int TeklifEdilenNo { get; set; }
+        public Kullanici TeklifEdilen { get; set; }
+        public DateTime IstekTarihi { get; set; }
+        public DateTime? CevapTarihi { get; set; }
+        public bool? Karar { get; set; }
+
+    }
+
 
 }

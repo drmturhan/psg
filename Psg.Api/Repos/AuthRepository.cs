@@ -3,6 +3,7 @@ using Psg.Api.Base;
 using Psg.Api.Data;
 using Psg.Api.Extensions;
 using Psg.Api.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,7 @@ namespace Psg.Api.Repos
             sifre.CreateHashes(out passwordHash, out passwordSalt);
             kullanici.SifreSalt = passwordSalt;
             kullanici.SifreHash = passwordHash;
+            kullanici.YaratilmaTarihi = DateTime.Now;
             await db.Kullanicilar.AddAsync(kullanici);
             await db.SaveChangesAsync();
             return kullanici;
@@ -49,17 +51,18 @@ namespace Psg.Api.Repos
         {
 
             var kullanici = await db.Kullanicilar
-                .Include(k => k.KisiBilgisi).ThenInclude(kisi=>kisi.Cinsiyeti)
-                .Include(k=>k.Fotograflari).SingleOrDefaultAsync(k => k.KullaniciAdi == kullaniciadi);
+                .Include(k => k.KisiBilgisi).ThenInclude(kisi => kisi.Cinsiyeti)
+                .Include(k => k.Fotograflari).SingleOrDefaultAsync(k => k.KullaniciAdi == kullaniciadi && k.Aktif);
             if (kullanici == null) return null;
 
             bool sonuc = false;
 
             sifre.VerifyPasswordHash(kullanici.SifreHash, kullanici.SifreSalt, out sonuc);
-
-            if (sonuc) return kullanici;
-            else
-                return null;
+            if (sonuc)
+            {
+                    return kullanici;
+            }
+            return null;
         }
 
         public async Task<Kullanici> KullaniciBulAsync(int id)

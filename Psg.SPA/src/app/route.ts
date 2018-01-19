@@ -1,3 +1,5 @@
+import { ArkadaslarimResolver } from './_resolvers/kullanici/arkadaslarim-resolver';
+import { ArkadaslarimComponent } from './kullanicilar/arkadaslarim/arkadaslarim.component';
 
 import { AnasayfaComponent } from './anasayfa/anasayfa.component';
 import { Routes } from '@angular/router';
@@ -24,6 +26,7 @@ export const appRoot: Routes = [
             { path: 'kullanicilar', component: KullaniciListesiComponent, resolve: { kullanicilar: KullaniciListesiResolver } },
             { path: 'kullanicilar/:id', component: KullaniciDetayComponent, resolve: { kullanici: KullaniciDetayResolver } },
             { path: 'profilim', component: KullaniciDuzeltComponent, canDeactivate: [KullanicidakiDegisikliklerKaybolsunmuGuard], resolve: { kullaniciVeriSeti: ProfilimResolver } },
+            { path: 'arkadasliklarim', component: ArkadaslarimComponent, resolve: { arkadaslarim: ArkadaslarimResolver } },
             { path: 'mesajlar', component: MesajlarComponent },
             { path: 'bul', component: BulComponent },
             { path: 'yukle', component: YukleComponent },

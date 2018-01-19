@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +40,16 @@ namespace Psg.Api
             string baglantiSatiri = useSqLite ? Configuration["Data:SqlLiteConnectionString"] : Configuration["Data:SqlServerConnectionString"];
             services.AddAutoMapper();
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+
             services.Configure<FotografAyarlari>(Configuration.GetSection("FotografAyarlari"));
+            services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+            services.AddTransient<ITypeHelperService, TypeHelperService>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper, UrlHelper>(implementationFactory =>
+            {
+                var actionContext = implementationFactory.GetService<IActionContextAccessor>().ActionContext;
+                return new UrlHelper(actionContext);
+            });
             services.AddCors(setup =>
             {
                 setup.AddPolicy("psg", policy =>
@@ -61,6 +73,7 @@ namespace Psg.Api
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IKullaniciRepository, KullaniciRepository>();
             services.AddScoped<ICinsiyetRepository, CinsiyetRepository>();
+            services.AddScoped<IArkadaslikRepository, ArkadaslikRepository>();
             services.AddScoped<IUykuTestRepository, UykuTestRepository>();
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -80,6 +93,7 @@ namespace Psg.Api
             {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
+            services.AddScoped<KullaniciAktiviteleriniTakipEt>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

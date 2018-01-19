@@ -23,9 +23,9 @@ export class AppComponent implements OnInit {
     if (kullanici) {
       this.authService.suankiKullanici = kullanici;
       let url = environment.bosFotoUrl;
-      if (this.authService.suankiKullanici.profilFotoUrl !== '')
+      if (this.authService.suankiKullanici.profilFotoUrl!=null && this.authService.suankiKullanici.profilFotoUrl !== '')
         url = this.authService.suankiKullanici.profilFotoUrl;
-      this.authService.kullaniciFotografiniDegistir(kullanici.profilFotoUrl);
+      this.authService.kullaniciFotografiniDegistir(url);
     }
   }
 }

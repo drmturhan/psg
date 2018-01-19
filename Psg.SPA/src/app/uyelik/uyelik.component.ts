@@ -7,6 +7,8 @@ import { timeout } from 'q';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap';
 import { defineLocale } from 'ngx-bootstrap/bs-moment';
 import { tr } from 'ngx-bootstrap/locale';
+import { Cinsiyet } from '../_models/foto';
+import { KullaniciService } from '../_services/kullanici.service';
 
 
 @Component({
@@ -22,9 +24,11 @@ export class UyelikComponent implements OnInit {
   bsConfig: Partial<BsDatepickerConfig>;
   uyelikFormu: FormGroup;
   uyelikBasvurusuTamam:boolean;
+  cinsiyetler: Cinsiyet[];
 
   constructor(
     private authService: AuthService,
+    private kullaniciService: KullaniciService,
     private uyarici: AlertifyService,
     private fb: FormBuilder,
     private _localeService: BsLocaleService) { }
@@ -55,11 +59,10 @@ export class UyelikComponent implements OnInit {
   ngOnInit() {
     defineLocale('tr', tr);
     this._localeService.use('tr');
-
     this.bsConfig = { containerClass: 'theme-red' }
     this.kullaniciVarsaCikisaZorla();
     this.uyeliKFromunuYarat();
-
+    this.kullaniciService.listeGetirCinsiyetler().subscribe(data=>this.cinsiyetler=data);
   }
   private kullaniciVarsaCikisaZorla() {
     if (this.authService.loggedIn())

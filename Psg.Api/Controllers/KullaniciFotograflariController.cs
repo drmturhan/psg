@@ -79,7 +79,7 @@ namespace Psg.Api.Controllers
 
             foto.DosyaAdi = dosyaAdi;
             kullanici.Fotograflari.Add(foto);
-            if (await repo.Kaydet())
+            if (await repo.KaydetAsync())
             {
                 var donecekDto = mapper.Map<FotoOkuDto>(foto);
                 return CreatedAtRoute("KullaniciFotografiniAl", new { id = foto.Id }, donecekDto);
@@ -139,7 +139,7 @@ namespace Psg.Api.Controllers
             if (suankiAsilFoto != null)
                 suankiAsilFoto.ProfilFotografi = false;
             dbdekiKayit.ProfilFotografi = true;
-            if (await repo.Kaydet())
+            if (await repo.KaydetAsync())
                 return NoContent();
             return BadRequest("Asıl foto yapılamadı!");
         }
@@ -166,7 +166,7 @@ namespace Psg.Api.Controllers
             if (dbdekiKayit.PublicId == null)
                 repo.Sil(dbdekiKayit);
 
-            if (await repo.Kaydet())
+            if (await repo.KaydetAsync())
                 return Ok();
             else
                 return BadRequest("Fotoğraf silinemedi");

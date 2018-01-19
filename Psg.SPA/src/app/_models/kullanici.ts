@@ -9,7 +9,7 @@ export class Kullanici {
     telefonNumarasi?: string;
     profilFotoUrl?: string;
     yaratilmaTarihi?: Date;
-    sonaktifOlma?: Date;
+    sonAktifOlma?: Date;
     fotograflari?: Foto[]
 }
 

@@ -8,12 +8,13 @@ using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Psg.Api.Data;
 using System;
 
-namespace Psg.Api.Migrations.Identity
+namespace Psg.Api.migrations.Identity
 {
     [DbContext(typeof(IdentityContext))]
-    partial class IdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20180117230818_Identity_Arkadasliklar_Degisiklikler")]
+    partial class Identity_Arkadasliklar_Degisiklikler
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

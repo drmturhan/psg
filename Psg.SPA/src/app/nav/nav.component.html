@@ -38,14 +38,16 @@
             </form>
             <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
                 <li>
-                    <img src="{{fotoUrl}}" alt="{{authService.suankiKullanici.kullaniciAdi}}">
+                    <img src="{{fotoUrl}}" alt="{{authService.suankiKullanici?.kullaniciAdi}}">
                 </li>
                 <li class="dropdown" dropdown>
-                    <a class="dropdown-toggle" dropdownToggle>{{kullaniciAdi}}<span class="caret"></span></a>
+                    <a class="dropdown-toggle" dropdownToggle>{{this.authService.suankiKullanici?.tamAdi}}<span class="caret"></span></a>
                     <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
                         <li role="menuitem"><a class="dropdown-item" [routerLink]="['/profilim']">Profilim</a></li>
-                        <li class="divider dropdown-divider"></li>
-                        <li role="menuitem"><a class="dropdown-item" (click)="logout()">Çıkış Yap</a></li>
+                        <li role="menuitem">
+                            <a class="dropdown-item" [routerLink]="['/arkadasliklarim']">Arkadaşlıklarım</a></li>
+                        <li class="divider dropdown-divider "></li>
+                        <li role="menuitem "><a class="dropdown-item " (click)="logout() ">Çıkış Yap</a></li>
                     </ul>
             </ul>
         </div>

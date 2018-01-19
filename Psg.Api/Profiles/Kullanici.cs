@@ -25,25 +25,40 @@ namespace Psg.Api.Profiles
 
             CreateMap<Kullanici, KullaniciListeDto>()
                 .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.KisiBilgisi.DogumTarihi.YasHesapla()))
-                .ForMember(dto => dto.AsilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
+                .ForMember(dto => dto.TamAdi, islem => islem.ResolveUsing(e => tamAdiOlustur(e)))
+                .ForMember(dto => dto.ProfilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
             CreateMap<Kullanici, KullaniciYazDto>()
-                .ForMember(dto=>dto.KisiNo,islem=>islem.MapFrom(e=>e.KisiBilgisi.Id))
+                .ForMember(dto => dto.KisiNo, islem => islem.MapFrom(e => e.KisiBilgisi.Id))
                 .ForMember(dto => dto.Unvan, islem => islem.MapFrom(e => e.KisiBilgisi.Unvan))
                 .ForMember(dto => dto.Ad, islem => islem.MapFrom(e => e.KisiBilgisi.Ad))
                 .ForMember(dto => dto.DigerAd, islem => islem.MapFrom(e => e.KisiBilgisi.DigerAd))
                 .ForMember(dto => dto.Soyad, islem => islem.MapFrom(e => e.KisiBilgisi.Soyad))
+                .ForMember(dto => dto.TamAdi, islem => islem.ResolveUsing(e => tamAdiOlustur(e)))
                 .ForMember(dto => dto.DogumTarihi, islem => islem.MapFrom(e => e.KisiBilgisi.DogumTarihi))
+                .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.KisiBilgisi.DogumTarihi.YasHesapla()))
                 .ForMember(dto => dto.CinsiyetNo, islem => islem.MapFrom(e => e.KisiBilgisi.CinsiyetNo))
                 .ForMember(dto => dto.ProfilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
             CreateMap<Kullanici, KullaniciDetayDto>()
                 .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.KisiBilgisi.DogumTarihi.YasHesapla()))
+                .ForMember(dto => dto.ProfilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()))
+                .ForMember(dto => dto.TamAdi, islem => islem.ResolveUsing(e => tamAdiOlustur(e)))
                 .ForMember(dto => dto.ProfilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
             CreateMap<Foto, FotoDetayDto>();
             CreateMap<Foto, FotoOkuDto>();
 
         }
 
+        private string tamAdiOlustur(Kullanici entity)
+        {
+            if (entity.KisiBilgisi == null) return entity.KullaniciAdi;
+            string donecek = $"{entity.KisiBilgisi.Unvan.TrimEnd()} {entity.KisiBilgisi.Ad.TrimEnd()}";
+            if (!string.IsNullOrWhiteSpace(entity.KisiBilgisi.DigerAd))
+                donecek = donecek + $" {entity.KisiBilgisi.DigerAd.TrimEnd()}";
+            donecek = donecek + $" {entity.KisiBilgisi.Soyad.TrimEnd()}";
+            return donecek.TrimEnd();
 
+
+        }
 
         private void CreateResourceToEntityMap()
         {

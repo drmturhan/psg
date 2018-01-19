@@ -9,9 +9,9 @@ namespace Psg.Api.Base
     public interface IRepository
     {
         
-        Task Ekle<T>(T entity) where T : class;
+        Task EkleAsync<T>(T entity) where T : class;
         void Sil<T>(T entity) where T : class;
-        Task<bool> Kaydet();
+        Task<bool> KaydetAsync();
     }
 
     

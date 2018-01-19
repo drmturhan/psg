@@ -11,9 +11,10 @@ using System;
 namespace Psg.Api.Migrations.Identity
 {
     [DbContext(typeof(IdentityContext))]
-    partial class IdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20180116231622_Identity_ArkadaslikTablosuOlsturuldu")]
+    partial class Identity_ArkadaslikTablosuOlsturuldu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,17 +26,17 @@ namespace Psg.Api.Migrations.Identity
                 {
                     b.Property<int>("ArkadaslikIsteyenNo");
 
-                    b.Property<int>("TeklifEdilenNo");
+                    b.Property<int>("CevapVerenNo");
 
                     b.Property<DateTime?>("CevapTarihi");
 
                     b.Property<DateTime>("IstekTarihi");
 
-                    b.Property<bool?>("Karar");
+                    b.Property<bool>("Karar");
 
-                    b.HasKey("ArkadaslikIsteyenNo", "TeklifEdilenNo");
+                    b.HasKey("ArkadaslikIsteyenNo", "CevapVerenNo");
 
-                    b.HasIndex("TeklifEdilenNo");
+                    b.HasIndex("CevapVerenNo");
 
                     b.ToTable("ArkadaslikTeklifleri");
                 });
@@ -138,14 +139,14 @@ namespace Psg.Api.Migrations.Identity
 
             modelBuilder.Entity("Psg.Api.Models.ArkadaslikTeklif", b =>
                 {
-                    b.HasOne("Psg.Api.Models.Kullanici", "TeklifEdilen")
+                    b.HasOne("Psg.Api.Models.Kullanici", "CevapVeren")
                         .WithMany("YapilanTeklifler")
                         .HasForeignKey("ArkadaslikIsteyenNo")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Psg.Api.Models.Kullanici", "ArkadaslikIsteyen")
                         .WithMany("GelenTeklifler")
-                        .HasForeignKey("TeklifEdilenNo")
+                        .HasForeignKey("CevapVerenNo")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

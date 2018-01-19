@@ -24,7 +24,6 @@ export class FotografDuzenleyiciComponent implements OnInit {
     private uyarici: AlertifyService) { }
 
   ngOnInit() {
-    console.log(this.fotograflar);
     this.initializeUploader();
   }
   public fileOverBase(e: any): void {
@@ -85,7 +84,7 @@ export class FotografDuzenleyiciComponent implements OnInit {
     );
   }
   sil(id: number) {
-    this.kullaniciService.sil(this.authService.kullaniciNumarasiniAl(), id)
+    this.kullaniciService.fotografSil(this.authService.kullaniciNumarasiniAl(), id)
       .subscribe(() => {
         this.fotograflar.splice(_.findIndex(this.fotograflar, { id: id }), 1);
         this.uyarici.success("Fotoğraf silindi!");

@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
   suankiKullanici: Kullanici
   private fotoUrl = new BehaviorSubject<string>(environment.bosFotoUrl);
   suankiFotoUrl = this.fotoUrl.asObservable();
-  constructor(private authHttp: HttpClient, private helper: JwtHelperService) { }
+  constructor(private authHttp: HttpClient, private helper: JwtHelperService, private router: Router) { }
 
   kullaniciFotografiniDegistir(fotoUrl: string) {
     this.fotoUrl.next(fotoUrl);
@@ -53,7 +54,7 @@ export class AuthService {
     }
   }
   register(model: any) {
-    return this.authHttp.post(this.baseUrl + 'uyeol', model);
+    return this.authHttp.post(this.baseUrl + 'auth/uyeol', model);
   }
   loggedIn(): boolean {
     let token = localStorage.getItem('access_token') ;
@@ -70,7 +71,7 @@ export class AuthService {
     this.suankiKullanici = null;
     localStorage.removeItem('access_token');
     localStorage.removeItem('kullanici');
-
+    this.router.navigate(['/'])
   }
   hataYoneti(hata: any) {
     const uygulamaHatasi = hata.headers.get('Uygulama-Hatasi');

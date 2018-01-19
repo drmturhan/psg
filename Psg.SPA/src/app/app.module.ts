@@ -1,3 +1,5 @@
+import { ArkadaslarimResolver } from './_resolvers/kullanici/arkadaslarim-resolver';
+import { ArkadaslarimComponent } from './kullanicilar/arkadaslarim/arkadaslarim.component';
 
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { KullaniciService } from './_services/kullanici.service';
@@ -58,6 +60,7 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     KullaniciDuzeltComponent,
     FotografDuzenleyiciComponent,
     UyelikBasariliComponent,
+    ArkadaslarimComponent,
     TimeAgoPipe
     
   ],
@@ -95,6 +98,7 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     KullaniciDetayResolver,
     KullaniciListesiResolver,
     ProfilimResolver,
+    ArkadaslarimResolver,
     KullanicidakiDegisikliklerKaybolsunmuGuard
   ],
   bootstrap: [AppComponent]

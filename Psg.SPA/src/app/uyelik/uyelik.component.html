@@ -8,14 +8,23 @@
         <div class="col-sm-6">
             <h4>Kişi bilgileri</h4>
             <div class="form-group">
+                <input type="text" class="form-control" placeholder="Ünvanı" formControlName="unvan">
+            </div>
+            <div class="form-group">
                 <input type="text" class="form-control" placeholder="Adı" formControlName="ad">
             </div>
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Soyadı" formControlName="soyad">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Cinsiyet" formControlName="cinsiyetNo">
+                <label for="cinsiyetNo">Cinsiyeti</label>
+                <select id="cinsiyetNo" class="form-control" formControlName="cinsiyetNo">
+                    <option value=""></option>
+                    <option *ngFor="let c of cinsiyetler" value="{{ c.id }}">{{ c.cinsiyetAdi}}</option>
+                </select>
             </div>
+
+
             <div class="form-group">
                 <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi" formControlName="dogumTarihi">
             </div>
