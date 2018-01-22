@@ -25,3 +25,18 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+
+
+Extensions 
+1. Angular v5 Snippets
+2. Angular Files --> Sağ tuş cli komutları
+3. angular language service
+4. Bracket Pair Colorizer (bracker pair)
+5. Material Icon Theme
+6. Path Intellisense
+7. Prettier formatter for Visual Studio Code (Esben Petersen)
+8. vscode-tslint egamma
+9. vscode-nuget-package-manager jmrog
+10. TypeScript Hero christoph Bühler
+11. VS Code - Debugger for Chrome 
