@@ -1,5 +1,5 @@
 import { ArkadaslikListe } from './../../_models/arkadaslik-liste';
-import { Kullanici, KullaniciVeriSeti } from './../../_models/kullanici';
+import { Kullanici, KullanicilarVeriSeti } from './../../_models/kullanici';
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
@@ -7,12 +7,13 @@ import { forkJoin } from "rxjs/observable/forkJoin";
 import { KullaniciService } from './../../_services/kullanici.service';
 import { AuthService } from '../../_services/auth.service';
 import { Cinsiyet } from '../../_models/foto';
+import { ListeSonuc } from '../../_models/sonuc';
 
 
 
 
 @Injectable()
-export class ArkadaslarimResolver implements Resolve<ArkadaslikListe[]> {
+export class ArkadaslarimResolver implements Resolve<ListeSonuc<ArkadaslikListe>> {
 
     constructor(
         private service: KullaniciService,
@@ -21,9 +22,9 @@ export class ArkadaslarimResolver implements Resolve<ArkadaslikListe[]> {
     ) {
 
     }
-    donecekVeriSeti: ArkadaslikListe[] = [];
+    donecekVeriSeti: ListeSonuc<ArkadaslikListe>;
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ArkadaslikListe[]> {
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ListeSonuc<ArkadaslikListe>> {
         let id = this.authService.kullaniciNumarasiniAl();
         if (isNaN(id)) {
 

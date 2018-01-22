@@ -1,8 +1,9 @@
 import { ActivatedRoute } from '@angular/router';
-import { Kullanici } from './../../_models/kullanici';
 import { Component, OnInit } from '@angular/core';
 import { KullaniciService } from '../../_services/kullanici.service';
 import { AlertifyService } from '../../_services/alertify.service';
+import { ArkadaslikListe } from '../../_models/arkadaslik-liste';
+import { ListeSonuc } from '../../_models/sonuc';
 
 @Component({
   selector: 'app-kullanici-listesi',
@@ -11,7 +12,7 @@ import { AlertifyService } from '../../_services/alertify.service';
 })
 export class KullaniciListesiComponent implements OnInit {
 
-  kullanicilar: Kullanici[]
+  kullanicilar: ListeSonuc<ArkadaslikListe>
   constructor(
     private uyarici: AlertifyService,
     private acRoute: ActivatedRoute) { }

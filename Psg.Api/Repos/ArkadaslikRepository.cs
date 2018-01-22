@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Psg.Api.Base;
 using Psg.Api.Data;
+using Psg.Api.Dtos;
+using Psg.Api.Extensions;
 using Psg.Api.Models;
 using System;
 using System.Collections.Generic;
@@ -18,8 +20,8 @@ namespace Psg.Api.Repos
         SadeceCevapBeklenenler,
         SadeceCevapVerilenler
     }
-    
-    public class ArkadaslikSorgusu
+
+    public class ArkadaslikSorgusu : SorguBase
     {
         public int? TeklifEdenKullaniciNo { get; set; }
         public int? TeklifEdilenKullaniciNo { get; set; }
@@ -28,7 +30,7 @@ namespace Psg.Api.Repos
     public interface IArkadaslikRepository : IRepository
     {
         Task<List<Kullanici>> ListeGetirKullanicilarAsync();
-        Task<List<ArkadaslikTeklif>> ListeGetirTekliflerAsync(ArkadaslikSorgusu sorgu);
+        Task<SayfaliListe<ArkadaslikTeklif>> ListeGetirTekliflerAsync(ArkadaslikSorgusu sorgu);
         Task<Kullanici> KullaniciBulAsync(int kullaniciNo);
         Task<Foto> FotografBulAsync(int fotografNo);
         Task<Foto> ProfilFotografiniAlAsync(int kullaniciNo);
@@ -38,10 +40,18 @@ namespace Psg.Api.Repos
     public class ArkadaslikRepository : IArkadaslikRepository
     {
         private readonly IdentityContext db;
+        private readonly IPropertyMappingService propertyMappingService;
 
-        public ArkadaslikRepository(IdentityContext db)
+        public ArkadaslikRepository(IdentityContext db, IPropertyMappingService propertyMappingService)
         {
             this.db = db;
+            this.propertyMappingService = propertyMappingService;
+            propertyMappingService.AddMap<ArkadaslarimListeDto, ArkadaslikTeklif>(ArkadaslikTeklifPropertyMap.Values);
+
+            sorgu = db.ArkadaslikTeklifleri
+                .Include(t => t.ArkadaslikIsteyen).ThenInclude(k => k.KisiBilgisi).ThenInclude(kisi => kisi.Cinsiyeti)
+                .Include(t => t.TeklifEdilen).ThenInclude(k => k.KisiBilgisi).ThenInclude(kisi => kisi.Cinsiyeti).AsQueryable();
+
         }
         public async Task EkleAsync<T>(T entity) where T : class
         {
@@ -63,20 +73,22 @@ namespace Psg.Api.Repos
         {
             return await db.Kullanicilar.SingleOrDefaultAsync(k => k.Id == kullaniciNo);
         }
-        public async Task<List<ArkadaslikTeklif>> ListeGetirTekliflerAsync(ArkadaslikSorgusu sorgu)
-        {
-            var query = db.ArkadaslikTeklifleri
-                .Include(t=>t.ArkadaslikIsteyen).ThenInclude(k=>k.KisiBilgisi).ThenInclude(kisi=>kisi.Cinsiyeti)
-                .Include(t => t.TeklifEdilen).ThenInclude(k => k.KisiBilgisi).ThenInclude(kisi => kisi.Cinsiyeti)
-                .AsQueryable();
-            if (sorgu.TeklifEdenKullaniciNo.HasValue)
-                query = query.Where(teklif => teklif.ArkadaslikIsteyenNo == sorgu.TeklifEdenKullaniciNo.Value);
-            if (sorgu.TeklifEdilenKullaniciNo.HasValue)
-                query = query.Where(teklif => teklif.TeklifEdilenNo == sorgu.TeklifEdilenKullaniciNo.Value);
-            if (sorgu.ListeTipi != ArkadaslikListeTipleri.Tumu)
-                query = ListetipiniBelirle(query, sorgu);
 
-            return await query.ToListAsync();
+        IQueryable<ArkadaslikTeklif> sorgu;
+
+        public async Task<SayfaliListe<ArkadaslikTeklif>> ListeGetirTekliflerAsync(ArkadaslikSorgusu sorguNesnesi)
+        {
+            var siralamaBilgisi = propertyMappingService.GetPropertyMapping<ArkadaslarimListeDto, ArkadaslikTeklif>();
+            var siralanmisSorgu = sorgu.SiralamayiAyarla(sorguNesnesi.SiralamaCumlesi, siralamaBilgisi);
+
+            if (sorguNesnesi.TeklifEdenKullaniciNo.HasValue)
+                sorgu = sorgu.Where(teklif => teklif.ArkadaslikIsteyenNo == sorguNesnesi.TeklifEdenKullaniciNo.Value);
+            if (sorguNesnesi.TeklifEdilenKullaniciNo.HasValue)
+                sorgu = sorgu.Where(teklif => teklif.TeklifEdilenNo == sorguNesnesi.TeklifEdilenKullaniciNo.Value);
+            if (sorguNesnesi.ListeTipi != ArkadaslikListeTipleri.Tumu)
+                sorgu = ListetipiniBelirle(sorgu, sorguNesnesi);
+            var sonuc = await SayfaliListe<ArkadaslikTeklif>.SayfaListesiYarat(siralanmisSorgu, sorguNesnesi.Sayfa, sorguNesnesi.SayfaBuyuklugu);
+            return sonuc;
         }
         public async Task<List<Kullanici>> ListeGetirKullanicilarAsync()
         {
@@ -119,7 +131,16 @@ namespace Psg.Api.Repos
             return await db.ArkadaslikTeklifleri.FirstOrDefaultAsync(a => a.ArkadaslikIsteyenNo == isteyenKullaniciNo && a.TeklifEdilenNo == cevaplayanKullaniciNo);
         }
 
-       
+
+    }
+    public class ArkadaslikTeklifPropertyMap
+    {
+
+        public static Dictionary<string, PropertyMappingValue> Values = new Dictionary<string, PropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Id",new PropertyMappingValue(new List<string>{"Id" })}
+        };
+
     }
 }
 

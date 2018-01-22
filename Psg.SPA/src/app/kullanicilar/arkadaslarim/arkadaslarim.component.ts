@@ -16,8 +16,8 @@ export class ArkadaslarimComponent implements OnInit {
   ngOnInit() {
     this.route.data.subscribe(data => {
       let kullaniciVeriSeti = data['arkadaslarim'];
-      if (kullaniciVeriSeti) {
-        this.arkadasliklarim = kullaniciVeriSeti;
+      if (kullaniciVeriSeti && kullaniciVeriSeti.basarili) {
+        this.arkadasliklarim = kullaniciVeriSeti.donenListe;
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Kullanici, KullaniciVeriSeti } from './../../_models/kullanici';
+import { Kullanici, KullanicilarVeriSeti, KullaniciVeriSeti } from './../../_models/kullanici';
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from "@angular/router";
 import { Observable } from "rxjs/Observable";
@@ -35,7 +35,7 @@ export class ProfilimResolver implements Resolve<KullaniciVeriSeti> {
             this.service.listeGetirCinsiyetler()
         ];
         return forkJoin(veriKaynaklari).map(data => {
-            this.donecekVeriSeti.kullanici = data[0];
+            this.donecekVeriSeti.kullaniciSonuc = data[0];
             this.donecekVeriSeti.cinsiyetler = data[1];
             if (this.donecekVeriSeti)
                 return this.donecekVeriSeti;

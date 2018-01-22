@@ -4,10 +4,11 @@ import { Observable } from "rxjs/Observable";
 import { forkJoin } from "rxjs/observable/forkJoin";
 import { KullaniciService } from './../../_services/kullanici.service';
 import { Kullanici } from '../../_models/kullanici';
+import { KayitSonuc } from '../../_models/sonuc';
 
 
 @Injectable()
-export class KullaniciDetayResolver implements Resolve<Kullanici> {
+export class KullaniciDetayResolver implements Resolve<KayitSonuc<Kullanici>> {
 
     constructor(
         private service: KullaniciService,
@@ -15,11 +16,11 @@ export class KullaniciDetayResolver implements Resolve<Kullanici> {
     ) {
 
     }
-    donecekVeriSeti: Kullanici=new Kullanici();;
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Kullanici> {
+    donecekVeriSeti:KayitSonuc<Kullanici> =new KayitSonuc<Kullanici>();;
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<KayitSonuc<Kullanici>> {
         let id = route.params['id'];
         if (isNaN(id)) {
-            
+
             this.router.navigate(['/kullanicilar']);
             return null;
         }
@@ -28,7 +29,7 @@ export class KullaniciDetayResolver implements Resolve<Kullanici> {
         ];
         return forkJoin(veriKaynaklari).map(data => {
             this.donecekVeriSeti = data[0];
-            if (this.donecekVeriSeti) {
+            if (this.donecekVeriSeti && this.donecekVeriSeti.basarili) {
                 return this.donecekVeriSeti;
             }
             this.router.navigate(['/kullanicilar']);

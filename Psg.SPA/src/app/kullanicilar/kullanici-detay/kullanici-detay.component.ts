@@ -14,7 +14,7 @@ import { KullaniciService } from '../../_services/kullanici.service';
 export class KullaniciDetayComponent implements OnInit {
 
   kullanici: Kullanici;
-  profilFotoUrl:string;
+  profilFotoUrl: string;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
 
@@ -22,17 +22,19 @@ export class KullaniciDetayComponent implements OnInit {
     private uyarici: AlertifyService,
     private kullaniciService: KullaniciService,
     private acRoute: ActivatedRoute,
-    private router:Router
-    ) { }
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.acRoute.data.subscribe(data => {
-      this.kullanici = data['kullanici'];
+      if (data['kullanici'].basarili) {
+        this.kullanici = data['kullanici'].donenNesne;
 
-      if (this.kullanici.profilFotoUrl)
-      this.profilFotoUrl=this.kullanici.profilFotoUrl;
-      else 
-      this.profilFotoUrl=environment.bosFotoUrl;
+        if (this.kullanici.profilFotoUrl)
+          this.profilFotoUrl = this.kullanici.profilFotoUrl;
+        else
+          this.profilFotoUrl = environment.bosFotoUrl;
+      }
     })
     this.galleryOptions = [{
       width: '500px',
@@ -70,7 +72,7 @@ export class KullaniciDetayComponent implements OnInit {
   sil(id: number) {
     this.kullaniciService.sil(id)
       .subscribe(() => {
-        
+
         this.uyarici.success("Kullanıcı silindi!");
         this.router.navigate(['/kullanicilar'])
       },

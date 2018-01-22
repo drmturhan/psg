@@ -1,3 +1,4 @@
+import { ListeSonuc } from './../../_models/sonuc';
 import { Cinsiyet } from './../../_models/foto';
 import { AuthService } from './../../_services/auth.service';
 import { KullaniciService } from './../../_services/kullanici.service';
@@ -22,7 +23,7 @@ export class KullaniciDuzeltComponent implements OnInit {
   cinsiyetler: Cinsiyet[]
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
-  
+
 
   fotoUrl: string;
   constructor(
@@ -38,9 +39,9 @@ export class KullaniciDuzeltComponent implements OnInit {
     this.bsConfig = { containerClass: 'theme-red' }
     this.route.data.subscribe(data => {
       let kullaniciVeriSeti=data['kullaniciVeriSeti'];
-      if (kullaniciVeriSeti){
-      this.kullanici = kullaniciVeriSeti['kullanici'];
-      this.cinsiyetler = kullaniciVeriSeti['cinsiyetler'];
+      if (kullaniciVeriSeti && kullaniciVeriSeti.kullaniciSonuc.basarili){
+      this.kullanici = kullaniciVeriSeti.kullaniciSonuc.donenNesne;
+      this.cinsiyetler = kullaniciVeriSeti.cinsiyetler;
       }
     });
     this.auth.suankiFotoUrl.subscribe(fotoUrl => this.fotoUrl = fotoUrl);

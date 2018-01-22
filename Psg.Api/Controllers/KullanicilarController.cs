@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Psg.Api.Base;
@@ -10,7 +6,9 @@ using Psg.Api.Dtos;
 using Psg.Api.Helpers;
 using Psg.Api.Models;
 using Psg.Api.Repos;
-using Psg.Api.Helpers;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Psg.Api.Controllers
 {
@@ -44,20 +42,20 @@ namespace Psg.Api.Controllers
             propertyMappingService.AddMap<KullaniciListeDto, Kullanici>(KullaniciPropertyMap.Values);
         }
 
-        [HttpGet]
+        [HttpGet(Name ="Kullanicilar")]
         public async Task<IActionResult> Get(KullaniciSorgu sorgu)
         {
             return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
             {
                 if (!propertyMappingService.ValidMappingsExistsFor<KullaniciListeDto, Kullanici>(sorgu.SiralamaCumlesi))
-                    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "CinsiyetListesi", Tanim = "Sıralama bilgisi yanlış!" } }));
+                    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Sıralama bilgisi yanlış!" } }));
 
                 if (!typeHelperService.TryHastProperties<KullaniciListeDto>(sorgu.Alanlar))
                     return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Gösterilmek istenen alanlar hatalı!" } }));
 
                 var kayitlar = await kullaniciRepo.ListeGetirKullanicilarTumuAsync(sorgu);
 
-                var sby = new StandartSayfaBilgiYaratici(sorgu, "ListeGetirCinsiyetler", urlHelper);
+                var sby = new StandartSayfaBilgiYaratici(sorgu, "Kullanicilar", urlHelper);
                 Response.Headers.Add("X-Pagination", kayitlar.SayfalamaMetaDataYarat<Kullanici>(sby));
 
                 var sonuc = ListeSonuc<Kullanici>.IslemTamam(kayitlar);
@@ -66,19 +64,28 @@ namespace Psg.Api.Controllers
                 return Ok(donecekListe.ShapeData(sorgu.Alanlar));
             });
         }
-
         [HttpGet("{id}", Name = "KullaniciGetir")]
-        public async Task<IActionResult> Get(int id, [FromQuery] string neden)
+        public async Task<IActionResult> Get(int id, [FromQuery] string neden, [FromQuery] string alanlar)
         {
-            var kayit = await kullaniciRepo.BulAsync(id);
-            if (neden == "yaz")
+            return await HataKontrolluCalistir<IActionResult>(async () =>
             {
-                var yazResource = mapper.Map<KullaniciYazDto>(kayit);
-                return Ok(yazResource);
-            }
-            var resource = mapper.Map<KullaniciDetayDto>(kayit);
-            return Ok(resource);
+                if (id <= 0)
+                    return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = SonucMesajlari.Liste[MesajAnahtarlari.SifirdanBuyukDegerGerekli] } }));
+
+                var kayit = await kullaniciRepo.BulAsync(id);
+                if (kayit == null)
+                    return NotFound();
+                if (neden == "yaz")
+                {
+                    var yazDto = (KayitSonuc<KullaniciYazDto>)KayitSonuc<KullaniciYazDto>.IslemTamam(mapper.Map<KullaniciYazDto>(kayit));
+                    return Ok(yazDto.ShapeData(alanlar));
+                }
+                var resource = (KayitSonuc<KullaniciDetayDto>)KayitSonuc<KullaniciDetayDto>.IslemTamam(mapper.Map<KullaniciDetayDto>(kayit));
+                return Ok(resource.ShapeData(alanlar));
+
+            });
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] KullaniciYazDto yazDto)
         {
