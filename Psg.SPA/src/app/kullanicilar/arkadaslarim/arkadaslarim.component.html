@@ -1,8 +1,8 @@
-<div *ngIf="arkadasliklarim">
+<div *ngIf="arkadasliklarim.donenListe">
     <div class="container">
         <div class="row equal">
             <h3>Liste</h3>
-            <div *ngFor="let teklif of arkadasliklarim" class="col-lg-2 col-md-3 sm-col-6">
+            <div *ngFor="let teklif of arkadasliklarim.donenListe" class="col-lg-2 col-md-3 sm-col-6">
                 <p>{{teklif.arkadaslikIsteyen.tamAdi}} </p>
                 <p>{{teklif.teklifEdilen.tamAdi}} </p>
                 <p>{{teklif.istekTarihi}} </p>
@@ -23,12 +23,12 @@
         <h2>{{aramaParametreleri==='TeklifEdenler' ? 'Benimle arkadaş olmak isteyenler':'Benim arkadaş olmak istediklerim'}}</h2>
     </div>
     <div class="row equal">
-        <div *ngFor="let teklif of arkadasliklarim" class="col-lg-2 col-md-3 col-sm-6">
+        <div *ngFor="let teklif of arkadasliklarim.donenListe" class="col-lg-2 col-md-3 col-sm-6">
             <mt-kullanici-karti [kullanici]="teklif.arkadaslikIsteyen"></mt-kullanici-karti>
         </div>
     </div>
 </div>
 
-<div *ngIf="!arkadasliklarim">
+<div *ngIf="!arkadasliklarim.donenListe">
     <h3>Hiç arkadaşlığınız yok!</h3>
 </div>
