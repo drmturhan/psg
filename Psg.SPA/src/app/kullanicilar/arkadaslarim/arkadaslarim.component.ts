@@ -14,9 +14,9 @@ export class ArkadaslarimComponent implements OnInit {
   aramaParametreleri: any = {};
 
   constructor(private route: ActivatedRoute) { }
-  arkadasliklarim: ListeSonuc<ArkadaslikListe>=new ListeSonuc<ArkadaslikListe>();
+  arkadasliklarim: ListeSonuc<ArkadaslikListe> = new ListeSonuc<ArkadaslikListe>();
   ngOnInit() {
-    this.route.data.subscribe((data:ListeSonuc<ArkadaslikListe>) => {
+    this.route.data.subscribe((data: ListeSonuc<ArkadaslikListe>) => {
 
       let kullaniciVeriSeti = data['arkadaslarim'];
       if (kullaniciVeriSeti && kullaniciVeriSeti.basarili) {
