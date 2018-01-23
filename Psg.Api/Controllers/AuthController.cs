@@ -1,22 +1,22 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Psg.Api.Dtos;
-using Psg.Api.Helpers;
+using Psg.Api.Extensions;
 using Psg.Api.Models;
 using Psg.Api.Repos;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/Auth")]
-    
+
     public class AuthController : Controller
     {
         private readonly IAuthRepository repo;
@@ -31,7 +31,7 @@ namespace Psg.Api.Controllers
         }
 
         [HttpPost("girisyap")]
-        
+
         public async Task<IActionResult> GirisYap([FromBody] GirisDto dto)
         {
             if (!ModelState.IsValid)
@@ -69,6 +69,7 @@ namespace Psg.Api.Controllers
         [HttpPost("uyeol")]
         public async Task<IActionResult> Uyeol([FromBody] UyelikYaratDto dto)
         {
+            if (dto == null) throw new Exception("Üyelik bilgisi boş!");
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             dto.KullaniciAdi = dto.KullaniciAdi.ToLower();

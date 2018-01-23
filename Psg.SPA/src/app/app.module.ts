@@ -26,21 +26,22 @@ import { KullaniciListesiComponent } from './kullanicilar/kullanici-listesi/kull
 import { HttpClientModule } from '@angular/common/http';
 import { KullaniciKartiComponent } from './kullanicilar/kullanici-karti/kullanici-karti.component';
 import { KullaniciDetayComponent } from './kullanicilar/kullanici-detay/kullanici-detay.component';
-import { TabsModule,BsDropdownModule } from 'ngx-bootstrap';
+import { TabsModule, BsDropdownModule } from 'ngx-bootstrap';
 import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-resolver';
 import { KullaniciDuzeltComponent } from './kullanicilar/kullanici-duzelt/kullanici-duzelt.component';
 import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/veri-yuklenemedi.component';
 import { KullaniciListesiResolver } from './_resolvers/kullanici/kullanici-listesi-resolver.';
 import { ProfilimResolver } from './_resolvers/kullanici/profilim-resolver';
 import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/kullanicidaki-degisiklikler-kaybolsunmu.service';
-import { NgModule, LOCALE_ID } from '@angular/core';
+import { NgModule, LOCALE_ID, ErrorHandler } from '@angular/core';
 import { FotografDuzenleyiciComponent } from './ortak/components/fotograf-duzenleyici/fotograf-duzenleyici.component';
 import { FileUploadModule } from 'ng2-file-upload';
 import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-basarili.component';
 import { registerLocaleData } from '@angular/common';
 import localeTr from '@angular/common/locales/tr';
 import localeTrExtra from '@angular/common/locales/extra/tr';
-import {TimeAgoPipe}from 'time-ago-pipe';
+import { TimeAgoPipe } from 'time-ago-pipe';
+import { MTAppErrorHandler } from './app-error-handler';
 
 registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
 @NgModule({
@@ -62,7 +63,7 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     UyelikBasariliComponent,
     ArkadaslarimComponent,
     TimeAgoPipe
-    
+
   ],
   imports: [
     BrowserModule,
@@ -84,13 +85,20 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     FormsModule,
     ReactiveFormsModule,
     NgxGalleryModule,
-    FileUploadModule 
-    
+    FileUploadModule
+
   ],
 
 
   providers: [
-    {provide: LOCALE_ID, useValue: 'tr-TR'},
+    {
+      provide: LOCALE_ID,
+      useValue: 'tr-TR'
+    },
+    {
+      provide: ErrorHandler,
+      useClass: MTAppErrorHandler
+    },
     AuthService,
     KullaniciService,
     AlertifyService,

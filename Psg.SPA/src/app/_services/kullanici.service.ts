@@ -1,8 +1,10 @@
-import { ArkadaslikListe } from './../_models/arkadaslik-liste';
 import { Observable } from 'rxjs/Observable';
+import { ArkadaslikListe } from './../_models/arkadaslik-liste';
+
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/operator/map';
+import 'rxjs/operator/catch';
 import { Kullanici } from './../_models/kullanici';
 import { environment } from './../../environments/environment';
 import { HttpRequest } from '@angular/common/http/src/request';
@@ -23,7 +25,7 @@ export class KullaniciService {
         // console.log(response.json());
         return <ListeSonuc<Kullanici>>response.json();
       },
-      hatalar => this.hatalariYonet(hatalar));
+      hatalar => Observable.throw(hatalar));
   }
   arkadasliklariGetir(): Observable<ListeSonuc<ArkadaslikListe>> {
     return this.http
@@ -33,7 +35,7 @@ export class KullaniciService {
         // console.log(response.json());
         return <ListeSonuc<ArkadaslikListe>>response.json();
       },
-      hatalar => this.hatalariYonet(hatalar));
+      hatalar => Observable.throw(hatalar));
   }
   kullaniciBul(id: number): Observable<KayitSonuc<Kullanici>> {
     return this.http.get(this.baseUrl + `kullanicilar/${id}`, this.jwt())
@@ -42,7 +44,7 @@ export class KullaniciService {
         // console.log(response);
         return <KayitSonuc<Kullanici>>response.json();
       },
-      hatalar => this.hatalariYonet(hatalar)
+      hatalar => Observable.throw(hatalar)
       );
   }
   kullaniciBulDegistirmekIcin(id: number): Observable<KayitSonuc<KullaniciYaz>> {
@@ -52,7 +54,7 @@ export class KullaniciService {
         // console.log(response);
         return <KayitSonuc<KullaniciYaz>>response.json();
       },
-      hatalar => this.hatalariYonet(hatalar)
+      hatalar =>  Observable.throw(hatalar)
       );
   }
 
@@ -60,7 +62,7 @@ export class KullaniciService {
     return this.http.get(this.baseUrl + 'cinsiyetler', this.jwt()).map(sonuc => {
       return <Cinsiyet[]>sonuc.json();
     },
-      hatalar => this.hatalariYonet(hatalar));
+      hatalar =>  Observable.throw(hatalar));
 
   }
   guncelle(id: number, kullanici: KullaniciYaz) {
@@ -88,19 +90,5 @@ export class KullaniciService {
     }
 
   }
-  hatalariYonet(hata: any) {
-    const uygulamaHatasi = hata.headers.get('Uygulama-Hatasi');
-    if (uygulamaHatasi) {
-      return Observable.throw(uygulamaHatasi);
-    }
-    const serverHatalari = hata.json();
-    let modelDurumHatalari = '';
-    if (serverHatalari) {
-      for (const key in serverHatalari) {
-        if (serverHatalari[key]) {
-          modelDurumHatalari += serverHatalari[key] + '\n';
-        }
-      }
-    }
-  }
+
 }

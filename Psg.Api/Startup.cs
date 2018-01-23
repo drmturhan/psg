@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -14,6 +16,7 @@ using Psg.Api.Data;
 using Psg.Api.Helpers;
 using Psg.Api.Repos;
 using Psg.Api.Seeds;
+using System.Net;
 using System.Text;
 
 namespace Psg.Api
@@ -54,8 +57,8 @@ namespace Psg.Api
             {
                 setup.AddPolicy("psg", policy =>
                 {
-                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                    
+                    policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+
                 });
             });
             services.AddDbContext<IdentityContext>(options =>
@@ -102,6 +105,22 @@ namespace Psg.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async context =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        var hata = context.Features.Get<IExceptionHandlerFeature>();
+                        if (hata != null)
+                        {
+                            context.Response.UygulamaHatasiEkle(hata.Error);
+                            await context.Response.WriteAsync(hata.Error.Message);
+                        }
+                    });
+                });
             }
             seederManager.SeedAll();
             app.UseCors("psg");

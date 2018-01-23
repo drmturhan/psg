@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
 import { Kullanici } from './../_models/kullanici';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AlertifyService } from '../_services/alertify.service';
@@ -77,7 +79,7 @@ export class UyelikComponent implements OnInit {
        this.uyarici.warning("Lütfen gelen kutunuza bakın ve hesabınızı aktifleştirin.");
        this.uyelikBasvurusuTamam=true;
      },
-    hata=>this.uyarici.error("Üyelik işleminiz gerçekleşmedi!!"));
+    hata=>Observable.throw(hata) );
     // }
     // this.authService.register(this.model).subscribe(() =>
     //   this.uyarici.success('Üyelik başarılı.'),
