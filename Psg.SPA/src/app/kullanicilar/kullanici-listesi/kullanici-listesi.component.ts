@@ -12,14 +12,14 @@ import { ListeSonuc } from '../../_models/sonuc';
 })
 export class KullaniciListesiComponent implements OnInit {
 
-  kullanicilar: ListeSonuc<ArkadaslikListe>
+  kullanicilar: ListeSonuc<ArkadaslikListe>;
   constructor(
     private uyarici: AlertifyService,
     private acRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.acRoute.data.subscribe(data => {
-      this.kullanicilar = data['kullanicilar'];
-    })
+      this.kullanicilar = data['kullanicilar']['kullaniciSonuc'];
+    });
   }
 }

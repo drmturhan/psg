@@ -1,6 +1,5 @@
 import { ArkadaslarimResolver } from './_resolvers/kullanici/arkadaslarim-resolver';
 import { ArkadaslarimComponent } from './kullanicilar/arkadaslarim/arkadaslarim.component';
-
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { KullaniciService } from './_services/kullanici.service';
 import { AlertifyService } from './_services/alertify.service';
@@ -26,7 +25,7 @@ import { KullaniciListesiComponent } from './kullanicilar/kullanici-listesi/kull
 import { HttpClientModule } from '@angular/common/http';
 import { KullaniciKartiComponent } from './kullanicilar/kullanici-karti/kullanici-karti.component';
 import { KullaniciDetayComponent } from './kullanicilar/kullanici-detay/kullanici-detay.component';
-import { TabsModule, BsDropdownModule } from 'ngx-bootstrap';
+import { TabsModule, BsDropdownModule, TooltipModule } from 'ngx-bootstrap';
 import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-resolver';
 import { KullaniciDuzeltComponent } from './kullanicilar/kullanici-duzelt/kullanici-duzelt.component';
 import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/veri-yuklenemedi.component';
@@ -41,7 +40,14 @@ import { registerLocaleData } from '@angular/common';
 import localeTr from '@angular/common/locales/tr';
 import localeTrExtra from '@angular/common/locales/extra/tr';
 import { TimeAgoPipe } from 'time-ago-pipe';
-import { MTAppErrorHandler } from './app-error-handler';
+import { KullaniciAsyncValidators } from './uyelik/kullanici-adi-var-validator.service';
+import { AppError } from './_hatalar/app-error';
+import { MTAppErrorHandler } from './_hatalar/app-error-handler';
+import { CinsiyetlerService } from './_services/cinsiyetler.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './_services/auth-interceptor';
+
+
 
 registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
 @NgModule({
@@ -63,12 +69,12 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     UyelikBasariliComponent,
     ArkadaslarimComponent,
     TimeAgoPipe
-
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoot),
     TabsModule.forRoot(),
+    TooltipModule.forRoot(),
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
     HttpModule,
@@ -99,15 +105,22 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
       provide: ErrorHandler,
       useClass: MTAppErrorHandler
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     AuthService,
     KullaniciService,
+    CinsiyetlerService,
     AlertifyService,
     AuthGuard,
     KullaniciDetayResolver,
     KullaniciListesiResolver,
     ProfilimResolver,
     ArkadaslarimResolver,
-    KullanicidakiDegisikliklerKaybolsunmuGuard
+    KullanicidakiDegisikliklerKaybolsunmuGuard,
+    KullaniciAsyncValidators
   ],
   bootstrap: [AppComponent]
 })

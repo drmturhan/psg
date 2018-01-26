@@ -1,11 +1,12 @@
 
-import { selector } from 'rxjs/operator/publish';
 import { KullaniciService } from './../../_services/kullanici.service';
 import { Kullanici } from './../../_models/kullanici';
 import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from '../../_services/auth.service';
 import { environment } from '../../../environments/environment';
 import { AlertifyService } from '../../_services/alertify.service';
+import { AppError } from '../../_hatalar/app-error';
+import { BadInputError } from '../../_hatalar/bad-input';
 
 @Component({
   selector: 'mt-kullanici-karti',
@@ -13,7 +14,7 @@ import { AlertifyService } from '../../_services/alertify.service';
   styleUrls: ['./kullanici-karti.component.css']
 })
 export class KullaniciKartiComponent implements OnInit {
-  @Input() kullanici: Kullanici
+  @Input() kullanici: Kullanici;
   bosFotoUrl: string = environment.bosFotoUrl;
   constructor(public authService: AuthService, private kullaniciService: KullaniciService,
     private uyarici: AlertifyService
@@ -26,7 +27,12 @@ export class KullaniciKartiComponent implements OnInit {
       .subscribe(data => {
         this.uyarici.success(`${this.kullanici.tamAdi} adlı kullanıcıya arkadaşlık isteği gönderildi!`);
       },
-      hata => {
-        if (hata.status === 400) { this.uyarici.error(hata._body); } else { this.uyarici.error("Arkadaşlık isteği başarısız."); }});
+      (hata: AppError) => {
+        if (hata instanceof BadInputError) {
+          this.uyarici.error(hata.orjinalHata);
+        } else {
+          throw hata;
+        }
+      });
   }
 }

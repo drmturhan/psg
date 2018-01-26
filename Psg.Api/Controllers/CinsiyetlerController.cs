@@ -7,7 +7,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Psg.Api.Base;
 using Psg.Api.Dtos;
+using Psg.Api.Helpers;
 using Psg.Api.Models;
 using Psg.Api.Repos;
 
@@ -15,26 +17,29 @@ namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/cinsiyetler")]
-    public class CinsiyetlerController : Controller
+    public class CinsiyetlerController : MTController
     {
         private readonly ICinsiyetRepository repo;
         private readonly IMapper mapper;
         private readonly IConfiguration configuration;
+        private readonly IUrlHelper urlHelper;
 
-        public CinsiyetlerController(ICinsiyetRepository repo, IMapper mapper, IConfiguration configuration)
+        public CinsiyetlerController(ICinsiyetRepository repo, IMapper mapper, IConfiguration configuration, IUrlHelper urlHelper) : base("Cinsiyetler")
         {
             this.repo = repo;
             this.mapper = mapper;
             this.configuration = configuration;
+            this.urlHelper = urlHelper;
         }
         [HttpGet()]
         public async Task<IActionResult> Get()
         {
-            var liste = await repo.ListeGetirCinsiyetAsync();
-            if (liste != null)
-                return Ok(liste);
-            else
-                return BadRequest("Cinsiyet listesi alınamadı!");
+
+            return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
+            {
+                var kayitlar = await repo.ListeGetirCinsiyetAsync();
+                return Ok(kayitlar);
+            });
         }
 
     }

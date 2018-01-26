@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using Psg.Api.Base;
 using Psg.Api.Data;
 using Psg.Api.Helpers;
@@ -53,14 +54,7 @@ namespace Psg.Api
                 var actionContext = implementationFactory.GetService<IActionContextAccessor>().ActionContext;
                 return new UrlHelper(actionContext);
             });
-            services.AddCors(setup =>
-            {
-                setup.AddPolicy("psg", policy =>
-                {
-                    policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
 
-                });
-            });
             services.AddDbContext<IdentityContext>(options =>
             {
                 options.UseSqlServer(baglantiSatiri);
@@ -95,6 +89,7 @@ namespace Psg.Api
             services.AddMvc().AddJsonOptions(opt =>
             {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
             services.AddScoped<KullaniciAktiviteleriniTakipEt>();
         }
@@ -116,14 +111,14 @@ namespace Psg.Api
                         var hata = context.Features.Get<IExceptionHandlerFeature>();
                         if (hata != null)
                         {
-                            context.Response.UygulamaHatasiEkle(hata.Error);
+                            context.Response.UygulamaHatasiEkle();
                             await context.Response.WriteAsync(hata.Error.Message);
                         }
                     });
                 });
             }
             seederManager.SeedAll();
-            app.UseCors("psg");
+            app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials()); ;
             app.UseAuthentication();
             app.UseMvc();
         }

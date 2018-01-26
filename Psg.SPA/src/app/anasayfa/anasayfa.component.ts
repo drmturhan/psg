@@ -8,7 +8,7 @@ import { AuthService } from '../_services/auth.service';
 })
 export class AnasayfaComponent implements OnInit {
 
-  registerMode: boolean = false;
+  registerMode = false;
   constructor(public authService: AuthService) { }
 
   ngOnInit() {

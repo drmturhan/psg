@@ -1,8 +1,8 @@
-import { ListeSonuc } from './../../_models/sonuc';
-import { ArkadaslikListe } from './../../_models/arkadaslik-liste';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { ListeSonuc } from './../../_models/sonuc';
+import { ArkadaslikListe } from './../../_models/arkadaslik-liste';
 
 @Component({
   selector: 'app-arkadaslarim',
@@ -18,11 +18,11 @@ export class ArkadaslarimComponent implements OnInit {
   ngOnInit() {
     this.route.data.subscribe((data: ListeSonuc<ArkadaslikListe>) => {
 
-      let kullaniciVeriSeti = data['arkadaslarim'];
+      const kullaniciVeriSeti = data['arkadaslarim'];
       if (kullaniciVeriSeti && kullaniciVeriSeti.basarili) {
         this.arkadasliklarim = kullaniciVeriSeti;
       }
     });
   }
-  yukle() { };
+  yukle() { }
 }

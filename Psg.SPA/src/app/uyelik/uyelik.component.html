@@ -1,56 +1,96 @@
-<form [formGroup]="uyelikFormu" (ngSubmit)="uyeol()" *ngIf="!uyelikBasvurusuTamam">
+<form [formGroup]="uyelikFormu" #anaForm (ngSubmit)="uyeol()" *ngIf="!uyelikBasvurusuTamam" novalidate>
 
     <h2 class="text-center text-primary">Üyelik Başvurusu</h2>
 
     <hr>
     <div class="row">
 
-        <div class="col-sm-6">
+        <div class="col-xs-6 col-offset-lg-2 col-lg-4">
             <h4>Kişi bilgileri</h4>
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Ünvanı" formControlName="unvan">
             </div>
-            <div class="form-group">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.ad, 'has-success': (!displayMessage.ad && uyelikFormu.get('ad')?.touched)}">
                 <input type="text" class="form-control" placeholder="Adı" formControlName="ad">
+                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.ad,'glyphicon-ok':!displayMessage.ad && uyelikFormu.get('ad')?.touched}"></span>
+                <span class="help-block" *ngIf="displayMessage.ad">
+                    {{displayMessage.ad}}
+                </span>
             </div>
-            <div class="form-group">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.soyad, 'has-success': (!displayMessage.soyad && uyelikFormu.get('soyad')?.touched)}">
                 <input type="text" class="form-control" placeholder="Soyadı" formControlName="soyad">
+                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.soyad,'glyphicon-ok':!displayMessage.soyad && uyelikFormu.get('soyad')?.touched}"></span>
+                <span class="help-block" *ngIf="displayMessage.soyad">
+                    {{displayMessage.soyad}}
+                </span>
+
             </div>
-            <div class="form-group">
-                <label for="cinsiyetNo">Cinsiyeti</label>
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.cinsiyetNo, 'has-success': (!displayMessage.cinsiyetNo && uyelikFormu.get('cinsiyetNo')?.touched)}">
                 <select id="cinsiyetNo" class="form-control" formControlName="cinsiyetNo">
-                    <option value=""></option>
                     <option *ngFor="let c of cinsiyetler" value="{{ c.id }}">{{ c.cinsiyetAdi}}</option>
                 </select>
             </div>
 
-
-            <div class="form-group">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.dogumTarihi, 'has-success': (!displayMessage.dogumTarihi && uyelikFormu.get('dogumTarihi')?.touched)}">
                 <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi" formControlName="dogumTarihi">
+                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.dogumTarihi}"></span>
+
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-xs-6 col-offset-lg-2 col-lg-4">
             <h4>Güvenlik bilgileri</h4>
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Kullanıcı adı" formControlName="kullaniciAdi">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.kullaniciAdi, 'has-success': (!displayMessage.kullaniciAdi && uyelikFormu.get('kullaniciAdi')?.touched)}">
+                <input type="text" name="kullaniciAdi" class="form-control" placeholder="Kullanıcı adı" formControlName="kullaniciAdi">
+                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.kullaniciAdi,'glyphicon-ok':!displayMessage.kullaniciAdi && uyelikFormu.get('kullaniciAdi')?.touched}"></span>
+                <span class="help-block" *ngIf="displayMessage.kullaniciAdi">
+                    {{displayMessage.kullaniciAdi}}
+                </span>
+                <span *ngIf="uyelikFormu.get('kullaniciAdi').pending " >Kullanıcı kontrol ediliyor...</span>
+                <span class="help-block" *ngIf="displayMessage.kullaniciAdiKullaniliyor">
+                    {{displayMessage.kullaniciAdiKullaniliyor}}
+                </span>
+
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control" placeholder="Şifre" formControlName="sifre">
+            <div formGroupName="sifreGrup" class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.sifreGrup, 'has-success': (!displayMessage.sifreGrup)}">
+                <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.sifre, 'has-success': (!displayMessage.sifre  && !displayMessage.sifreGrup && uyelikFormu.controls.sifreGrup.controls.sifre.touched)}">
+                    <input type="password" class="form-control" placeholder="Şifre" formControlName="sifre">
+                    <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.sifre,'glyphicon-ok':!displayMessage.sifre && !displayMessage.sifreGrup && uyelikFormu.controls.sifreGrup.controls.sifre.touched}"></span>
+                    <span class="help-block" *ngIf="displayMessage.sifre">
+                        {{displayMessage.sifre}}
+                    </span>
+                </div>
+                <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.sifreKontrol, 'has-success': (!displayMessage.sifreKontrol && !displayMessage.sifreGrup && uyelikFormu.controls.sifreGrup.controls.sifreKontrol.touched)}">
+                    <input type="password" class="form-control" placeholder="Şifre kontrol" formControlName="sifreKontrol">
+                    <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.sifreKontrol,'glyphicon-ok':!displayMessage.sifreKontrol && !displayMessage.sifreGrup && uyelikFormu.controls.sifreGrup.controls.sifreKontrol.touched}"></span>
+                    <span class="help-block" *ngIf="displayMessage.sifreKontrol">
+                        {{displayMessage.sifreKontrol}}
+                    </span>
+
+                </div>
+                <span class="help-block" *ngIf="displayMessage.sifreGrup">
+                    {{displayMessage.sifreGrup}}
+                </span>
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control" placeholder="Şifre kontrol" formControlName="sifreKontrol">
-            </div>
-            <div class="form-group">
+
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.ePosta, 'has-success': (!displayMessage.ePosta && uyelikFormu.get('ePosta')?.touched)}">
                 <input type="email" class="form-control" placeholder="Eposta adresi" formControlName="ePosta">
+                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.ePosta,'glyphicon-ok':!displayMessage.ePosta && uyelikFormu.get('ePosta')?.touched}"></span>
+                <span class="help-block" *ngIf="displayMessage.ePosta">
+                    {{displayMessage.ePosta}}
+                </span>
             </div>
-            <div class="form-group">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.telefonNumarasi, 'has-success': (!displayMessage.telefonNumarasi && uyelikFormu.get('telefonNumarasi')?.touched)}">
                 <input type="phone" class="form-control" placeholder="Telefon Numarası" formControlName="telefonNumarasi">
+                <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.telefonNumarasi,'glyphicon-ok':!displayMessage.telefonNumarasi && uyelikFormu.get('telefonNumarasi')?.touched}"></span>
+                <span class="help-block" *ngIf="displayMessage.telefonNumarasi">
+                    {{displayMessage.telefonNumarasi}}
+                </span>
             </div>
         </div>
     </div>
 
-    <div class="form-group text-center">
-        <button class="btn btn-success" type="submit">Üye Ol</button>
+    <div class="text-center">
+        <button class="btn btn-success" type="submit" [disabled]="!uyelikFormu.valid">Üye Ol</button>
         <button class="btn btn-default" type="button" (click)="vazgec()">Vazgeç</button>
     </div>
 </form>

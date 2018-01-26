@@ -11,7 +11,7 @@ export class Kullanici {
     profilFotoUrl?: string;
     yaratilmaTarihi?: Date;
     sonAktifOlma?: Date;
-    fotograflari?: Foto[]
+    fotograflari?: Foto[];
 }
 
 
@@ -32,13 +32,30 @@ export class KullaniciYaz {
     profilFotoUrl?: string;
     yaratilmaTarihi?: Date;
     sonAktifOlma?: Date;
-    tamAdi?:string;
-    fotograflari?: Foto[]
+    tamAdi?: string;
+    fotograflari?: Foto[];
 }
 export class KullanicilarVeriSeti {
-    kullaniciSonuc:ListeSonuc<Kullanici>;
+    kullaniciSonuc: ListeSonuc<Kullanici>;
 }
 export class KullaniciVeriSeti {
-  kullaniciSonuc:KayitSonuc<KullaniciYaz>;
-  cinsiyetler: Cinsiyet[];
+    kullaniciSonuc: KayitSonuc<KullaniciYaz>;
+    cinsiyetler: Cinsiyet[];
+}
+
+export class UyeBilgisi {
+
+    constructor() {
+        this.sifre = '';
+    }
+    kullaniciAdi?: string;
+    sifre?: string;
+    unvan?: string;
+    ad?: string;
+    digerAd?: string;
+    soyad?: string;
+    cinsiyetNo?: string;
+    dogumTarihi: Date;
+    eposta?: string;
+    telefonNumarasi?: string;
 }

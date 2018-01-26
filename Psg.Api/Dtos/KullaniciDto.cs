@@ -9,6 +9,12 @@ namespace Psg.Api.Dtos
         public string CinsiyetAdi { get; set; }
     }
 
+    public class CinsiyetDto
+    {
+        public int Id { get; set; }
+        public string CinsiyetAdi { get; set; }
+
+    }
 
     public class KullaniciBaseDto
     {

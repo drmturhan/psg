@@ -13,6 +13,7 @@ namespace Psg.Api.Repos
 {
     public interface IKullaniciRepository : IRepository
     {
+        Task<bool> KullaniciVarAsync(string kullaniciAdi);
         Task<Kullanici> BulAsync(int id);
         Task<SayfaliListe<Kullanici>> ListeGetirKullanicilarTumuAsync(KullaniciSorgu  sorgu);
         Task<Foto> FotografBulAsync(int id);
@@ -78,7 +79,10 @@ namespace Psg.Api.Repos
             db.Kisiler.Remove(entity);
         }
 
-      
+        public Task<bool> KullaniciVarAsync(string kullaniciAdi)
+        {
+            return db.Kullanicilar.AnyAsync(k => k.KullaniciAdi == kullaniciAdi);
+        }
     }
     public class KullaniciPropertyMap
     {

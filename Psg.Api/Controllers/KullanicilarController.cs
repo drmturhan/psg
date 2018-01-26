@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Psg.Api.Controllers
 {
-    [ServiceFilter(typeof(KullaniciAktiviteleriniTakipEt))]
+    //[ServiceFilter(typeof(KullaniciAktiviteleriniTakipEt))]
     [Produces("application/json")]
     [Route("api/kullanicilar")]
     [Authorize]
@@ -42,7 +42,7 @@ namespace Psg.Api.Controllers
             propertyMappingService.AddMap<KullaniciListeDto, Kullanici>(KullaniciPropertyMap.Values);
         }
 
-        [HttpGet(Name ="Kullanicilar")]
+        [HttpGet(Name = "Kullanicilar")]
         public async Task<IActionResult> Get(KullaniciSorgu sorgu)
         {
             return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
@@ -64,6 +64,22 @@ namespace Psg.Api.Controllers
                 return Ok(donecekListe.ShapeData(sorgu.Alanlar));
             });
         }
+
+        [AllowAnonymous]
+        [Route("kullaniciAdiVar")]
+        [HttpGet()]
+        public async Task<IActionResult> Get([FromQuery]string kullaniciAdi)
+        {
+            return await HataKontrolluCalistir<IActionResult>(async () =>
+            {
+                if (string.IsNullOrEmpty(kullaniciAdi.Trim()))
+                    return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = "Kullanıcı adı boş olamaz!" } }));
+                var kullaniciVar = await kullaniciRepo.KullaniciVarAsync(kullaniciAdi);
+
+                return Ok(kullaniciVar);
+            });
+        }
+
         [HttpGet("{id}", Name = "KullaniciGetir")]
         public async Task<IActionResult> Get(int id, [FromQuery] string neden, [FromQuery] string alanlar)
         {

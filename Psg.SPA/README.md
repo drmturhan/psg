@@ -40,3 +40,12 @@ Extensions
 9. vscode-nuget-package-manager jmrog
 10. TypeScript Hero christoph Bühler
 11. VS Code - Debugger for Chrome 
+
+
+
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/observable/merge';
+import 'rxjs/add/operator/switchMap';

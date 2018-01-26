@@ -289,7 +289,7 @@ namespace Psg.Api.Base
             Add(MesajAnahtarlari.KayitBulunamadi, Resources.KayitBulunamadi);
             Add(MesajAnahtarlari.SifirdanBuyukDegerGerekli, Resources.BuyukDegerGerekli);
             Add(MesajAnahtarlari.KayitBosOlamaz, Resources.KayitBosOlamaz);
-            Add(MesajAnahtarlari.IslemGerceklesmedi, Resources.IslemGerceklesmesi);
+            Add(MesajAnahtarlari.IslemGerceklesmedi, Resources.IslemGerceklesmedi);
             Add(MesajAnahtarlari.DahaSonraTekrarDeneyiniz, Resources.DahaSonraTekrarDeneyiniz);
         }
 

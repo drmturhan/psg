@@ -6,6 +6,8 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gal
 import { Foto } from '../../_models/foto';
 import { environment } from '../../../environments/environment';
 import { KullaniciService } from '../../_services/kullanici.service';
+import { NotFoundError } from '../../_hatalar/not-found-error';
+import { AppError } from '../../_hatalar/app-error';
 @Component({
   selector: 'app-kullanici-detay',
   templateUrl: './kullanici-detay.component.html',
@@ -30,12 +32,13 @@ export class KullaniciDetayComponent implements OnInit {
       if (data['kullanici'].basarili) {
         this.kullanici = data['kullanici'].donenNesne;
 
-        if (this.kullanici.profilFotoUrl)
+        if (this.kullanici.profilFotoUrl) {
           this.profilFotoUrl = this.kullanici.profilFotoUrl;
-        else
+        } else {
           this.profilFotoUrl = environment.bosFotoUrl;
+        }
       }
-    })
+    });
     this.galleryOptions = [{
       width: '500px',
       height: '500px',
@@ -44,14 +47,14 @@ export class KullaniciDetayComponent implements OnInit {
       imageAnimation: NgxGalleryAnimation.Slide,
       preview: false
 
-    }]
+    }];
     this.galleryImages = this.getImages();
   }
   getImages(): NgxGalleryImage[] {
-    var imageUrls: NgxGalleryImage[] = [];
+    const imageUrls: NgxGalleryImage[] = [];
     for (let i = 0; i < this.kullanici.fotograflari.length; i++) {
-      var yeni: NgxGalleryImage = {};
-      var item = this.kullanici.fotograflari[i];
+      const yeni: NgxGalleryImage = {};
+      const item = this.kullanici.fotograflari[i];
       yeni.small = item.url;
       yeni.medium = item.url;
       yeni.big = item.url;
@@ -70,14 +73,16 @@ export class KullaniciDetayComponent implements OnInit {
     );
   }
   sil(id: number) {
-    this.kullaniciService.sil(id)
+    this.kullaniciService.delete(id)
       .subscribe(() => {
-
-        this.uyarici.success("Kullanıcı silindi!");
-        this.router.navigate(['/kullanicilar'])
+        this.uyarici.success('Kullanıcı silindi!');
+        this.router.navigate(['/kullanicilar']);
       },
-      hata => this.uyarici.error(hata._body)
-      );
-
+      (hata: AppError) => {
+        if (hata instanceof NotFoundError) {
+        } else {
+          throw hata;
+        }
+      });
   }
 }

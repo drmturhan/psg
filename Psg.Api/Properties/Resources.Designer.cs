@@ -61,7 +61,16 @@ namespace Psg.Api.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Büyük değer gerekli.
+        ///   Looks up a localized string similar to {0} alanına veri girilmesi zorunludur..
+        /// </summary>
+        internal static string AlanaVeriGirilmesiZorunlu {
+            get {
+                return ResourceManager.GetString("AlanaVeriGirilmesiZorunlu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Büyük değer gerekli..
         /// </summary>
         internal static string BuyukDegerGerekli {
             get {
@@ -79,7 +88,7 @@ namespace Psg.Api.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to İşlem başarılı.
+        ///   Looks up a localized string similar to İşlem başarılı..
         /// </summary>
         internal static string IslemBasarili {
             get {
@@ -88,7 +97,7 @@ namespace Psg.Api.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to İşlem gerçekleşmedi.
+        ///   Looks up a localized string similar to İşlem gerçekleşmedi!.
         /// </summary>
         internal static string IslemGerceklesmedi {
             get {
@@ -97,16 +106,7 @@ namespace Psg.Api.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to İşlem gerçekleşmedi.
-        /// </summary>
-        internal static string IslemGerceklesmesi {
-            get {
-                return ResourceManager.GetString("IslemGerceklesmesi", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Kayıt boş olamaz.
+        ///   Looks up a localized string similar to Kayıt boş olamaz..
         /// </summary>
         internal static string KayitBosOlamaz {
             get {
@@ -115,7 +115,7 @@ namespace Psg.Api.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Kayıt bulunamadı.
+        ///   Looks up a localized string similar to Kayıt bulunamadı!.
         /// </summary>
         internal static string KayitBulunamadi {
             get {
@@ -124,11 +124,29 @@ namespace Psg.Api.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sıfırdan büyük değer gerekli.
+        ///   Looks up a localized string similar to {0} alanına en az {2} en fazla {1} karakter girebilirsiniz..
+        /// </summary>
+        internal static string MetinUzunlugu {
+            get {
+                return ResourceManager.GetString("MetinUzunlugu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sıfırdan büyük değer gerekli..
         /// </summary>
         internal static string SifirdanBuyukDegerGerekli {
             get {
                 return ResourceManager.GetString("SifirdanBuyukDegerGerekli", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} alanına doğru bir tarih girilmelidir..
+        /// </summary>
+        internal static string YanlisTarih {
+            get {
+                return ResourceManager.GetString("YanlisTarih", resourceCulture);
             }
         }
     }

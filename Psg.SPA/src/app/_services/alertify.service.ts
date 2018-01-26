@@ -6,15 +6,18 @@ export class AlertifyService {
 
   constructor() { }
   confirm(message: string, okCallback: () => any, title?: string, evet?: string, iptal?: string) {
-    let evetStr: string = 'Evet';
-    let iptalStr: string = 'iptal';
-    if (evet)
+    let evetStr = 'Evet';
+    let iptalStr = 'iptal';
+    if (evet) {
       evetStr = evet;
-    if (iptal)
+    }
+    if (iptal) {
       iptalStr = iptal;
+    }
 
-    if (!title)
+    if (!title) {
       title = 'Onay';
+    }
 
     alertify.confirm()
       .setting({
@@ -30,7 +33,7 @@ export class AlertifyService {
     alertify.success(message);
   }
   error(message: string) {
-      alertify.set('notifier','position', 'bottom-center');
+    alertify.set('notifier', 'position', 'bottom-center');
     alertify.error(message);
   }
 

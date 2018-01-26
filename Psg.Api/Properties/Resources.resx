@@ -117,28 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlanaVeriGirilmesiZorunlu" xml:space="preserve">
+    <value>{0} alanına veri girilmesi zorunludur.</value>
+  </data>
   <data name="BuyukDegerGerekli" xml:space="preserve">
-    <value>Büyük değer gerekli</value>
+    <value>Büyük değer gerekli.</value>
   </data>
   <data name="DahaSonraTekrarDeneyiniz" xml:space="preserve">
     <value>Daha sonra tekrar deneyiniz.</value>
   </data>
   <data name="IslemBasarili" xml:space="preserve">
-    <value>İşlem başarılı</value>
+    <value>İşlem başarılı.</value>
   </data>
   <data name="IslemGerceklesmedi" xml:space="preserve">
-    <value>İşlem gerçekleşmedi</value>
-  </data>
-  <data name="IslemGerceklesmesi" xml:space="preserve">
-    <value>İşlem gerçekleşmedi</value>
+    <value>İşlem gerçekleşmedi!</value>
   </data>
   <data name="KayitBosOlamaz" xml:space="preserve">
-    <value>Kayıt boş olamaz</value>
+    <value>Kayıt boş olamaz.</value>
   </data>
   <data name="KayitBulunamadi" xml:space="preserve">
-    <value>Kayıt bulunamadı</value>
+    <value>Kayıt bulunamadı!</value>
+  </data>
+  <data name="MetinUzunlugu" xml:space="preserve">
+    <value>{0} alanına en az {2} en fazla {1} karakter girebilirsiniz.</value>
   </data>
   <data name="SifirdanBuyukDegerGerekli" xml:space="preserve">
-    <value>Sıfırdan büyük değer gerekli</value>
+    <value>Sıfırdan büyük değer gerekli.</value>
+  </data>
+  <data name="YanlisTarih" xml:space="preserve">
+    <value>{0} alanına doğru bir tarih girilmelidir.</value>
   </data>
 </root>

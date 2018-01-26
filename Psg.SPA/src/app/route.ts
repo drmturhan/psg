@@ -17,6 +17,8 @@ import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/ve
 import { ProfilimResolver } from './_resolvers/kullanici/profilim-resolver';
 import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/kullanicidaki-degisiklikler-kaybolsunmu.service';
 export const appRoot: Routes = [
+    { path: '', redirectTo: 'anasayfa', pathMatch: 'full' },
+    { path: 'yuklemeHatasi', component: VeriYuklenemediComponent },
     { path: 'anasayfa', component: AnasayfaComponent },
     {
         path: '',
@@ -25,7 +27,10 @@ export const appRoot: Routes = [
         children: [
             { path: 'kullanicilar', component: KullaniciListesiComponent, resolve: { kullanicilar: KullaniciListesiResolver } },
             { path: 'kullanicilar/:id', component: KullaniciDetayComponent, resolve: { kullanici: KullaniciDetayResolver } },
-            { path: 'profilim', component: KullaniciDuzeltComponent, canDeactivate: [KullanicidakiDegisikliklerKaybolsunmuGuard], resolve: { kullaniciVeriSeti: ProfilimResolver } },
+            {
+                path: 'profilim', component: KullaniciDuzeltComponent,
+                canDeactivate: [KullanicidakiDegisikliklerKaybolsunmuGuard], resolve: { kullaniciVeriSeti: ProfilimResolver }
+            },
             { path: 'arkadasliklarim', component: ArkadaslarimComponent, resolve: { arkadaslarim: ArkadaslarimResolver } },
             { path: 'mesajlar', component: MesajlarComponent },
             { path: 'bul', component: BulComponent },
@@ -33,6 +38,5 @@ export const appRoot: Routes = [
             { path: 'randevu', component: RandevuComponent }
         ]
     },
-    { path: 'yuklemeHatasi', component: VeriYuklenemediComponent },
     { path: '**', redirectTo: 'anasayfa', pathMatch: 'full' }
-]
+];

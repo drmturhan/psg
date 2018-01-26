@@ -1,7 +1,3 @@
-import { ListeSonuc } from './../../_models/sonuc';
-import { Cinsiyet } from './../../_models/foto';
-import { AuthService } from './../../_services/auth.service';
-import { KullaniciService } from './../../_services/kullanici.service';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
 import { Component, OnInit, ViewChild, QueryList } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -10,6 +6,10 @@ import { AlertifyService } from '../../_services/alertify.service';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap';
 import { defineLocale } from 'ngx-bootstrap/bs-moment';
 import { tr } from 'ngx-bootstrap/locale';
+import { ListeSonuc } from './../../_models/sonuc';
+import { Cinsiyet } from './../../_models/foto';
+import { AuthService } from './../../_services/auth.service';
+import { KullaniciService } from './../../_services/kullanici.service';
 @Component({
   selector: 'app-kullanici-duzelt',
   templateUrl: './kullanici-duzelt.component.html',
@@ -20,7 +20,7 @@ export class KullaniciDuzeltComponent implements OnInit {
   @ViewChild('editForm') duzenlemeFormu;
   bsConfig: Partial<BsDatepickerConfig>;
   kullanici: KullaniciYaz;
-  cinsiyetler: Cinsiyet[]
+  cinsiyetler: Cinsiyet[];
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
 
@@ -28,7 +28,7 @@ export class KullaniciDuzeltComponent implements OnInit {
   fotoUrl: string;
   constructor(
     private route: ActivatedRoute,
-    private servis: KullaniciService,
+    private kullaniciService: KullaniciService,
     private auth: AuthService,
     private uyarici: AlertifyService,
     private _localeService: BsLocaleService) { }
@@ -36,12 +36,12 @@ export class KullaniciDuzeltComponent implements OnInit {
   ngOnInit() {
     defineLocale('tr', tr);
     this._localeService.use('tr');
-    this.bsConfig = { containerClass: 'theme-red' }
+    this.bsConfig = { containerClass: 'theme-red' };
     this.route.data.subscribe(data => {
-      let kullaniciVeriSeti=data['kullaniciVeriSeti'];
-      if (kullaniciVeriSeti && kullaniciVeriSeti.kullaniciSonuc.basarili){
-      this.kullanici = kullaniciVeriSeti.kullaniciSonuc.donenNesne;
-      this.cinsiyetler = kullaniciVeriSeti.cinsiyetler;
+      const kullaniciVeriSeti = data['kullaniciVeriSeti'];
+      if (kullaniciVeriSeti && kullaniciVeriSeti.kullaniciSonuc.basarili) {
+        this.kullanici = kullaniciVeriSeti.kullaniciSonuc.donenNesne;
+        this.cinsiyetler = kullaniciVeriSeti.cinsiyetler;
       }
     });
     this.auth.suankiFotoUrl.subscribe(fotoUrl => this.fotoUrl = fotoUrl);
@@ -53,16 +53,16 @@ export class KullaniciDuzeltComponent implements OnInit {
       imageAnimation: NgxGalleryAnimation.Slide,
       preview: false
 
-    }]
+    }];
     this.galleryImages = this.getImages();
   }
 
 
   getImages(): NgxGalleryImage[] {
-    var imageUrls: NgxGalleryImage[] = [];
+    const imageUrls: NgxGalleryImage[] = [];
     for (let i = 0; i < this.kullanici.fotograflari.length; i++) {
-      var yeni: NgxGalleryImage = {};
-      var item = this.kullanici.fotograflari[i];
+      const yeni: NgxGalleryImage = {};
+      const item = this.kullanici.fotograflari[i];
       yeni.small = item.url;
       yeni.medium = item.url;
       yeni.big = item.url;
@@ -75,23 +75,10 @@ export class KullaniciDuzeltComponent implements OnInit {
 
   kaydet() {
     const id = this.auth.kullaniciNumarasiniAl();
-    this.servis.guncelle(id, this.kullanici).subscribe(
+    this.kullaniciService.update(id, this.kullanici).subscribe(
       next => {
         this.duzenlemeFormu.reset(this.kullanici);
         this.uyarici.success('Kaydedildi');
-      },
-      hata => {
-        if (!hata['ok']) {
-          if (hata['status'] == 401) {
-            this.uyarici.warning("Sisteme giriş yapmadınız veya oturum süresi dolmuş..");
-            this.uyarici.message("Lütfen sisteme giriş yapın!");
-          }
-          else {
-
-            this.uyarici.error("Kayıp yapılamadı! Kayıt yapılırken bir hata oluştu. ");
-          }
-        }
-
       });
   }
   asilFotoDegisti(url: string) {

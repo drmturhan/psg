@@ -1,11 +1,11 @@
-import { Foto } from './../../../_models/foto';
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { environment } from '../../../../environments/environment';
+import { Foto } from './../../../_models/foto';
 import { AuthService } from '../../../_services/auth.service';
 import { KullaniciService } from '../../../_services/kullanici.service';
 import { AlertifyService } from '../../../_services/alertify.service';
-import * as _ from "underscore";
+import * as _ from 'underscore';
 @Component({
   selector: 'fotograf-duzenleyici',
   templateUrl: './fotograf-duzenleyici.component.html',
@@ -59,8 +59,9 @@ export class FotografDuzenleyiciComponent implements OnInit {
   }
   public fotoUrlAyarla(fotoUrl: string) {
     let url = environment.bosFotoUrl;
-    if (this.authService.suankiKullanici.profilFotoUrl !== '')
+    if (this.authService.suankiKullanici.profilFotoUrl !== '') {
       url = this.authService.suankiKullanici.profilFotoUrl;
+    }
     this.authService.kullaniciFotografiniDegistir(fotoUrl);
   }
   asilFotoYap(foto: Foto) {
@@ -87,11 +88,10 @@ export class FotografDuzenleyiciComponent implements OnInit {
     this.kullaniciService.fotografSil(this.authService.kullaniciNumarasiniAl(), id)
       .subscribe(() => {
         this.fotograflar.splice(_.findIndex(this.fotograflar, { id: id }), 1);
-        this.uyarici.success("Fotoğraf silindi!");
+        this.uyarici.success('Fotoğraf silindi!');
       },
-      hata => this.uyarici.error("Fotoğraf silinemedi!")
+      hata => this.uyarici.error('Fotoğraf silinemedi!')
       );
-
   }
 }
 
