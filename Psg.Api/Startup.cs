@@ -1,4 +1,9 @@
 ﻿using AutoMapper;
+using Core.Base;
+using Core.EntityFramework;
+using Core.Mail;
+using Identity.DataAccess;
+using Identity.DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -7,14 +12,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
-using Psg.Api.Base;
-using Psg.Api.Data;
+using Psg.Api.Extensions;
 using Psg.Api.Helpers;
+using Psg.Api.Preferences;
 using Psg.Api.Repos;
 using Psg.Api.Seeds;
 using System.Net;
@@ -26,8 +31,10 @@ namespace Psg.Api
     {
         private readonly IHostingEnvironment _environment;
         public IConfigurationRoot Configuration { get; }
+        public ApiTercihleri Tercihler { get; set; }
         public Startup(IHostingEnvironment env)
         {
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -44,8 +51,19 @@ namespace Psg.Api
             string baglantiSatiri = useSqLite ? Configuration["Data:SqlLiteConnectionString"] : Configuration["Data:SqlServerConnectionString"];
             services.AddAutoMapper();
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
-
             services.Configure<FotografAyarlari>(Configuration.GetSection("FotografAyarlari"));
+            services.Configure<ApiTercihleri>(Configuration.GetSection("ApiTercihleri"));
+            services.Configure<UygulamaAyarlari>(Configuration.GetSection("AppSettings"));
+            services.Configure<EpostaHesapBilgileri>(Configuration.GetSection("SistemPostaHesapBilgileri"));
+            services.Configure<SMSHesapBilgileri>(Configuration.GetSection("SistemSMSHesapBilgileri"));
+
+
+
+            var sp = services.BuildServiceProvider();
+            Tercihler = sp.GetService<IOptions<ApiTercihleri>>().Value;
+
+
+            services.AddTransient<IEmailSender, PostaciKit>();
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
             services.AddTransient<ITypeHelperService, TypeHelperService>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -55,33 +73,42 @@ namespace Psg.Api
                 return new UrlHelper(actionContext);
             });
 
-            services.AddDbContext<IdentityContext>(options =>
+            services.AddDbContexts(useSqLite, baglantiSatiri, Tercihler);
+
+            if (Tercihler.AspNetCoreIdentityKullan)
             {
-                options.UseSqlServer(baglantiSatiri);
-            });
-            services.AddDbContext<PsgContext>(options =>
-            {
-                options.UseSqlServer(baglantiSatiri);
-            });
+
+                services.AddMTIdentity(Configuration);
+
+            }
             services.AddTransient<KullaniciRepository>();
             services.AddTransient<ISeederManager, SeederManager>();
-            services.AddTransient<UserSeeder>();
 
-            services.AddScoped<IAuthRepository, AuthRepository>();
+            
             services.AddScoped<IKullaniciRepository, KullaniciRepository>();
+
+
+
             services.AddScoped<ICinsiyetRepository, CinsiyetRepository>();
             services.AddScoped<IArkadaslikRepository, ArkadaslikRepository>();
             services.AddScoped<IUykuTestRepository, UykuTestRepository>();
-            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value);
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            var uygulamaAyarlari = sp.GetService<IOptions<UygulamaAyarlari>>().Value;
+
+   
+           services.AddAuthentication()
                 .AddJwtBearer(options =>
                 {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(uygulamaAyarlari.JwtKey)),
+                        ValidIssuer = "",
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidAudience= "",
+                        ValidateAudience=false
 
                     };
 
@@ -97,12 +124,17 @@ namespace Psg.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISeederManager seederManager)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                
             }
             else
             {
+
+                
                 app.UseExceptionHandler(builder =>
                 {
                     builder.Run(async context =>
@@ -117,7 +149,8 @@ namespace Psg.Api
                     });
                 });
             }
-            seederManager.SeedAll();
+
+
             app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials()); ;
             app.UseAuthentication();
             app.UseMvc();

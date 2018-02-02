@@ -1,15 +1,14 @@
 export class Foto {
-    id?:number;
-    url?:string;
-    aciklama?:string;
-    eklenmeTarihi?:Date;
-    profilFotografi?:boolean
+    id?: number;
+    url?: string;
+    aciklama?: string;
+    eklenmeTarihi?: Date;
+    profilFotografi?: boolean;
 
 }
 
-export class Cinsiyet
-{
-id:number;
-cinsiyetAdi:string;
+export class Cinsiyet {
+    cinsiyetId: number;
+    cinsiyetAdi: string;
 }
 

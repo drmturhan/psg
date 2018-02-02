@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
@@ -16,15 +15,17 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../environments/environment';
 import { BadInputError } from '../_hatalar/bad-input';
 import { AppError } from '../_hatalar/app-error';
+import { AuthUser } from '../_models/auth-user';
 
 @Injectable()
 export class AuthService {
   baseUrl = environment.apiUrl;
   userToken: any;
+  decodedToken: any;
   suankiKullanici: Kullanici;
   private fotoUrl = new BehaviorSubject<string>(environment.bosFotoUrl);
   suankiFotoUrl = this.fotoUrl.asObservable();
-  constructor(private authHttp: HttpClient, private helper: JwtHelperService, private router: Router) { }
+  constructor(private authHttp: HttpClient, private jwtHelperService: JwtHelperService, private router: Router) { }
 
   kullaniciFotografiniDegistir(fotoUrl: string) {
     this.fotoUrl.next(fotoUrl);
@@ -32,64 +33,70 @@ export class AuthService {
 
   login(model: any) {
 
-    return this.authHttp.post(this.baseUrl + 'auth/girisyap', model).map((response: Response) => {
-      const token = response['tokenString'];
-      const kullanici = response['kullanici'];
-      if (token) {
-        localStorage.setItem('access_token', token);
-        localStorage.setItem('kullanici', JSON.stringify(kullanici));
-        this.userToken = token;
-        this.suankiKullanici = kullanici;
+    return this.authHttp.post<AuthUser>(this.baseUrl + 'account/girisyap', model,
+      {
+        headers: new HttpHeaders().set('Content-Type', 'application/json')
+      }).map(gelenNesne => {
+        localStorage.setItem('access_token', gelenNesne.tokenString);
+        localStorage.setItem('kullanici', JSON.stringify(gelenNesne.kullanici));
+        this.userToken = gelenNesne.tokenString;
+        this.suankiKullanici = gelenNesne.kullanici;
         let url = environment.bosFotoUrl;
         if (this.suankiKullanici.profilFotoUrl !== '') {
           url = this.suankiKullanici.profilFotoUrl;
         }
         this.kullaniciFotografiniDegistir(url);
-      }
-    });
-  }
-  kullaniciNumarasiniAl(): number {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      console.log(this.helper.getTokenExpirationDate(token));
-      return +this.helper.decodeToken(token)['nameid'];
-    }
-  }
-  kullaniciAdiniAl(): string {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      console.log(this.helper.getTokenExpirationDate(token));
-      return this.helper.decodeToken(token)['unique_name'];
-    }
-  }
-  register(uyeBilgisi: UyeBilgisi) {
-    return this.authHttp.post(this.baseUrl + 'auth/uyeol', uyeBilgisi)
-      .catch((hata: Response) => {
-        if (hata.status = 400) {
-          return Observable.throw(new BadInputError(hata.json));
-        }
-        return Observable.throw(new AppError(hata.json()));
       });
   }
-  loggedIn(): boolean {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      if (!this.helper.isTokenExpired(token)) {
-        return true;
-      }
+  kullaniciNumarasiniAl(): number {
+    if (!this.suankiKullanici) {
+      return -1;
     }
-    return false;
+    return this.suankiKullanici.id;
+  }
+  kullaniciAktiveEt(kullaniciNo: number, kod: string) {
+    return this.authHttp.get(`http://localhost:55126/api/account/kullaniciepostasinionayla?userId=${kullaniciNo}&code=${kod}`);
+  }
+  yenidenAktivasyonkoduGonder(kullaniciAdi: string, epostaAdresi: string) {
+    return this.authHttp.
+      get(`http://localhost:55126/api/account/onaykodunubirdahagonder/?kullaniciAdi=${kullaniciAdi}&eposta=${epostaAdresi}`);
+  }
+
+  kullaniciGuvenlikKoduDogrumu(kod: string) {
+    return this.authHttp.get(`http://localhost:55126/api/account/guvenlikkodudogrumu?kod=${kod}`);
+  }
+  kullaniciAdiniAl(): string {
+    if (!this.suankiKullanici) {
+      return null;
+    }
+    return this.suankiKullanici.tamAdi;
+  }
+  register(uyeBilgisi: UyeBilgisi) {
+    return this.authHttp.post('http://localhost:55126/api/account/uyelikbaslat', uyeBilgisi,
+      {
+        headers: new HttpHeaders().set('Content-Type', 'application/json')
+      })
+      .catch(this.hataYonetici);
+  }
+  loggedIn(): boolean {
+    const token = this.jwtHelperService.tokenGetter();
+    if (!token) {
+      return false;
+    }
+    const durum = !this.jwtHelperService.isTokenExpired(token);
+    return durum;
   }
 
 
   logout() {
     this.userToken = null;
+    this.decodedToken = null;
     this.suankiKullanici = null;
     localStorage.removeItem('access_token');
     localStorage.removeItem('kullanici');
     this.router.navigate(['/']);
   }
-  hataYoneti(hata: any) {
+  hataYonetici(hata: any) {
     const uygulamaHatasi = hata.headers.get('Uygulama-Hatasi');
     if (uygulamaHatasi) {
       return Observable.throw(uygulamaHatasi);

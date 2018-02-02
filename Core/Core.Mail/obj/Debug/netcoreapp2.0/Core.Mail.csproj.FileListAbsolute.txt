@@ -1,0 +1,12 @@
+D:\GitProjeleri\psg\Core\Core.Mail\bin\Debug\netcoreapp2.0\Properties\Resources.resx
+D:\GitProjeleri\psg\Core\Core.Mail\bin\Debug\netcoreapp2.0\Core.Mail.deps.json
+D:\GitProjeleri\psg\Core\Core.Mail\bin\Debug\netcoreapp2.0\Core.Mail.dll
+D:\GitProjeleri\psg\Core\Core.Mail\bin\Debug\netcoreapp2.0\Core.Mail.pdb
+D:\GitProjeleri\psg\Core\Core.Mail\bin\Debug\netcoreapp2.0\Core.Base.dll
+D:\GitProjeleri\psg\Core\Core.Mail\bin\Debug\netcoreapp2.0\Core.Base.pdb
+D:\GitProjeleri\psg\Core\Core.Mail\obj\Debug\netcoreapp2.0\Core.Mail.csprojResolveAssemblyReference.cache
+D:\GitProjeleri\psg\Core\Core.Mail\obj\Debug\netcoreapp2.0\Core.Mail.csproj.CoreCompileInputs.cache
+D:\GitProjeleri\psg\Core\Core.Mail\obj\Debug\netcoreapp2.0\Core.Mail.AssemblyInfoInputs.cache
+D:\GitProjeleri\psg\Core\Core.Mail\obj\Debug\netcoreapp2.0\Core.Mail.AssemblyInfo.cs
+D:\GitProjeleri\psg\Core\Core.Mail\obj\Debug\netcoreapp2.0\Core.Mail.dll
+D:\GitProjeleri\psg\Core\Core.Mail\obj\Debug\netcoreapp2.0\Core.Mail.pdb

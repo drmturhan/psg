@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'uyelik-basarili',
+  selector: 'app-uyelik-basarili',
   templateUrl: './uyelik-basarili.component.html',
   styleUrls: ['./uyelik-basarili.component.css']
 })
 export class UyelikBasariliComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
   }
-
+  aktivasyonEkraniniAc() {
+    this.router.navigateByUrl('/epostaonayla');
+  }
 }

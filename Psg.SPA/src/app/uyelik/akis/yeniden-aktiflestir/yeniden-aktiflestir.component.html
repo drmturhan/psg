@@ -1,0 +1,23 @@
+<form #form="ngForm" (ngSubmit)="gonder(form)">
+  <div class="container">
+    <div class="form-control">
+      <label>Kullanıcı Adı</label>
+      <input type="text" name="kullaniciAdi" ngModel placeholder="Kullanıcı adı">
+    </div>
+    <div class="form-control">
+      <label>Eposta adresi</label>
+      <input type="text" name="epostaAdresi" ngModel  placeholder="Eposta adresi">
+    </div>
+    <button class="btn btn-success" type="submit">Aktivasyon Epostası Gönder</button>
+  </div>
+</form>
+
+<div class="alert alert-success" *ngIf="!hataMesaji&& onayPostasiGonderildi">
+  <h3>İşlem başarılı</h3>
+  <p>Lütfen posta kutuzu kontrol edin. Kullanıcı aktifkeştirme epostasını bulun ve aktifleştirme linkini tıklayın</p>
+</div>
+
+<div class="alert alert-error" *ngIf="hataMesaji && onayPostasiGonderildi">
+  <h3>İşlem başarısiz</h3>
+  <p>{{hataMesaji}}</p>
+</div>

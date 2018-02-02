@@ -1,0 +1,34 @@
+<div class="container" *ngIf="sonuc===true">
+
+  <div class="alert alert-success">
+    <h3>
+      <p>
+        Tebrikler!!!
+      </p>
+      <p>
+        Kullanıcı hesabınız aktifleştirildi.
+      </p>
+      <p>
+        Sisteme kullanıcı adı ve şifrenizi kullanarak giriş yapabilirsiniz....
+      </p>
+    </h3>
+  </div>
+</div>
+
+<div class="container" *ngIf="sonuc===false">
+  <div class="alert alert-danger">
+    <h3>
+      <p>
+        Hata
+      </p>
+      <p>
+        Kullanıcı kodu aktifleştirilemedi veya zaten aktilleştirilmiş durumda!
+      </p>
+      <p>
+        Kullanıcı adı ve şifrenizi kullanarak sisteme giriş yapmayı deneyin. Eğer başarısız olursa,
+        lütfen aşağıdaki linklerle tekrar deneyiniz veya sistem yöneticisine başvurunuz.
+      </p>
+    </h3>
+  </div>
+
+</div>

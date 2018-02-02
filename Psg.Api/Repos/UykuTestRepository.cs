@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Psg.Api.Base;
-using Psg.Api.Data;
+using Psg.Api.DbContexts;
 using Psg.Api.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;

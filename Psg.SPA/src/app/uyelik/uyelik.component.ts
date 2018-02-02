@@ -1,23 +1,24 @@
-import { Response } from '@angular/http';
-import { UyeBilgisi } from './../_models/kullanici';
-import { Component, OnInit, Output, EventEmitter, AfterViewInit, QueryList, ViewChildren, ElementRef } from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChild,
+  ViewChildren
+} from '@angular/core';
+import {
+  AbstractControl, FormBuilder, FormControl, FormControlName, FormGroup, Validators
+} from '@angular/forms';
+
+import { Observable } from 'rxjs/Observable';
+import { AppError } from '../_hatalar/app-error';
+import { BadInputError } from '../_hatalar/bad-input';
+import { Cinsiyet } from '../_models/foto';
+import { UyeBilgisi } from '../_models/kullanici';
 import { AlertifyService } from '../_services/alertify.service';
 import { AuthService } from '../_services/auth.service';
-import { FormGroup, FormControl, FormBuilder, Validators, FormControlName, AbstractControl } from '@angular/forms';
-import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap';
-import { defineLocale } from 'ngx-bootstrap/bs-moment';
-import { tr } from 'ngx-bootstrap/locale';
-import { Cinsiyet } from '../_models/foto';
+import { CinsiyetlerService } from '../_services/cinsiyetler.service';
 import { KullaniciService } from '../_services/kullanici.service';
 import { GenericValidator } from '../_validators/generic-validator';
-import { validasyonMesajlari, uyelikFormuEksikMesaji } from './validasyon.mesajlari';
-import { ViewChild } from '@angular/core';
 import { UyelikValidatorleri } from './uyelik.validators';
-import { AppError } from '../_hatalar/app-error';
-import { Observable } from 'rxjs/Observable';
-import { BadInputError } from '../_hatalar/bad-input';
-import { CinsiyetlerService } from '../_services/cinsiyetler.service';
-
+import { uyelikFormuEksikMesaji, validasyonMesajlari } from './validasyon.mesajlari';
+import { BsDatepickerConfig } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-uyelik',
@@ -27,10 +28,9 @@ import { CinsiyetlerService } from '../_services/cinsiyetler.service';
 export class UyelikComponent implements OnInit, AfterViewInit {
 
   @Output() iptal = new EventEmitter();
-
+  bsConfig: Partial<BsDatepickerConfig>;
   @ViewChildren(FormControlName, { read: ElementRef })
   formInputElements: QueryList<any>;
-  bsConfig: Partial<BsDatepickerConfig>;
   uyelikFormu: FormGroup;
   uyelikBasvurusuTamam: boolean;
   cinsiyetler: Cinsiyet[];
@@ -47,10 +47,10 @@ export class UyelikComponent implements OnInit, AfterViewInit {
     private kullaniciService: KullaniciService,
     private cinstiyetlerService: CinsiyetlerService,
     private uyarici: AlertifyService,
-    private fb: FormBuilder,
-    private _localeService: BsLocaleService) {
+    private fb: FormBuilder) {
     this.validationMessages = validasyonMesajlari();
     this.genericValidator = new GenericValidator(this.validationMessages);
+
   }
 
   uyeliKFromunuYarat() {
@@ -75,16 +75,34 @@ export class UyelikComponent implements OnInit, AfterViewInit {
 
       soyad: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       cinsiyetNo: [1],
-      dogumTarihi: [null, Validators.required],
+      dogumTarihi: ['', Validators.required],
       ePosta: ['', [Validators.required, Validators.email]],
       telefonNumarasi: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(10)]],
+    });
+  }
+  denemeKullaniciYarat() {
+    this.uyelikFormu.patchValue({
+      kullaniciAdi: 'gozde',
+      sifreGrup: {
+        sifre: 'Akd34630.',
+        sifreKontrol: 'Akd34630.'
+      },
+      unvan: 'Doç.Dr.',
+      ad: 'Gözde2',
+      soyad: 'Turhan3',
+      digerAd: '',
+      cinsiyetNo: 1,
+      ePosta: 'muratturhan@akdeniz.edu.tr',
+      telefonNumarasi: 53225323,
+      dogumTarihi: new Date('1970-11-15')
+
     });
   }
 
   isUserNameUnique(control: FormControl) {
     const q = new Promise((resolve, reject) => {
       setTimeout(() => {
-        this.kullaniciService.kullaniciVar(control.value).subscribe(sonuc => {
+        this.kullaniciService.kullaniciAdiVar(control.value).subscribe(sonuc => {
           if (sonuc) {
             resolve({ 'kullaniciAdiKullaniliyor': true });
           } else {
@@ -97,14 +115,12 @@ export class UyelikComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    defineLocale('tr', tr);
-    this._localeService.use('tr');
-    this.bsConfig = { containerClass: 'theme-red' };
+    this.bsConfig = { containerClass: 'theme-red', dateInputFormat: 'DD.MM.YYYY' };
     this.kullaniciVarsaCikisaZorla();
-    this.cinstiyetlerService.list<Cinsiyet[]>().subscribe(
+    this.cinstiyetlerService.list().subscribe(
       data => this.cinsiyetler = data);
     this.uyeliKFromunuYarat();
-
+    this.denemeKullaniciYarat();
   }
 
   public ngAfterViewInit(): void {
@@ -114,7 +130,7 @@ export class UyelikComponent implements OnInit, AfterViewInit {
     // Merge the blur event observable with the valueChanges observable
     Observable
       .merge(this.uyelikFormu.valueChanges, ...controlBlurs)
-      .debounceTime(800)
+      .debounceTime(600)
       .subscribe(value => {
         this.displayMessage = this.genericValidator.processMessages(this.uyelikFormu);
         this.uyeOlAktif = true;
@@ -133,7 +149,6 @@ export class UyelikComponent implements OnInit, AfterViewInit {
     //       });
     // }
   }
-
 
   private kullaniciVarsaCikisaZorla() {
     if (this.authService.loggedIn()) {
@@ -167,7 +182,6 @@ export class UyelikComponent implements OnInit, AfterViewInit {
   vazgec() {
     this.iptal.emit(false);
     this.uyarici.message('Üyelik isteği iptal edildi...');
-
   }
 
   kapat() {

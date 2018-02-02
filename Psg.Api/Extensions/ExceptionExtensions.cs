@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.Base;
+using Core.EntityFramework;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Psg.Api.Base;
 using System;

@@ -22,11 +22,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core\Core.Base\Core.Base.csproj" />
+    <ProjectReference Include="..\Core\Core.EntityFramework\Core.EntityFramework.csproj" />
+    <ProjectReference Include="..\Core\Core.Mail\Core.Mail.csproj" />
+    <ProjectReference Include="..\Core\Identity.DataAccess\Identity.DataAccess.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Seeds\Veriler\kullanicilar.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Seeds\Veriler\MedeniHaller.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

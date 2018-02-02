@@ -15,6 +15,20 @@ export class Kullanici {
 }
 
 
+export class KullaniciBilgi {
+    id?: number;
+    tamAdi?: string;
+    CinsiyetNo?: number;
+    yasi?: number;
+    eposta?: string;
+    epostaOnaylandi?: boolean;
+    telefonNumarasi?: string;
+    telefonNumarasiOnaylandi?: boolean;
+    profilFotoUrl?: string;
+}
+
+
+
 export class KullaniciYaz {
     id?: number;
     kullaniciAdi?: string;
@@ -59,3 +73,5 @@ export class UyeBilgisi {
     eposta?: string;
     telefonNumarasi?: string;
 }
+
+

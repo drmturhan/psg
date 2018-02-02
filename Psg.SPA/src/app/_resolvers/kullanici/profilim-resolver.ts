@@ -30,7 +30,7 @@ export class ProfilimResolver implements Resolve<KullaniciVeriSeti> {
         }
         const veriKaynaklari = [
             this.kullaniciService.kullaniciBulDegistirmekIcin(id),
-            this.cinsiyetlerService.list<KayitSonuc<Kullanici>>()
+            this.cinsiyetlerService.list()
         ];
         return forkJoin(veriKaynaklari).map(data => {
             this.donecekVeriSeti.kullaniciSonuc = data[0];

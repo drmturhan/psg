@@ -14,13 +14,13 @@ import { ListeSonuc } from '../../_models/sonuc';
 export class KullaniciListesiResolver implements Resolve<KullanicilarVeriSeti> {
 
   constructor(
-    private service: KullaniciService,
+    private kullaniciService: KullaniciService,
     private router: Router
-    ) { }
+  ) { }
   donecekVeriSeti: KullanicilarVeriSeti = new KullanicilarVeriSeti();
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<KullanicilarVeriSeti> {
     const veriKaynaklari = [
-      this.service.list<ListeSonuc<Kullanici>>()
+      this.kullaniciService.listeGetirKullanicilar()
     ];
     return forkJoin(veriKaynaklari).map(data => {
       this.donecekVeriSeti.kullaniciSonuc = data[0];

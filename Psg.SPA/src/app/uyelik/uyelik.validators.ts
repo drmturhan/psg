@@ -36,7 +36,7 @@ export class UyelikValidatorleri {
     static kullaniciAdiVar(control: AbstractControl, kullaniciService: KullaniciService): Promise<ValidationErrors | null> {
         return new Promise((resolve, reject) => {
             let kullaniciVar = false;
-            kullaniciService.kullaniciVar(control.value).map(res => {
+            kullaniciService.kullaniciAdiVar(control.value).map((res: boolean) => {
                 kullaniciVar = res;
                 if (kullaniciVar) {
                     resolve({ 'kullaniciVar': true });

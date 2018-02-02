@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Core.Base;
+using Identity.DataAccess;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Psg.Api.Data;
 using Psg.Api.Models;
 using System;
@@ -11,13 +14,18 @@ namespace Psg.Api.Seeds
 {
     public class CinsiyetSeeder : ISeeder
     {
-        private readonly IdentityContext idDb;
+        private readonly MTIdentityDbContext idDb;
         public CinsiyetSeeder()
         {
-            idDb = new IndetityContextFactory().CreateDbContext(null);
+            //idDb = new MTIdentityDbContextFactory().CreateDbContext(null);
+            //var migrasyonGerekli = idDb.Database.GetPendingMigrations();
+            //if (migrasyonGerekli.Count() > 0)
+            //{
+            //    idDb.Database.Migrate();
+            //}
         }
 
-        public CinsiyetSeeder(IdentityContext idDb)
+        public CinsiyetSeeder(MTIdentityDbContext idDb)
         {
             this.idDb = idDb;
         }
@@ -29,15 +37,15 @@ namespace Psg.Api.Seeds
         {
             try
             {
-                if (idDb.Cinsiyetler.Any()) return;
-                var dosyaAdi = "Seeds/Veriler/cinsiyetler.json";
-                var veriJson = await File.ReadAllTextAsync(dosyaAdi);
-                var veriler = JsonConvert.DeserializeObject<List<Cinsiyet>>(veriJson);
-                foreach (var veri in veriler)
-                {
-                    idDb.Cinsiyetler.Add(veri);
-                }
-                idDb.SaveChanges();
+                //if (idDb.Cinsiyetler.Any()) return;
+                //var dosyaAdi = "Seeds/Veriler/cinsiyetler.json";
+                //var veriJson = await File.ReadAllTextAsync(dosyaAdi);
+                //var veriler = JsonConvert.DeserializeObject<List<KisiCinsiyet>>(veriJson);
+                //foreach (var veri in veriler)
+                //{
+                //    idDb.Cinsiyetler.Add(veri);
+                //}
+                //idDb.SaveChanges();
             }
             catch (Exception hata)
             {

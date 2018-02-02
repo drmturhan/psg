@@ -1,4 +1,4 @@
-<div *ngIf="arkadasliklarim.donenListe">
+<div *ngIf="arkadasliklarim.donenListe?.length>0">
     <div class="container">
         <div class="row equal">
             <h3>Liste</h3>
@@ -29,6 +29,6 @@
     </div>
 </div>
 
-<div *ngIf="!arkadasliklarim.donenListe">
+<div *ngIf="!arkadasliklarim.donenListe || arkadasliklarim.donenListe?.length==0">
     <h3>Hiç arkadaşlığınız yok!</h3>
 </div>

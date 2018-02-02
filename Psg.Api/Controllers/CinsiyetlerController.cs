@@ -1,16 +1,10 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
+using Identity.DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Psg.Api.Base;
 using Psg.Api.Dtos;
-using Psg.Api.Helpers;
-using Psg.Api.Models;
 using Psg.Api.Repos;
 
 namespace Psg.Api.Controllers
@@ -37,6 +31,8 @@ namespace Psg.Api.Controllers
 
             return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
             {
+
+
                 var kayitlar = await repo.ListeGetirCinsiyetAsync();
                 return Ok(kayitlar);
             });

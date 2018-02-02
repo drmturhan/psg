@@ -20,7 +20,7 @@ export class KullaniciAsyncValidators {
             if (control.value == null || control.value === '') {
                 resolve(null);
             } else {
-                this.kullaniciService.kullaniciVar(control.value).map(sonuc => {
+                this.kullaniciService.kullaniciAdiVar(control.value).map(sonuc => {
                     sonuc ? resolve({ 'kullaniciVar': true }) : resolve(null);
                 });
             }

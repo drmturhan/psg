@@ -27,25 +27,28 @@
             </div>
             <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.cinsiyetNo, 'has-success': (!displayMessage.cinsiyetNo && uyelikFormu.get('cinsiyetNo')?.touched)}">
                 <select id="cinsiyetNo" class="form-control" formControlName="cinsiyetNo">
-                    <option *ngFor="let c of cinsiyetler" value="{{ c.id }}">{{ c.cinsiyetAdi}}</option>
+                    <option *ngFor="let c of cinsiyetler" value="{{ c.cinsiyetId }}">{{ c.cinsiyetAdi}}</option>
                 </select>
             </div>
 
             <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.dogumTarihi, 'has-success': (!displayMessage.dogumTarihi && uyelikFormu.get('dogumTarihi')?.touched)}">
                 <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi" formControlName="dogumTarihi">
                 <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.dogumTarihi}"></span>
+                <span class="help-block" *ngIf="displayMessage.dogumTarihi">
+                    ay.gün.yıl formatında bilgi giriniz
+                </span>
 
             </div>
         </div>
         <div class="col-xs-6 col-offset-lg-2 col-lg-4">
             <h4>Güvenlik bilgileri</h4>
-            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.kullaniciAdi, 'has-success': (!displayMessage.kullaniciAdi && uyelikFormu.get('kullaniciAdi')?.touched)}">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.kullaniciAdi  || displayMessage.kullaniciAdiKullaniliyor, 'has-success': (!displayMessage.kullaniciAdi && uyelikFormu.get('kullaniciAdi')?.touched)}">
                 <input type="text" name="kullaniciAdi" class="form-control" placeholder="Kullanıcı adı" formControlName="kullaniciAdi">
                 <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.kullaniciAdi,'glyphicon-ok':!displayMessage.kullaniciAdi && uyelikFormu.get('kullaniciAdi')?.touched}"></span>
                 <span class="help-block" *ngIf="displayMessage.kullaniciAdi">
                     {{displayMessage.kullaniciAdi}}
                 </span>
-                <span *ngIf="uyelikFormu.get('kullaniciAdi').pending " >Kullanıcı kontrol ediliyor...</span>
+                <span *ngIf="uyelikFormu.get('kullaniciAdi').pending ">Kullanıcı kontrol ediliyor...</span>
                 <span class="help-block" *ngIf="displayMessage.kullaniciAdiKullaniliyor">
                     {{displayMessage.kullaniciAdiKullaniliyor}}
                 </span>
@@ -95,6 +98,6 @@
     </div>
 </form>
 
-<uyelik-basarili *ngIf="uyelikBasvurusuTamam">
-</uyelik-basarili>
+<app-uyelik-basarili *ngIf="uyelikBasvurusuTamam">
+</app-uyelik-basarili>
 <a class="btn btn-info" (click)="kapat()" *ngIf="uyelikBasvurusuTamam">Kapat</a>

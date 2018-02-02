@@ -1,18 +1,20 @@
 import { ArkadaslarimResolver } from './_resolvers/kullanici/arkadaslarim-resolver';
 import { ArkadaslarimComponent } from './kullanicilar/arkadaslarim/arkadaslarim.component';
+
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { defineLocale } from 'ngx-bootstrap/bs-moment';
+import { tr } from 'ngx-bootstrap/locale';
 import { KullaniciService } from './_services/kullanici.service';
 import { AlertifyService } from './_services/alertify.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router/';
-import { HttpModule } from '@angular/http';
+
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { AnasayfaComponent } from './anasayfa/anasayfa.component';
 import { UyelikComponent } from './uyelik/uyelik.component';
 import { JwtModule } from '@auth0/angular-jwt';
-import { RequestOptions, Http } from '@angular/http/';
 import { AuthService } from './_services/auth.service';
 import { MesajlarComponent } from './mesajlar/mesajlar.component';
 import { NgxGalleryModule } from 'ngx-gallery';
@@ -42,12 +44,17 @@ import localeTrExtra from '@angular/common/locales/extra/tr';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { KullaniciAsyncValidators } from './uyelik/kullanici-adi-var-validator.service';
 import { AppError } from './_hatalar/app-error';
-import { MTAppErrorHandler } from './_hatalar/app-error-handler';
+import { AppErrorProvider } from './_hatalar/app-error-handler';
 import { CinsiyetlerService } from './_services/cinsiyetler.service';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './_services/auth-interceptor';
 
 
+import { YenidenAktiflestirComponent } from './uyelik/akis/yeniden-aktiflestir/yeniden-aktiflestir.component';
+import { EpostaOnaylandiComponent } from './uyelik/akis/eposta-onay/eposta-onaylandi.component';
+import { DataService } from './_services/data.service';
+import { TokenInterceptor, TokenInterceptorProvider } from './_interceptors/token.interceptor';
+import { ErrorInterceptorProvider } from './_interceptors/error.interceptor';
+
+defineLocale('tr', tr);
 
 registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
 @NgModule({
@@ -68,7 +75,9 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     FotografDuzenleyiciComponent,
     UyelikBasariliComponent,
     ArkadaslarimComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    EpostaOnaylandiComponent,
+    YenidenAktiflestirComponent
   ],
   imports: [
     BrowserModule,
@@ -77,14 +86,13 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     TooltipModule.forRoot(),
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    HttpModule,
     HttpClientModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: () => {
           return localStorage.getItem('access_token');
         },
-        whitelistedDomains: ['http://localhost:4200'],
+        whitelistedDomains: ['http://localhost:55126/'],
         skipWhenExpired: true,
       }
     }),
@@ -101,15 +109,10 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
       provide: LOCALE_ID,
       useValue: 'tr-TR'
     },
-    {
-      provide: ErrorHandler,
-      useClass: MTAppErrorHandler
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    },
+    AppErrorProvider,
+    TokenInterceptorProvider,
+    ErrorInterceptorProvider,
+    DataService,
     AuthService,
     KullaniciService,
     CinsiyetlerService,

@@ -1,7 +1,8 @@
 <nav class="navbar navbar-default">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -10,7 +11,7 @@
             <a class="navbar-brand" [routerLink]="['/anasayfa']">Polisomnografiler</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav" *ngIf="loggedIn()">
+            <ul class="nav navbar-nav" *ngIf="this.authService.loggedIn()">
                 <li routerLinkActive="active">
                     <a [routerLink]="['/yukle']">PSG Yükle </a>
                 </li>
@@ -27,27 +28,35 @@
                     <a [routerLink]="['/kullanicilar']">Kullanıcı Listesi </a>
                 </li>
             </ul>
-            <form *ngIf="!loggedIn()" #loginForm="ngForm" class="navbar-form navbar-right" (ngSubmit)="login()">
+            <form *ngIf="this.authService.loggedIn()===false" #loginForm="ngForm" class="navbar-form navbar-right" (ngSubmit)="login()">
                 <div class="form-group">
-                    <input type="text" placeholder="Kullanıcı adı" class="form-control" name="kullaniciadi" [(ngModel)]="model.kullaniciadi" required>
+                    <input type="text" placeholder="Kullanıcı adı" class="form-control" name="kullaniciadi" [(ngModel)]="model.kullaniciadi"
+                        required>
                 </div>
                 <div class="form-group">
                     <input type="password" placeholder="Şifre" class="form-control" name="sifre" [(ngModel)]="model.sifre" required>
                 </div>
                 <button type="submit" class="btn btn-success" [disabled]="!loginForm.valid">Giriş Yap</button>
             </form>
-            <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
+            <ul *ngIf="this.authService.loggedIn()" class="nav navbar-nav navbar-right">
                 <li>
                     <img src="{{fotoUrl}}" alt="{{authService.suankiKullanici?.kullaniciAdi}}">
                 </li>
                 <li class="dropdown" dropdown>
-                    <a class="dropdown-toggle" dropdownToggle>{{this.authService.suankiKullanici?.tamAdi}}<span class="caret"></span></a>
+                    <a class="dropdown-toggle" dropdownToggle>{{this.authService.suankiKullanici?.tamAdi }}
+                        <span class="caret"></span>
+                    </a>
                     <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li role="menuitem"><a class="dropdown-item" [routerLink]="['/profilim']">Profilim</a></li>
                         <li role="menuitem">
-                            <a class="dropdown-item" [routerLink]="['/arkadasliklarim']">Arkadaşlıklarım</a></li>
+                            <a class="dropdown-item" [routerLink]="['/profilim']">Profilim</a>
+                        </li>
+                        <li role="menuitem">
+                            <a class="dropdown-item" [routerLink]="['/arkadasliklarim']">Arkadaşlıklarım</a>
+                        </li>
                         <li class="divider dropdown-divider "></li>
-                        <li role="menuitem "><a class="dropdown-item " (click)="logout() ">Çıkış Yap</a></li>
+                        <li role="menuitem ">
+                            <a class="dropdown-item " (click)="logout() ">Çıkış Yap</a>
+                        </li>
                     </ul>
             </ul>
         </div>

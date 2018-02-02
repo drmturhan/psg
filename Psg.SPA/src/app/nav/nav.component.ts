@@ -12,17 +12,18 @@ import { AuthService } from '../_services/auth.service';
 })
 export class NavComponent implements OnInit {
   model: any = {};
-  kullaniciAdi: string = '';
+  kullaniciAdi = '';
   fotoUrl: string;
 
   constructor(public authService: AuthService, private uyarici: AlertifyService, private router: Router) { }
 
   ngOnInit() {
-    if (this.authService.suankiKullanici != null)
+    if (this.authService.suankiKullanici != null) {
       this.kullaniciAdi = this.authService.suankiKullanici.kullaniciAdi;
-    this.authService.suankiFotoUrl.subscribe(fotoUrl => {
-      this.fotoUrl = fotoUrl;
-    });
+      this.authService.suankiFotoUrl.subscribe(fotoUrl => {
+        this.fotoUrl = fotoUrl;
+      });
+    }
   }
   login() {
     this.authService.login(this.model).subscribe(data => {
@@ -36,11 +37,8 @@ export class NavComponent implements OnInit {
   }
   logout() {
     this.authService.logout();
-    
-  }
-  loggedIn(): boolean {
-    return this.authService.loggedIn();
 
   }
+
 
 }

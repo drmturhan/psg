@@ -16,9 +16,16 @@ import { KullaniciListesiResolver } from './_resolvers/kullanici/kullanici-liste
 import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/veri-yuklenemedi.component';
 import { ProfilimResolver } from './_resolvers/kullanici/profilim-resolver';
 import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/kullanicidaki-degisiklikler-kaybolsunmu.service';
+
+import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-basarili.component';
+import { YenidenAktiflestirComponent } from './uyelik/akis/yeniden-aktiflestir/yeniden-aktiflestir.component';
+import { EpostaOnaylandiComponent } from './uyelik/akis/eposta-onay/eposta-onaylandi.component';
 export const appRoot: Routes = [
     { path: '', redirectTo: 'anasayfa', pathMatch: 'full' },
     { path: 'yuklemeHatasi', component: VeriYuklenemediComponent },
+    { path: 'epostaonaylandi', component: EpostaOnaylandiComponent },
+    { path: 'onaypostasigonder', component: YenidenAktiflestirComponent },
+    { path: 'uyelikbasarili', component: UyelikBasariliComponent },
     { path: 'anasayfa', component: AnasayfaComponent },
     {
         path: '',
