@@ -31,7 +31,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                     return Observable.throw(new AppError(appError));
                 }
             }
-            if (hata.error['hatalar']) {
+            if (hata.error && hata.error['hatalar']) {
                 console.log(hata.error);
                 return Observable.throw(hata.error.hatalar[0]);
             }

@@ -34,7 +34,8 @@ export function validasyonMesajlari() {
         },
         ePosta: {
             required: 'Eposta  girmediniz',
-            email: 'Geçerli bir eposta adresi girmeliniz'
+            email: 'Geçerli bir eposta adresi girmeliniz',
+            epostaKullaniliyor:'Eposta adresi kullanılıyor. Başka deneyin....'
         },
         telefonNumarasi: {
             required: 'Telefon numarası girmediniz',

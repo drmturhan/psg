@@ -16,7 +16,7 @@ export class KullaniciService {
   private url: string;
 
   arkadaslikteklifEt(isteyenId: number, cevaplayanId: number) {
-    return this.dataService.get(`${this.url} kullanicilar/${isteyenId}/teklif/${cevaplayanId}`);
+    return this.dataService.post(`${this.url}kullanicilar/${isteyenId}/teklif/${cevaplayanId}`, '');
   }
   listeGetirKullanicilar() {
     return this.dataService.get<ListeSonuc<Kullanici>>(`${environment.apiUrl}kullanicilar`);
@@ -28,8 +28,11 @@ export class KullaniciService {
   update(id: number, kullanici: KullaniciYaz) {
     return this.dataService.kaydet<Kullanici>(`${environment.apiUrl}kullanicilar/${id}`, kullanici);
   }
-  kullaniciAdiVar(kullaniciAdi: string) {
-    return this.dataService.get(`${this.url}?kullaniciAdi=${kullaniciAdi}`);
+  kullaniciAdiKullanimda(kullaniciAdi: string) {
+    return this.dataService.get(`${this.url}kullanicilar/kullaniciadikullanimda?kullaniciAdi=${kullaniciAdi}`);
+  }
+  mailAdresiKullanimda(eposta: string) {
+    return this.dataService.get(`${this.url}kullanicilar/epostakullanimda?eposta=${eposta}`);
   }
   arkadasliklariGetir(): Observable<ListeSonuc<ArkadaslikListe>> {
     return this.dataService.get<ListeSonuc<ArkadaslikListe>>(`${this.url}arkadasliklar`)

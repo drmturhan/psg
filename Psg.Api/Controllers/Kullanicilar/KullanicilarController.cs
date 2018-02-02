@@ -66,15 +66,29 @@ namespace Psg.Api.Controllers
         }
 
         [AllowAnonymous]
-        [Route("kullaniciAdiVar")]
+        [Route("kullaniciadikullanimda")]
         [HttpGet()]
-        public async Task<IActionResult> Get([FromQuery]string kullaniciAdi)
+        public async Task<IActionResult> KullaniciAdiKullaniliyormu([FromQuery]string kullaniciAdi)
         {
             return await HataKontrolluCalistir<IActionResult>(async () =>
             {
                 if (string.IsNullOrEmpty(kullaniciAdi.Trim()))
                     return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = "Kullanıcı adı boş olamaz!" } }));
-                var kullaniciVar = await kullaniciRepo.KullaniciVarAsync(kullaniciAdi);
+                var kullaniciVar = await kullaniciRepo.KullaniciAdiKullanimdaAsync(kullaniciAdi);
+
+                return Ok(kullaniciVar);
+            });
+        }
+        [AllowAnonymous]
+        [Route("epostakullanimda")]
+        [HttpGet()]
+        public async Task<IActionResult> EpostaKullaniliyormu([FromQuery]string eposta)
+        {
+            return await HataKontrolluCalistir<IActionResult>(async () =>
+            {
+                if (string.IsNullOrEmpty(eposta.Trim()))
+                    return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = "Kullanıcı adı boş olamaz!" } }));
+                var kullaniciVar = await kullaniciRepo.EpostaKullanimdaAsync(eposta);
 
                 return Ok(kullaniciVar);
             });

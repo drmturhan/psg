@@ -42,7 +42,6 @@ import { registerLocaleData } from '@angular/common';
 import localeTr from '@angular/common/locales/tr';
 import localeTrExtra from '@angular/common/locales/extra/tr';
 import { TimeAgoPipe } from 'time-ago-pipe';
-import { KullaniciAsyncValidators } from './uyelik/kullanici-adi-var-validator.service';
 import { AppError } from './_hatalar/app-error';
 import { AppErrorProvider } from './_hatalar/app-error-handler';
 import { CinsiyetlerService } from './_services/cinsiyetler.service';
@@ -122,8 +121,7 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     KullaniciListesiResolver,
     ProfilimResolver,
     ArkadaslarimResolver,
-    KullanicidakiDegisikliklerKaybolsunmuGuard,
-    KullaniciAsyncValidators
+    KullanicidakiDegisikliklerKaybolsunmuGuard
   ],
   bootstrap: [AppComponent]
 })

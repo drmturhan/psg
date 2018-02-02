@@ -1,21 +1,21 @@
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, ValidationErrors, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { KullaniciService } from '../_services/kullanici.service';
 import 'rxjs/add/operator/map';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, Injector } from '@angular/core';
 
 @Injectable()
 export class UyelikValidatorleri {
-
-
-    static boslukIceremez(control: AbstractControl): ValidationErrors | null {
+    constructor(private kullaniciService: KullaniciService) {
+    }
+    boslukIceremez(control: AbstractControl): ValidationErrors | null {
         if ((control.value as string).indexOf(' ') >= 0) {
             return { boslukIceremez: true };
         }
         return null;
     }
-    static sifreKontrol(control: AbstractControl): ValidationErrors | null {
+    sifreKontrol(control: AbstractControl): ValidationErrors | null {
         const sifre = control.get('sifre');
         const sifreKontrol = control.get('sifreKontrol');
         if (sifre.pristine || sifreKontrol.pristine) {
@@ -33,18 +33,34 @@ export class UyelikValidatorleri {
         return { 'sifreKontrolBasarisiz': true };
     }
 
-    static kullaniciAdiVar(control: AbstractControl, kullaniciService: KullaniciService): Promise<ValidationErrors | null> {
-        return new Promise((resolve, reject) => {
-            let kullaniciVar = false;
-            kullaniciService.kullaniciAdiVar(control.value).map((res: boolean) => {
-                kullaniciVar = res;
-                if (kullaniciVar) {
-                    resolve({ 'kullaniciVar': true });
-                } else {
-                    resolve(null);
-                }
-            });
-        });
+    isUserNameUnique(control: FormControl) {
 
+        const q = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.kullaniciService.kullaniciAdiKullanimda(control.value).subscribe(sonuc => {
+                    if (sonuc) {
+                        resolve({ 'kullaniciAdiKullaniliyor': true });
+                    } else {
+                        resolve(null);
+                    }
+                }, () => { resolve({ 'kullaniciAdiKullaniliyor': true }); });
+            }, 500);
+        });
+        return q;
+    }
+    isMailUnique(control: FormControl) {
+
+        const q = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.kullaniciService.mailAdresiKullanimda(control.value).subscribe(sonuc => {
+                    if (sonuc) {
+                        resolve({ 'epostaKullaniliyor': true });
+                    } else {
+                        resolve(null);
+                    }
+                }, () => { resolve({ 'epostaKullaniliyor': true }); });
+            }, 1000);
+        });
+        return q;
     }
 }

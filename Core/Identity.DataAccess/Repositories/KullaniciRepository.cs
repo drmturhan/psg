@@ -15,7 +15,8 @@ namespace Identity.DataAccess.Repositories
  
     public interface IKullaniciRepository : IRepository
     {
-        Task<bool> KullaniciVarAsync(string kullaniciAdi);
+        Task<bool> KullaniciAdiKullanimdaAsync(string kullaniciAdi);
+        Task<bool> EpostaKullanimdaAsync(string kullaniciAdi);
         Task<Kullanici> BulAsync(int id);
         Task<SayfaliListe<Kullanici>> ListeGetirKullanicilarTumuAsync(KullaniciSorgu sorgu);
         Task<Foto> FotografBulAsync(int id);
@@ -93,11 +94,14 @@ namespace Identity.DataAccess.Repositories
             db.Kisiler.Remove(entity);
         }
 
-        public Task<bool> KullaniciVarAsync(string kullaniciAdi)
+        public Task<bool> KullaniciAdiKullanimdaAsync(string kullaniciAdi)
         {
             return db.Users.AnyAsync(k => k.UserName== kullaniciAdi);
         }
-
+        public Task<bool> EpostaKullanimdaAsync(string eposta)
+        {
+            return db.Users.AnyAsync(k => k.Email == eposta);
+        }
 
     }
     public class KullaniciPropertyMap

@@ -42,7 +42,7 @@
         </div>
         <div class="col-xs-6 col-offset-lg-2 col-lg-4">
             <h4>Güvenlik bilgileri</h4>
-            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.kullaniciAdi  || displayMessage.kullaniciAdiKullaniliyor, 'has-success': (!displayMessage.kullaniciAdi && uyelikFormu.get('kullaniciAdi')?.touched)}">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.kullaniciAdi  || displayMessage.kullaniciAdiKullaniliyor, 'has-success': (!displayMessage.kullaniciAdi )}">
                 <input type="text" name="kullaniciAdi" class="form-control" placeholder="Kullanıcı adı" formControlName="kullaniciAdi">
                 <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.kullaniciAdi,'glyphicon-ok':!displayMessage.kullaniciAdi && uyelikFormu.get('kullaniciAdi')?.touched}"></span>
                 <span class="help-block" *ngIf="displayMessage.kullaniciAdi">
@@ -75,12 +75,17 @@
                 </span>
             </div>
 
-            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.ePosta, 'has-success': (!displayMessage.ePosta && uyelikFormu.get('ePosta')?.touched)}">
+            <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.ePosta || displayMessage.epostaKullaniliyor, 'has-success': (!displayMessage.ePosta)}">
                 <input type="email" class="form-control" placeholder="Eposta adresi" formControlName="ePosta">
                 <span class="glyphicon form-control-feedback" [ngClass]="{'glyphicon-remove':displayMessage.ePosta,'glyphicon-ok':!displayMessage.ePosta && uyelikFormu.get('ePosta')?.touched}"></span>
                 <span class="help-block" *ngIf="displayMessage.ePosta">
                     {{displayMessage.ePosta}}
                 </span>
+                <span *ngIf="uyelikFormu.get('ePosta').pending ">Eposta adresi kontrol ediliyor...</span>
+                <span class="help-block" *ngIf="displayMessage.epostaKullaniliyor">
+                    {{displayMessage.epostaKullaniliyor}}
+                </span>
+
             </div>
             <div class="form-group has-feedback" [ngClass]="{'has-error': displayMessage.telefonNumarasi, 'has-success': (!displayMessage.telefonNumarasi && uyelikFormu.get('telefonNumarasi')?.touched)}">
                 <input type="phone" class="form-control" placeholder="Telefon Numarası" formControlName="telefonNumarasi">

@@ -23,7 +23,8 @@ import { BsDatepickerConfig } from 'ngx-bootstrap';
 @Component({
   selector: 'app-uyelik',
   templateUrl: './uyelik.component.html',
-  styleUrls: ['./uyelik.component.css']
+  styleUrls: ['./uyelik.component.css'],
+  providers: [UyelikValidatorleri]
 })
 export class UyelikComponent implements OnInit, AfterViewInit {
 
@@ -47,6 +48,7 @@ export class UyelikComponent implements OnInit, AfterViewInit {
     private kullaniciService: KullaniciService,
     private cinstiyetlerService: CinsiyetlerService,
     private uyarici: AlertifyService,
+    private uyelikValidatorlari: UyelikValidatorleri,
     private fb: FormBuilder) {
     this.validationMessages = validasyonMesajlari();
     this.genericValidator = new GenericValidator(this.validationMessages);
@@ -60,14 +62,14 @@ export class UyelikComponent implements OnInit, AfterViewInit {
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(20),
-        UyelikValidatorleri.boslukIceremez
-      ], this.isUserNameUnique.bind(this)],
+        this.uyelikValidatorlari.boslukIceremez
+      ], this.uyelikValidatorlari.isUserNameUnique.bind(this)],
       sifreGrup: this.fb.group(
         {
           sifre: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(18)]],
           sifreKontrol: ['', [Validators.required]]
         },
-        { validator: UyelikValidatorleri.sifreKontrol }
+        { validator: this.uyelikValidatorlari.sifreKontrol }
       ),
       unvan: ['', [Validators.minLength(2), Validators.maxLength(10)]],
       ad: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
@@ -76,7 +78,7 @@ export class UyelikComponent implements OnInit, AfterViewInit {
       soyad: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       cinsiyetNo: [1],
       dogumTarihi: ['', Validators.required],
-      ePosta: ['', [Validators.required, Validators.email]],
+      ePosta: ['', [Validators.required, Validators.email],[this.uyelikValidatorlari.isMailUnique.bind(this)]],
       telefonNumarasi: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(10)]],
     });
   }
@@ -99,20 +101,7 @@ export class UyelikComponent implements OnInit, AfterViewInit {
     });
   }
 
-  isUserNameUnique(control: FormControl) {
-    const q = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.kullaniciService.kullaniciAdiVar(control.value).subscribe(sonuc => {
-          if (sonuc) {
-            resolve({ 'kullaniciAdiKullaniliyor': true });
-          } else {
-            resolve(null);
-          }
-        }, () => { resolve({ 'kullaniciAdiKullaniliyor': true }); });
-      }, 500);
-    });
-    return q;
-  }
+
 
   ngOnInit() {
     this.bsConfig = { containerClass: 'theme-red', dateInputFormat: 'DD.MM.YYYY' };
