@@ -82,7 +82,6 @@
                                         <label for="unvan">Eposta adresi</label>
                                         <div class="form-inline">
                                             <input type="text" class="form-control" id="eposta" readonly name="eposta" [(ngModel)]="kullanici.eposta" placeholder="Eposta">
-                                            <button class="btn btn-info" type="button" *ngIf="!kullanici.epostaOnaylandi">Onayla</button>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -93,13 +92,7 @@
                                             <button class="btn btn-danger" type="button" *ngIf="!kullanici.telefonOnaylandi">Sil</button>
                                         </div>
                                     </div>
-                                    <fieldset>
-                                        <legend>What is Your Favorite Pet?</legend>
-                                        <input type="radio" name="animal" value="Cat" />Cats<br />
-                                        <input type="radio" name="animal" value="Dog" />Dogs<br />
-                                        <input type="radio" name="animal" value="Bird" />Birds<br />
-                                        <input type="submit" value="Submit now" />
-                                    </fieldset>
+
                                 </div>
                             </div>
 
