@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { CanDeactivate } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { KullaniciDuzeltComponent } from '../../kullanicilar/kullanici-duzelt/kullanici-duzelt.component';
+
+import { ProfilimComponent } from '../../uyelik/profilim/profilim.component';
 
 @Injectable()
-export class KullanicidakiDegisikliklerKaybolsunmuGuard implements CanDeactivate<KullaniciDuzeltComponent>{
+export class KullanicidakiDegisikliklerKaybolsunmuGuard implements CanDeactivate<ProfilimComponent>{
 
     constructor() { }
-    canDeactivate(component: KullaniciDuzeltComponent) {
+    canDeactivate(component: ProfilimComponent) {
         if (component.duzenlemeFormu) {
-            return confirm("Devam etmek istiyor musun? Kaydedilmemiş bilgiler kaybolacaktır!");
+            return confirm('Devam etmek istiyor musun? Kaydedilmemiş bilgiler kaybolacaktır!');
         }
         return true;
     }

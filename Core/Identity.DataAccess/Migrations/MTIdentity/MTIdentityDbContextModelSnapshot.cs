@@ -176,9 +176,9 @@ namespace Identity.DataAccess.Migrations.MTIdentity
 
                     b.HasIndex("MedeniHalNo");
 
-                    b.HasIndex("Ad", "Soyad", "DogumTarihi")
+                    b.HasIndex("Ad", "Soyad", "DogumTarihi", "CinsiyetNo")
                         .IsUnique()
-                        .HasName("KisiAdSoyadSogumTarihiIndeks")
+                        .HasName("KisiAdSoyadDogumTarihiCinsiyetIndeks")
                         .HasFilter("[Ad] IS NOT NULL AND [Soyad] IS NOT NULL");
 
                     b.ToTable("Kisiler","Kisi");

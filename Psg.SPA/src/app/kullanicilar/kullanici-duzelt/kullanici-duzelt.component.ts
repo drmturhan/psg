@@ -7,9 +7,11 @@ import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap';
 import { defineLocale } from 'ngx-bootstrap/bs-moment';
 import { tr } from 'ngx-bootstrap/locale';
 import { ListeSonuc } from './../../_models/sonuc';
-import { Cinsiyet } from './../../_models/foto';
+import { Cinsiyet, KisiFoto } from './../../_models/foto';
 import { AuthService } from './../../_services/auth.service';
 import { KullaniciService } from './../../_services/kullanici.service';
+import * as _ from 'underscore';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-kullanici-duzelt',
   templateUrl: './kullanici-duzelt.component.html',
@@ -20,20 +22,22 @@ export class KullaniciDuzeltComponent implements OnInit {
   @ViewChild('editForm') duzenlemeFormu;
   bsConfig: Partial<BsDatepickerConfig>;
   kullanici: KullaniciYaz;
+  saveUrl= '';
   cinsiyetler: Cinsiyet[];
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
-
+  suankiProfilFotografi: KisiFoto;
 
   fotoUrl: string;
   constructor(
     private route: ActivatedRoute,
     private kullaniciService: KullaniciService,
-    private auth: AuthService,
+    private authService: AuthService,
     private uyarici: AlertifyService,
     private _localeService: BsLocaleService) { }
 
   ngOnInit() {
+    
     defineLocale('tr', tr);
     this._localeService.use('tr');
     this.bsConfig = { containerClass: 'theme-red' };
@@ -42,9 +46,10 @@ export class KullaniciDuzeltComponent implements OnInit {
       if (kullaniciVeriSeti && kullaniciVeriSeti.kullaniciSonuc.basarili) {
         this.kullanici = kullaniciVeriSeti.kullaniciSonuc.donenNesne;
         this.cinsiyetler = kullaniciVeriSeti.cinsiyetler;
+        this.saveUrl = `kullanicilar/${this.kullanici.id}/fotograflari`;
       }
     });
-    this.auth.suankiFotoUrl.subscribe(fotoUrl => this.fotoUrl = fotoUrl);
+    this.authService.suankiFotoUrl.subscribe(fotoUrl => this.fotoUrl = fotoUrl);
     this.galleryOptions = [{
       width: '100%',
       height: '100%',
@@ -74,15 +79,36 @@ export class KullaniciDuzeltComponent implements OnInit {
   }
 
   kaydet() {
-    const id = this.auth.kullaniciNumarasiniAl();
+    const id = this.authService.suankiKullanici.id;
     this.kullaniciService.update(id, this.kullanici).subscribe(
       next => {
         this.duzenlemeFormu.reset(this.kullanici);
         this.uyarici.success('Kaydedildi');
+      },
+      hata => {
+
       });
   }
-  asilFotoDegisti(url: string) {
-    this.kullanici.profilFotoUrl = url;
-    this.auth.kullaniciFotografiniDegistir(url);
+
+  sil(id: number) {
+    this.kullaniciService.fotografSil(this.kullanici.id, id)
+      .subscribe(() => {
+        this.kullanici.fotograflari.splice(_.findIndex(this.kullanici.fotograflari, { id: id }), 1);
+        this.uyarici.success('Fotoğraf silindi!');
+      },
+      hata => this.uyarici.error('Fotoğraf silinemedi!')
+      );
   }
+  profilFotografiYap(foto: KisiFoto) {
+
+    this.kullaniciService.asilFotoYap(this.kullanici.id, foto.id)
+      .subscribe(() => {
+        this.suankiProfilFotografi = _.findWhere(this.kullanici.fotograflari, { profilFotografi: true });
+        this.suankiProfilFotografi.profilFotografi = false;
+        foto.profilFotografi = true;
+        this.uyarici.success('Asıl foto yapıldı.');
+      },
+      hata => this.uyarici.error('Asıl foto yapılırken bir hata oluştu!'));
+  }
+
 }

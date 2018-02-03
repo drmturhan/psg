@@ -31,8 +31,6 @@ namespace Psg.Api.Controllers
 
             return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
             {
-
-
                 var kayitlar = await repo.ListeGetirCinsiyetAsync();
                 return Ok(kayitlar);
             });

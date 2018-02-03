@@ -26,7 +26,7 @@ namespace Identity.DataAccess.Mappers
             CreateMap<Kullanici, KullaniciListeDto>()
                 .ForMember(dto => dto.CinsiyetAdi, islem => islem.ResolveUsing(e => e.Kisi.Cinsiyeti.CinsiyetAdi))
                 .ForMember(dto => dto.KullaniciAdi, islem => islem.ResolveUsing(e => e.UserName))
-                .ForMember(dto => dto.Eposta, islem => islem.ResolveUsing(e => e.Email)) 
+                .ForMember(dto => dto.Eposta, islem => islem.ResolveUsing(e => e.Email))
                 .ForMember(dto => dto.EpostaOnaylandi, islem => islem.ResolveUsing(e => e.EmailConfirmed))
                 .ForMember(dto => dto.TelefonNumarasi, islem => islem.ResolveUsing(e => e.PhoneNumber))
                 .ForMember(dto => dto.TelefonOnaylandi, islem => islem.ResolveUsing(e => e.PhoneNumberConfirmed))
@@ -45,7 +45,20 @@ namespace Identity.DataAccess.Mappers
                 .ForMember(dto => dto.DogumTarihi, islem => islem.MapFrom(e => e.Kisi.DogumTarihi))
                 .ForMember(dto => dto.Yasi, islem => islem.ResolveUsing(e => e.Kisi.DogumTarihi.YasHesapla()))
                 .ForMember(dto => dto.CinsiyetNo, islem => islem.MapFrom(e => e.Kisi.CinsiyetNo))
-                .ForMember(dto => dto.ProfilFotoUrl, islem => islem.ResolveUsing(e => e.AsilFotografUrlGetir()));
+                .AfterMap((ent, dto) =>
+                {
+                    dto.Fotograflari = new List<FotoDetayDto>();
+                    foreach (var item in ent.Kisi.Fotograflari)
+                    {
+                        var yeni = item.ToFotoDetayDto();
+                        if (yeni.ProfilFotografi)
+                            dto.ProfilFotoUrl = yeni.Url;
+                        dto.Fotograflari.Add(yeni);
+                    }
+                    
+
+                });
+
             CreateMap<Identity.DataAccess.Kullanici, KullaniciBilgi>()
                 .ForMember(dto => dto.Eposta, islem => islem.ResolveUsing(e => e.Email))
                 .ForMember(dto => dto.EpostaOnaylandi, islem => islem.ResolveUsing(e => e.EmailConfirmed))

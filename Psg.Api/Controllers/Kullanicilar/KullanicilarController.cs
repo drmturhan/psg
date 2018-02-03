@@ -46,7 +46,7 @@ namespace Psg.Api.Controllers
         [HttpGet(Name = "Kullanicilar")]
         public async Task<IActionResult> Get(KullaniciSorgu sorgu)
         {
-            return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
+            return await KullaniciVarsaCalistir<Task<IActionResult>>(async () =>
             {
                 if (!propertyMappingService.ValidMappingsExistsFor<KullaniciListeDto, Kullanici>(sorgu.SiralamaCumlesi))
                     return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Sıralama bilgisi yanlış!" } }));

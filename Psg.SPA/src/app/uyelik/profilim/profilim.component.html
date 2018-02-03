@@ -1,0 +1,107 @@
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-xs-4 col-lg-3">
+          <h1> Profiliniz</h1>
+      </div>
+      <div class="col-xs-8 col-lg-9">
+          <div class="alert alert-info" [hidden]="!editForm.dirty"> <strong>Dikkat!</strong> Profil bilgilerinde değişklik yaptınız. Kaydetmediğiniz bilgilerin kaybolacağını unutmayın.
+          </div>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-xs-4 col-lg-3">
+          <div class="panel panel-default">
+              <div style="margin-bottom:-16px;">
+                  <h4 class="text-center">
+                      <strong>{{kullanici?.tamAdi}}</strong>
+                  </h4>
+              </div>
+              <img class="profile-image thumbnail" src="{{fotoUrl}}" alt="{{kullanici?.kullaniciAdi}}">
+              <div class="panel-body">
+
+                  <div>
+                      <strong>Eposta</strong>
+                      <p>{{kullanici?.eposta}}</p>
+                  </div>
+                  <div>
+                      <strong>Telefonu</strong>
+                      <p>{{kullanici?.telefonNumarasi}}</p>
+                  </div>
+                  <div>
+                      <strong>Son aktif olduğu tarih</strong>
+                      <p>{{kullanici?.sonAktifOlma|timeAgo}}</p>
+                  </div>
+                  <div>
+                      <strong>Üye olduğu tarih</strong>
+                      <p>{{kullanici?.yaratilmaTarihi| date:'longDate'}}</p>
+                  </div>
+              </div>
+              <div class="panel-footer">
+                  <button [disabled]="!editForm.dirty" form="editForm" type="submit" class="btn btn-success btn-block">Kaydet</button>
+              </div>
+          </div>
+      </div>
+
+      <div class="col-xs-8 col-lg-9">
+          <div class="tab-panel">
+              <tabset class="kullanici-tabset">
+                  <tab heading="Profil Bilgileri">
+                      <form #editForm="ngForm" id="editForm" (ngSubmit)="kaydet()">
+                          <div class="row" style="margin:4px">
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label for="unvan">Ünvan</label>
+                                      <input type="text" class="form-control" id="unvan" name="unvan" [(ngModel)]="kullanici.unvan" placeholder="Ünvanı">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="ad">Adı</label>
+                                      <input type="text" class="form-control" id="ad" name="ad" [(ngModel)]="kullanici.ad" placeholder="Adı">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="digerAd">İkinci Adı</label>
+                                      <input type="text" class="form-control" id="digerAd" name="digerAd" [(ngModel)]="kullanici.digerAd" placeholder="İkinci adı">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="soyad">Soyadı</label>
+                                      <input type="text" class="form-control" id="soyad" name="soyad" [(ngModel)]="kullanici.soyad" placeholder="Soyadı">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="dogumTarihi">Doğum Tarihi</label>
+                                      <input type="text" class="form-control" id="dogumTarihi" name="dogumTarihi" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi" [(ngModel)]="kullanici.dogumTarihi">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="cinsiyetId">Cinsiyeti</label>
+                                      <select id="cinsiyetId" class="form-control" name="cinsiyetNo" id="cinsiyetNo" [(ngModel)]="kullanici.cinsiyetNo">
+                                      <option value=""></option>
+                                      <option *ngFor="let c of cinsiyetler" value="{{ c.cinsiyetId }}">{{ c.cinsiyetAdi}}</option>
+                                  </select>
+                                  </div>
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group">
+                                      <label for="unvan">Eposta adresi</label>
+                                      <div class="form-inline">
+                                          <input type="text" class="form-control" id="eposta" readonly name="eposta" [(ngModel)]="kullanici.eposta" placeholder="Eposta">
+                                      </div>
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="unvan">Telefonu</label>
+                                      <div class="form-inline">
+                                          <input type="text" class="form-control" id="telefonNumarasi" [disabled]="kullanici.telefonOnaylandi" name="telefonNumarasi" [(ngModel)]="kullanici.telefonNumarasi" placeholder="Eposta">
+                                          <button class="btn btn-info" type="button" *ngIf="!kullanici.telefonOnaylandi">Onayla</button>
+                                          <button class="btn btn-danger" type="button" *ngIf="!kullanici.telefonOnaylandi">Sil</button>
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
+
+                      </form>
+                  </tab>
+                  <tab heading="Resimleri Düzelt">
+                      <app-fotograf-duzenleyici  [(url)]="saveUrl"  [fotograflar]="kullanici.fotograflari" (profilFotografiYap)="profilFotografiYap($event)" (fotoSil)="fotograSil($event)" (fotografKaydedildi)="fotografKaydedildi($event)"> </app-fotograf-duzenleyici>
+                  </tab>
+              </tabset>
+          </div>
+      </div>
+  </div>

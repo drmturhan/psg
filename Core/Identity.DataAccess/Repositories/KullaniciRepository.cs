@@ -19,8 +19,8 @@ namespace Identity.DataAccess.Repositories
         Task<bool> EpostaKullanimdaAsync(string kullaniciAdi);
         Task<Kullanici> BulAsync(int id);
         Task<SayfaliListe<Kullanici>> ListeGetirKullanicilarTumuAsync(KullaniciSorgu sorgu);
-        Task<Foto> FotografBulAsync(int id);
-        Task<Foto> KullanicininAsilFotosunuGetirAsync(int kullaniciNo);
+        Task<KisiFoto> FotografBulAsync(int id);
+        Task<KisiFoto> KullanicininAsilFotosunuGetirAsync(int kullaniciNo);
         void KisileriniSil(KullaniciKisi entity);
 
     }
@@ -53,12 +53,12 @@ namespace Identity.DataAccess.Repositories
             await db.AddAsync<T>(entity);
         }
 
-        public async Task<Foto> FotografBulAsync(int id)
+        public async Task<KisiFoto> FotografBulAsync(int id)
         {
             var foto = await db.KisiFotograflari.FirstOrDefaultAsync(p => p.FotoId == id);
             return foto;
         }
-        public async Task<Foto> KullanicininAsilFotosunuGetirAsync(int kullaniciNo)
+        public async Task<KisiFoto> KullanicininAsilFotosunuGetirAsync(int kullaniciNo)
         {
             var foto = await db.KisiFotograflari.Where(f => f.Kisi.Kullanicilari.Count(k => k.Id == kullaniciNo) == 1).FirstOrDefaultAsync(p => p.ProfilFotografi);
             return foto;

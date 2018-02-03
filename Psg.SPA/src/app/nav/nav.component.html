@@ -40,7 +40,7 @@
             </form>
             <ul *ngIf="this.authService.loggedIn()" class="nav navbar-nav navbar-right">
                 <li>
-                    <img src="{{fotoUrl}}" alt="{{authService.suankiKullanici?.kullaniciAdi}}">
+                    <img src="{{authService.suankiFotoUrl|async}}" alt="{{authService.suankiKullanici?.kullaniciAdi}}">
                 </li>
                 <li class="dropdown" dropdown>
                     <a class="dropdown-toggle" dropdownToggle>{{this.authService.suankiKullanici?.tamAdi }}

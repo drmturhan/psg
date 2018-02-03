@@ -108,7 +108,10 @@ namespace Identity.DataAccess
         public async Task<Kullanici> KullaniciyiGetirKullaniciAdinaGoreAsync(string userName)
         {
 
-            var kullanici = await Context.Users.Include(kul => kul.Kisi).ThenInclude(k => k.Cinsiyeti).SingleOrDefaultAsync(k => k.UserName == userName);
+            var kullanici = await Context.Users
+                .Include(kul => kul.Kisi).ThenInclude(k => k.Cinsiyeti)
+                .Include(kul => kul.Kisi).ThenInclude(k => k.Fotograflari).
+                SingleOrDefaultAsync(k => k.UserName == userName);
             return kullanici;
 
         }

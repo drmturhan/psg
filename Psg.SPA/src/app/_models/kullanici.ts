@@ -1,4 +1,4 @@
-import { Foto, Cinsiyet } from './foto';
+import { KisiFoto, Cinsiyet } from './foto';
 import { ListeSonuc, KayitSonuc } from './sonuc';
 export class Kullanici {
     id?: number;
@@ -11,7 +11,7 @@ export class Kullanici {
     profilFotoUrl?: string;
     yaratilmaTarihi?: Date;
     sonAktifOlma?: Date;
-    fotograflari?: Foto[];
+    fotograflari?: KisiFoto[];
 }
 
 
@@ -47,7 +47,7 @@ export class KullaniciYaz {
     yaratilmaTarihi?: Date;
     sonAktifOlma?: Date;
     tamAdi?: string;
-    fotograflari?: Foto[];
+    fotograflari?: KisiFoto[];
 }
 export class KullanicilarVeriSeti {
     kullaniciSonuc: ListeSonuc<Kullanici>;

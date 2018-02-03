@@ -16,10 +16,7 @@ import 'rxjs/add/observable/throw';
 import { AppError } from '../_hatalar/app-error';
 import { BadInputError } from '../_hatalar/bad-input';
 
-
-
 Injectable();
-
 
 export class ErrorInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler):
@@ -33,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
             }
             if (hata.error && hata.error['hatalar']) {
                 console.log(hata.error);
-                return Observable.throw(hata.error.hatalar[0]);
+                throw hata;
             }
             const serverError = hata.error;
             let modelStateErrors = '';
@@ -53,9 +50,3 @@ export const ErrorInterceptorProvider = {
     useClass: ErrorInterceptor,
     multi: true
 };
-
-
-
-
-
-

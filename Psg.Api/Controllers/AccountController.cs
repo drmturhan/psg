@@ -61,7 +61,7 @@ namespace Psg.Api.Controllers
         }
         private async Task<IActionResult> KullaniciBilgisiVeTokenDondur(string kullaniciAdi)
         {
-            var bulunanKullanici = await userManager.FindByNameAsync(kullaniciAdi);
+            var bulunanKullanici = await userManager.KullaniciyiGetirKullaniciAdinaGoreAsync(kullaniciAdi);
             if (bulunanKullanici == null) return Unauthorized();
 
             var claims = new Claim[] {

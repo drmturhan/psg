@@ -15,22 +15,26 @@ namespace Identity.DataAccess.Mappers
         {
 
             //CreateMap(typeof(QueryResult<>), typeof(QueryResultResource<>));
-            
+
             CreateEntityToResourceMap();
             CreateResourceToEntityMap();
         }
 
         private void CreateEntityToResourceMap()
         {
-           
-            CreateMap<Foto, FotoDetayDto>();
-            CreateMap<Foto, FotoOkuDto>();
+
+            CreateMap<KisiFoto, FotoDetayDto>()
+                .ForMember(dt => dt.Id, isl => isl.ResolveUsing(ent => ent.FotoId));
+
+            CreateMap<KisiFoto, FotoOkuDto>()
+                .ForMember(dt => dt.Id, isl => isl.ResolveUsing(ent => ent.FotoId));
+
         }
 
         private void CreateResourceToEntityMap()
         {
-            CreateMap<FotoDetayDto, Foto>().ForMember(k => k.FotoId, islem => islem.Ignore());
-            CreateMap<FotografYazDto, Foto>();
+            CreateMap<FotoDetayDto, KisiFoto>().ForMember(k => k.FotoId, islem => islem.Ignore());
+            CreateMap<FotografYazDto, KisiFoto>();
         }
     }
 }

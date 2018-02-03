@@ -89,9 +89,13 @@ namespace Identity.DataAccess.Mappers
             Mapper = new MapperConfiguration(cfg => cfg.AddProfile<FotoProfile>()).CreateMapper();
         }
 
-        public static FotoOkuDto ToFotoOkuDto(this Foto entity)
+        public static FotoOkuDto ToFotoOkuDto(this KisiFoto entity)
         {
             return entity == null ? null : Mapper.Map<FotoOkuDto>(entity);
+        }
+        public static FotoDetayDto ToFotoDetayDto(this KisiFoto entity)
+        {
+            return entity == null ? null : Mapper.Map<FotoDetayDto>(entity);
         }
 
         public static KisiFoto ToEntity(this FotografYazDto dto)

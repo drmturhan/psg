@@ -16,6 +16,7 @@ import { environment } from '../../environments/environment';
 import { BadInputError } from '../_hatalar/bad-input';
 import { AppError } from '../_hatalar/app-error';
 import { AuthUser } from '../_models/auth-user';
+import { KisiFoto } from '../_models/foto';
 
 @Injectable()
 export class AuthService {
@@ -27,8 +28,11 @@ export class AuthService {
   suankiFotoUrl = this.fotoUrl.asObservable();
   constructor(private authHttp: HttpClient, private jwtHelperService: JwtHelperService, private router: Router) { }
 
-  kullaniciFotografiniDegistir(fotoUrl: string) {
-    this.fotoUrl.next(fotoUrl);
+  profilFotografiDegisti(url: string) {
+    this.fotoUrl.next(url);
+  }
+  profilFotografiYap(fotoId: number) {
+    return this.authHttp.post(`${this.baseUrl}profilim/profilFotografiYap`, fotoId);
   }
 
   login(model: any) {
@@ -39,15 +43,31 @@ export class AuthService {
       }).map(gelenNesne => {
         localStorage.setItem('access_token', gelenNesne.tokenString);
         localStorage.setItem('kullanici', JSON.stringify(gelenNesne.kullanici));
-        this.userToken = gelenNesne.tokenString;
-        this.suankiKullanici = gelenNesne.kullanici;
-        let url = environment.bosFotoUrl;
-        if (this.suankiKullanici.profilFotoUrl !== '') {
-          url = this.suankiKullanici.profilFotoUrl;
-        }
-        this.kullaniciFotografiniDegistir(url);
+        this.kullaniciAyarlariYap(gelenNesne.tokenString, gelenNesne.kullanici);
       });
   }
+  public kullaniciAyarlariYap(token = null, kullanici = null) {
+
+    if (token == null) {
+      this.userToken = localStorage.getItem('access_token');
+    } else {
+      this.userToken = token;
+    }
+    if (kullanici == null) {
+      this.suankiKullanici = JSON.parse(localStorage.getItem('kullanici'));
+    } else {
+      this.suankiKullanici = kullanici;
+    }
+    if (this.userToken === '' || this.suankiKullanici === null) {
+      return;
+    }
+    let url = environment.bosFotoUrl;
+    if (this.suankiKullanici.profilFotoUrl !== '') {
+      url = this.suankiKullanici.profilFotoUrl;
+    }
+    this.profilFotografiDegisti(url);
+  }
+
   kullaniciNumarasiniAl(): number {
     if (!this.suankiKullanici) {
       return -1;
@@ -75,8 +95,10 @@ export class AuthService {
     return this.authHttp.post('http://localhost:55126/api/account/uyelikbaslat', uyeBilgisi,
       {
         headers: new HttpHeaders().set('Content-Type', 'application/json')
-      })
-      .catch(this.hataYonetici);
+      });
+  }
+  fotografSil(fotoId: number) {
+    return this.authHttp.delete(`${this.baseUrl}profilim/${fotoId}`);
   }
   loggedIn(): boolean {
     const token = this.jwtHelperService.tokenGetter();

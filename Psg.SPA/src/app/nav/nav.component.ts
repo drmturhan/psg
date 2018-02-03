@@ -12,24 +12,17 @@ import { AuthService } from '../_services/auth.service';
 })
 export class NavComponent implements OnInit {
   model: any = {};
-  kullaniciAdi = '';
-  fotoUrl: string;
+
 
   constructor(public authService: AuthService, private uyarici: AlertifyService, private router: Router) { }
 
   ngOnInit() {
-    if (this.authService.suankiKullanici != null) {
-      this.kullaniciAdi = this.authService.suankiKullanici.kullaniciAdi;
-      this.authService.suankiFotoUrl.subscribe(fotoUrl => {
-        this.fotoUrl = fotoUrl;
-      });
-    }
+
   }
   login() {
     this.authService.login(this.model).subscribe(data => {
       this.uyarici.success('Giriş başarılı');
       this.model = {};
-      this.kullaniciAdi = this.authService.suankiKullanici.tamAdi;
     },
       error => this.uyarici.warning('Giriş başarısız!'),
       () => this.router.navigate(['/uyeler'])

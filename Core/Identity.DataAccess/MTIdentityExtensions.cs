@@ -56,7 +56,7 @@ namespace Identity.DataAccess
 
             })
             .AddEntityFrameworkStores<MTIdentityDbContext>()
-            //.AddDefaultTokenProviders()
+            .AddDefaultTokenProviders()
             .AddPasswordValidator<KullaniciAdSoyadOlamazPasswordValidator>();
 
 

@@ -8,6 +8,9 @@ export class TokenInterceptor implements HttpInterceptor {
     constructor() { }
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const token: string = localStorage.getItem('access_token');
+        if (token == null) {
+            return next.handle(req);
+        }
         if (token) {
             req = req.clone({ headers: req.headers.set('Authorization', 'Bearer ' + token) });
         }

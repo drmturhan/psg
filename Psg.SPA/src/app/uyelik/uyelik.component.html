@@ -98,7 +98,8 @@
     </div>
 
     <div class="text-center">
-        <button class="btn btn-success" type="submit" [disabled]="!uyelikFormu.valid">Üye Ol</button>
+       
+        <button class="btn btn-success" type="submit" (mousemove)="validasyonuBilgisiGorunsun(anaForm)"  >Üye Ol</button>
         <button class="btn btn-default" type="button" (click)="vazgec()">Vazgeç</button>
     </div>
 </form>
@@ -106,3 +107,4 @@
 <app-uyelik-basarili *ngIf="uyelikBasvurusuTamam">
 </app-uyelik-basarili>
 <a class="btn btn-info" (click)="kapat()" *ngIf="uyelikBasvurusuTamam">Kapat</a>
+

@@ -1,5 +1,5 @@
 import { ArkadaslarimResolver } from './_resolvers/kullanici/arkadaslarim-resolver';
-import { ArkadaslarimComponent } from './kullanicilar/arkadaslarim/arkadaslarim.component';
+import { ArkadaslarimComponent } from './uyelik/arkadaslarim/arkadaslarim.component';
 
 import { AnasayfaComponent } from './anasayfa/anasayfa.component';
 import { Routes } from '@angular/router';
@@ -20,6 +20,7 @@ import { KullanicidakiDegisikliklerKaybolsunmuGuard } from './_guards/kullanici/
 import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-basarili.component';
 import { YenidenAktiflestirComponent } from './uyelik/akis/yeniden-aktiflestir/yeniden-aktiflestir.component';
 import { EpostaOnaylandiComponent } from './uyelik/akis/eposta-onay/eposta-onaylandi.component';
+import { ProfilimComponent } from './uyelik/profilim/profilim.component';
 export const appRoot: Routes = [
     { path: '', redirectTo: 'anasayfa', pathMatch: 'full' },
     { path: 'yuklemeHatasi', component: VeriYuklenemediComponent },
@@ -35,7 +36,7 @@ export const appRoot: Routes = [
             { path: 'kullanicilar', component: KullaniciListesiComponent, resolve: { kullanicilar: KullaniciListesiResolver } },
             { path: 'kullanicilar/:id', component: KullaniciDetayComponent, resolve: { kullanici: KullaniciDetayResolver } },
             {
-                path: 'profilim', component: KullaniciDuzeltComponent,
+                path: 'profilim', component: ProfilimComponent,
                 canDeactivate: [KullanicidakiDegisikliklerKaybolsunmuGuard], resolve: { kullaniciVeriSeti: ProfilimResolver }
             },
             { path: 'arkadasliklarim', component: ArkadaslarimComponent, resolve: { arkadaslarim: ArkadaslarimResolver } },

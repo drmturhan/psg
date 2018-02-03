@@ -91,7 +91,7 @@ namespace Identity.DataAccess
         {
             return Depo.KullaniciyiGetirIdyeGoreAsync(userId);
         }
-        public override async Task<Kullanici> FindByNameAsync(string userName)
+        public  async Task<Kullanici> KullaniciyiGetirKullaniciAdinaGoreAsync(string userName)
         {
             return await Depo.KullaniciyiGetirKullaniciAdinaGoreAsync(userName);
         }
@@ -108,7 +108,7 @@ namespace Identity.DataAccess
         public override async Task<IdentityResult> ConfirmEmailAsync(Kullanici user, string token)
         {
 
-            var sonuc = await ConfirmEmailAsync(user, token);
+            var sonuc = await base.ConfirmEmailAsync(user, token);
             if (sonuc.Succeeded)
             {
                 user.Pasif = false;

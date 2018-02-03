@@ -1,5 +1,5 @@
 import { ArkadaslarimResolver } from './_resolvers/kullanici/arkadaslarim-resolver';
-import { ArkadaslarimComponent } from './kullanicilar/arkadaslarim/arkadaslarim.component';
+import { ArkadaslarimComponent } from './uyelik/arkadaslarim/arkadaslarim.component';
 
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/bs-moment';
@@ -52,6 +52,7 @@ import { EpostaOnaylandiComponent } from './uyelik/akis/eposta-onay/eposta-onayl
 import { DataService } from './_services/data.service';
 import { TokenInterceptor, TokenInterceptorProvider } from './_interceptors/token.interceptor';
 import { ErrorInterceptorProvider } from './_interceptors/error.interceptor';
+import { ProfilimComponent } from './uyelik/profilim/profilim.component';
 
 defineLocale('tr', tr);
 
@@ -66,6 +67,7 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     RandevuComponent,
     YukleComponent,
     BulComponent,
+    ProfilimComponent,
     KullaniciListesiComponent,
     KullaniciKartiComponent,
     KullaniciDetayComponent,
@@ -122,6 +124,7 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     ProfilimResolver,
     ArkadaslarimResolver,
     KullanicidakiDegisikliklerKaybolsunmuGuard
+    
   ],
   bootstrap: [AppComponent]
 })

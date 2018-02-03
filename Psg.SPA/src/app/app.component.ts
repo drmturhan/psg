@@ -18,18 +18,6 @@ export class AppComponent implements OnInit {
 
   public ngOnInit(): void {
     this._localeService.use('tr');
-    const token = localStorage.getItem('access_token');
-    const kullanici: Kullanici = JSON.parse(localStorage.getItem('kullanici'));
-    if (token) {
-      this.authService.decodedToken = this.jwtHelperService.decodeToken(token);
-    }
-    if (kullanici) {
-      this.authService.suankiKullanici = kullanici;
-      let url = environment.bosFotoUrl;
-      if (this.authService.suankiKullanici.profilFotoUrl != null && this.authService.suankiKullanici.profilFotoUrl !== '') {
-        url = this.authService.suankiKullanici.profilFotoUrl;
-      }
-      this.authService.kullaniciFotografiniDegistir(url);
-    }
+    const token = this.authService.kullaniciAyarlariYap();
   }
 }

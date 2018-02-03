@@ -4,7 +4,8 @@
             <h1> Profiliniz</h1>
         </div>
         <div class="col-md-8">
-            <div class="alert alert-info" [hidden]="!editForm.dirty"> <strong>Dikkat!</strong> Profil bilgilerinde değişklik yaptınız. Kaydetmediğiniz bilgilerin kaybolacağını unutmayın.
+            <div class="alert alert-info" [hidden]="!editForm.dirty">
+                <strong>Dikkat!</strong> Profil bilgilerinde değişklik yaptınız. Kaydetmediğiniz bilgilerin kaybolacağını unutmayın.
             </div>
         </div>
     </div>
@@ -67,14 +68,15 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="dogumTarihi">Doğum Tarihi</label>
-                                        <input type="text" class="form-control" id="dogumTarihi" name="dogumTarihi" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi" [(ngModel)]="kullanici.dogumTarihi">
+                                        <input type="text" class="form-control" id="dogumTarihi" name="dogumTarihi" bsDatepicker [bsConfig]="bsConfig" placeholder="Doğum Tarihi"
+                                            [(ngModel)]="kullanici.dogumTarihi">
                                     </div>
                                     <div class="form-group">
                                         <label for="cinsiyetId">Cinsiyeti</label>
                                         <select id="cinsiyetId" class="form-control" name="cinsiyetNo" id="cinsiyetNo" [(ngModel)]="kullanici.cinsiyetNo">
-                                        <option value=""></option>
-                                        <option *ngFor="let c of cinsiyetler" value="{{ c.id }}">{{ c.cinsiyetAdi}}</option>
-                                    </select>
+                                            <option value=""></option>
+                                            <option *ngFor="let c of cinsiyetler" value="{{ c.cinsiyetId }}">{{ c.cinsiyetAdi}}</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -87,7 +89,8 @@
                                     <div class="form-group">
                                         <label for="unvan">Telefonu</label>
                                         <div class="form-inline">
-                                            <input type="text" class="form-control" id="telefonNumarasi" [disabled]="kullanici.telefonOnaylandi" name="telefonNumarasi" [(ngModel)]="kullanici.telefonNumarasi" placeholder="Eposta">
+                                            <input type="text" class="form-control" id="telefonNumarasi" [disabled]="kullanici.telefonOnaylandi" name="telefonNumarasi"
+                                                [(ngModel)]="kullanici.telefonNumarasi" placeholder="Eposta">
                                             <button class="btn btn-info" type="button" *ngIf="!kullanici.telefonOnaylandi">Onayla</button>
                                             <button class="btn btn-danger" type="button" *ngIf="!kullanici.telefonOnaylandi">Sil</button>
                                         </div>
@@ -99,7 +102,8 @@
                         </form>
                     </tab>
                     <tab heading="Resimleri Düzelt">
-                        <fotograf-duzenleyici [fotograflar]="kullanici.fotograflari" (asilFotoDegisti)="asilFotoDegisti($event)"> </fotograf-duzenleyici>
+                        <app-fotograf-duzenleyici [(url)]="saveUrl" [fotograflar]="kullanici.fotograflari" (profilFotografiYap)="profilFotografiYap($event)"
+                            (fotoSil)="sil($event)"> </app-fotograf-duzenleyici>
                     </tab>
                 </tabset>
             </div>

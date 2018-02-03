@@ -12,6 +12,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Psg.Api.Base
@@ -25,27 +26,49 @@ namespace Psg.Api.Base
         }
         protected async Task<IActionResult> HataKontrolluCalistir<R>(Func<Task<IActionResult>> codetoExecute) where R : class
         {
+            if (!ModelState.IsValid)
+                return new DortYuzYirmiIki(ModelState);
             try
             {
                 return await codetoExecute.Invoke();
+            }
+
+            catch (BadRequestError hata)
+            {
+                return BadRequest(new BadRequestError(hata.Message));
             }
             catch (ModelStateError)
             {
                 return new DortYuzYirmiIki(ModelState);
             }
+            catch (NotFoundError hata)
+            {
+                return NotFound(Sonuc.Basarisiz(new Exception("Kayıt bulunamadı!", hata)));
+            }
+            catch (InternalServerError hata)
+            {
+                return NotFound(Sonuc.Basarisiz(new Exception("İşlem başarısız. Lütfen daha sonra tekrar deneyiniz!", hata)));
+            }
             catch (Exception hata)
             {
-                Sonuc<R> sonuc = Sonuc<R>.Basarisiz(new Exception("Beklenmedik bir hata oluştu", hata));
-                return StatusCode(500, sonuc);
+                return StatusCode(500, Sonuc.Basarisiz(new Exception(Properties.Resources.IslemGerceklesmedi, hata)));
             }
         }
-        protected async Task<IActionResult> GecerlilikKontrolluCalistir<R>(Func<IActionResult> codetoExecute) where R : class
+        protected int aktifKullaniciNo = -1;
+        protected async Task<IActionResult> KullaniciVarsaCalistir<R>(Func<Task<IActionResult>> codetoExecute) where R : class
         {
+            var aktifKullaniciClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (aktifKullaniciClaim == null)
+                return Unauthorized();
+
+            aktifKullaniciNo = int.Parse(aktifKullaniciClaim.Value);
+
             if (!ModelState.IsValid)
                 return new DortYuzYirmiIki(ModelState);
+
             try
             {
-                return codetoExecute.Invoke();
+                return await codetoExecute.Invoke();
             }
 
             catch (BadRequestError hata)
@@ -70,27 +93,8 @@ namespace Psg.Api.Base
             }
         }
 
-        #region Kapat
-        //protected void Calistir(Action codetoExecute)
-        //{
-        //    try
-        //    {
-        //        codetoExecute.Invoke();
-        //    }
-        //    catch (AuthorizationValidationException ex)
-        //    {
-        //        throw new FaultException<AuthorizationValidationException>(ex, ex.Message);
-        //    }
-        //    catch (FaultException ex)
-        //    {
-        //        throw ex;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new FaultException(ex.Message);
-        //    }
-        //} 
-        #endregion
+
+
 
         #region Yardimcilar
         protected string AnBilgisiAl()

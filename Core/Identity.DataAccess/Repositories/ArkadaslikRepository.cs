@@ -22,7 +22,7 @@ namespace Identity.DataAccess.Repositories
     public class ArkadaslikSorgusu : SorguBase
     {
         public int? TeklifEdenKullaniciNo { get; set; }
-        public int? TeklifEdilenKullaniciNo { get; set; }
+        public int? CevapVerecekKullaniciNo { get; set; }
         public ArkadaslikListeTipleri ListeTipi { get; set; }
     }
     public interface IArkadaslikRepository : IRepository
@@ -81,8 +81,8 @@ namespace Identity.DataAccess.Repositories
 
             if (sorguNesnesi.TeklifEdenKullaniciNo.HasValue)
                 sorgu = sorgu.Where(teklif => teklif.ArkadaslikIsteyenNo == sorguNesnesi.TeklifEdenKullaniciNo.Value);
-            if (sorguNesnesi.TeklifEdilenKullaniciNo.HasValue)
-                sorgu = sorgu.Where(teklif => teklif.TeklifEdilenNo == sorguNesnesi.TeklifEdilenKullaniciNo.Value);
+            if (sorguNesnesi.CevapVerecekKullaniciNo.HasValue)
+                sorgu = sorgu.Where(teklif => teklif.TeklifEdilenNo == sorguNesnesi.CevapVerecekKullaniciNo.Value);
             if (sorguNesnesi.ListeTipi != ArkadaslikListeTipleri.Tumu)
                 sorgu = ListetipiniBelirle(sorgu, sorguNesnesi);
             var sonuc = await SayfaliListe<ArkadaslikTeklif>.SayfaListesiYarat(siralanmisSorgu, sorguNesnesi.Sayfa, sorguNesnesi.SayfaBuyuklugu);

@@ -14,7 +14,7 @@ export class MTAppErrorHandler implements ErrorHandler {
             this.uyarici.error((<BadInputError>error).orjinalHata);
 
         } else {
-            console.log(error);
+            this.uyarici.warning(error);
         }
 
 

@@ -1,24 +1,31 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { environment } from '../../../../environments/environment';
-import { Foto } from './../../../_models/foto';
+import { KisiFoto } from './../../../_models/foto';
 import { AuthService } from '../../../_services/auth.service';
 import { KullaniciService } from '../../../_services/kullanici.service';
 import { AlertifyService } from '../../../_services/alertify.service';
 import * as _ from 'underscore';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/throw';
+import { AppError } from '../../../_hatalar/app-error';
 @Component({
-  selector: 'fotograf-duzenleyici',
+  selector: 'app-fotograf-duzenleyici',
   templateUrl: './fotograf-duzenleyici.component.html',
   styleUrls: ['./fotograf-duzenleyici.component.css']
 })
 export class FotografDuzenleyiciComponent implements OnInit {
-  @Input() fotograflar: Foto[];
-  @Output() asilFotoDegisti = new EventEmitter<string>();
+  @Input() fotograflar: KisiFoto[];
+  @Input() url: string;
+  @Output() profilFotografiYap = new EventEmitter<KisiFoto>();
+  @Output() fotoSil = new EventEmitter<number>();
+  @Output() fotografKaydedildi = new EventEmitter<KisiFoto>();
+
   uploader: FileUploader = new FileUploader({});
 
   hasBaseDropZoneOver = false;
   baseUrl = environment.apiUrl;
-  suankiAsil: Foto;
+
   constructor(private authService: AuthService,
     private kullaniciService: KullaniciService,
     private uyarici: AlertifyService) { }
@@ -30,68 +37,54 @@ export class FotografDuzenleyiciComponent implements OnInit {
     this.hasBaseDropZoneOver = e;
   }
   initializeUploader() {
+    const kullaniciNo = this.authService.suankiKullanici.id;
+    const jeton = 'Bearer ' + localStorage.getItem('access_token');
+    if (this.url == null) {
+      throw new AppError('Url yok');
+    }
     this.uploader = new FileUploader({
-      url: this.baseUrl + 'kullanicilar/' + this.authService.kullaniciNumarasiniAl() + '/fotograflari',
-      authToken: 'Bearer ' + localStorage.getItem('access_token'),
+      url: `${this.baseUrl}/${this.url}`,
+      authToken: jeton,
       isHTML5: true,
       allowedFileType: ['image'],
       removeAfterUpload: false,
       autoUpload: false,
-      maxFileSize: 10 * 1024 * 1024
+      maxFileSize: 10 * 1024 * 102,
     });
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {
       if (response) {
-        const res: Foto = JSON.parse(response);
+        const res: KisiFoto = JSON.parse(response);
         const foto = {
           id: res.id,
           url: res.url,
+          kisiNo: res.kisiNo,
           aciklama: res.aciklama,
           eklemeTarihi: res.eklenmeTarihi,
-          ilkTercih: res.profilFotografi
-        }
+          profilFotografi: res.profilFotografi
+        };
         this.fotograflar.push(foto);
-        if (foto.ilkTercih) {
-          this.fotoUrlAyarla(foto.url);
-        }
-      };
-    }
+        this.fotografKaydedildi.emit(foto);
+      }
+    };
+    this.uploader.onErrorItem = (item, response, status, headers) => {
+      this.uploader.cancelItem(item);
+      this.uyarici.error('Fotoğraf yüklenemedi!');
+    };
+    this.uploader.onCompleteAll = () => {
+      this.uploader.clearQueue();
+
+    };
   }
-  public fotoUrlAyarla(fotoUrl: string) {
-    let url = environment.bosFotoUrl;
-    if (this.authService.suankiKullanici.profilFotoUrl !== '') {
-      url = this.authService.suankiKullanici.profilFotoUrl;
-    }
-    this.authService.kullaniciFotografiniDegistir(fotoUrl);
+  asilFotoYap(foto: KisiFoto) {
+    this.profilFotografiYap.emit(foto);
   }
-  asilFotoYap(foto: Foto) {
-    this.kullaniciService.asilFotoYap(this.authService.kullaniciNumarasiniAl(), foto.id)
-      .subscribe(() => {
-        this.suankiAsil = _.findWhere(this.fotograflar, { profilFotografi: true })
-        this.suankiAsil.profilFotografi = false;
-        foto.profilFotografi = true;
-        this.fotoUrlAyarla(foto.url);
-        this.authService.suankiKullanici.profilFotoUrl = foto.url;
-        localStorage.setItem('kullanici', JSON.stringify(this.authService.suankiKullanici));
-        this.uyarici.success('Asıl foto yapıldı.')
-      },
-      hata => this.uyarici.error('Asıl foto yapılırken bir hata oluştu!'))
-  }
-  silmeOnayiIste(foto: Foto) {
+  silmeOnayiIste(foto: KisiFoto) {
     this.uyarici.confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?',
       () => {
-        this.sil(foto.id);
+        this.fotoSil.emit(foto.id);
       }, 'Emin misiniz?', 'Evet', 'Hayır'
     );
-  }
-  sil(id: number) {
-    this.kullaniciService.fotografSil(this.authService.kullaniciNumarasiniAl(), id)
-      .subscribe(() => {
-        this.fotograflar.splice(_.findIndex(this.fotograflar, { id: id }), 1);
-        this.uyarici.success('Fotoğraf silindi!');
-      },
-      hata => this.uyarici.error('Fotoğraf silinemedi!')
-      );
   }
 }
 

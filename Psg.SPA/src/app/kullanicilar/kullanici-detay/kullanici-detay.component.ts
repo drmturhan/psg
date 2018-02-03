@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Kullanici } from '../../_models/kullanici';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
-import { Foto } from '../../_models/foto';
+import { KisiFoto } from '../../_models/foto';
 import { environment } from '../../../environments/environment';
 import { KullaniciService } from '../../_services/kullanici.service';
 import { NotFoundError } from '../../_hatalar/not-found-error';

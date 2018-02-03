@@ -67,7 +67,7 @@ namespace Identity.DataAccess
                 entity.Property(k => k.Unvan).HasMaxLength(15);
                 entity.Property(k => k.Ad).HasMaxLength(50).IsRequired(false);
                 entity.Property(k => k.Soyad).HasMaxLength(50).IsRequired(false);
-                entity.HasIndex(k => new { k.Ad, k.Soyad, k.DogumTarihi }).HasName("KisiAdSoyadSogumTarihiIndeks").IsUnique();
+                entity.HasIndex(k => new { k.Ad, k.Soyad, k.DogumTarihi,k.CinsiyetNo }).HasName("KisiAdSoyadDogumTarihiCinsiyetIndeks").IsUnique();
             });
 
             builder.Entity<KisiCinsiyet>(entity =>

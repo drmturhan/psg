@@ -10,9 +10,12 @@ using Core.Base;
 using Identity.DataAccess.Dtos;
 using Identity.DataAccess.Mappers;
 using Identity.DataAccess.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Psg.Api.Base;
 using Psg.Api.Models;
 using Psg.Api.Preferences;
 
@@ -20,14 +23,15 @@ namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/kullanicilar/{kullaniciNo}/fotograflari")]
-    public class KullaniciFotograflariController : Controller
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class KullaniciFotograflariController : MTController
     {
         private readonly KullaniciRepository repo;
         private readonly FotografAyarlari fotografAyarlari;
         private readonly IHostingEnvironment host;
         private readonly IOptions<CloudinarySettings> cloudinaryConfig;
         private readonly Cloudinary cloudinary;
-        public KullaniciFotograflariController(KullaniciRepository repo, IOptions<FotografAyarlari> fotografAyarlari, IHostingEnvironment host, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig)
+        public KullaniciFotograflariController(KullaniciRepository repo, IOptions<FotografAyarlari> fotografAyarlari, IHostingEnvironment host, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig) : base("Kullanıcı fotoğrafları")
         {
             this.repo = repo;
             this.fotografAyarlari = fotografAyarlari.Value;
@@ -39,49 +43,61 @@ namespace Psg.Api.Controllers
         [HttpGet(Name = "KullaniciFotografiniAl")]
         public async Task<IActionResult> KullaniciFotografiniAl(int kullaniciNo)
         {
-            var entity = await repo.FotografBulAsync(kullaniciNo);
-            
-            return Ok(entity.ToFotoOkuDto());
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
+               {
+                   var entity = await repo.FotografBulAsync(kullaniciNo);
+
+                   return Ok(entity.ToFotoOkuDto());
+               });
         }
 
         [HttpPost]
         public async Task<IActionResult> KullaniciyaFotografEkle(int kullaniciNo, FotografYazDto dto)
         {
-
-            if (dto.File == null)
-                return BadRequest("Fotoğraf yok!");
-            if (dto.File.Length == 0)
-                return BadRequest("Fotoğraf dosyası boş!");
-            if (dto.File.Length > fotografAyarlari.MaxBytes) return BadRequest($"Dosya çok büyük. En fazla {fotografAyarlari.MaxBytes / (1024 * 1024)} MB resim yükleyebilirsiniz");
-            if (!fotografAyarlari.DosyaTipUygunmu(dto.File.FileName))
-                return BadRequest("Dosya tipini yükleme izni yok! Sadece resim dosyalarını yükleyebilirsiniz.");
-
-            var kullanici = await repo.BulAsync(kullaniciNo);
-            if (kullanici == null)
-                return BadRequest("Kullanıcı bulunamadı!");
-            var aktifKullaniciNo = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            if (aktifKullaniciNo != kullanici.Id)
-                return Unauthorized();
-            string dosyaAdi = string.Empty;
-            if (!fotografAyarlari.SadeceBulutaYukle)
-                dosyaAdi = await LokaldeKaydet(dto);
-
-            if (!fotografAyarlari.SadeceLokaldeTut)
-                BulutaYukle(dto);
-
-            var foto = dto.ToEntity();
-            foto.Kisi = kullanici.Kisi;
-
-            if (!kullanici.Kisi.Fotograflari.Any(m => m.ProfilFotografi))
-                foto.ProfilFotografi= true;
-
-            foto.DosyaAdi = dosyaAdi;
-            kullanici.Kisi.Fotograflari.Add(foto);
-            if (await repo.KaydetAsync())
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
             {
-                return CreatedAtRoute("KullaniciFotografiniAl", new { id = foto.Id }, foto.ToFotoOkuDto());
-            }
-            return BadRequest("Fotoğraf eklenemedi!");
+
+
+                if (dto.File == null)
+                    return BadRequest("Fotoğraf yok!");
+                if (dto.File.Length == 0)
+                    return BadRequest("Fotoğraf dosyası boş!");
+                if (dto.File.Length > fotografAyarlari.MaxBytes) return BadRequest($"Dosya çok büyük. En fazla {fotografAyarlari.MaxBytes / (1024 * 1024)} MB resim yükleyebilirsiniz");
+                if (!fotografAyarlari.DosyaTipUygunmu(dto.File.FileName))
+                    return BadRequest("Dosya tipini yükleme izni yok! Sadece resim dosyalarını yükleyebilirsiniz.");
+
+                var kullanici = await repo.BulAsync(kullaniciNo);
+                if (kullanici == null)
+                    return BadRequest("Kullanıcı bulunamadı!");
+
+                if (aktifKullaniciNo != kullanici.Id)
+                    return Unauthorized();
+                string dosyaAdi = string.Empty;
+                if (!fotografAyarlari.SadeceBulutaYukle)
+                    dosyaAdi = await LokaldeKaydet(dto);
+
+                if (!fotografAyarlari.SadeceLokaldeTut)
+                    BulutaYukle(dto);
+                try
+                {
+                    var foto = dto.ToEntity();
+                    foto.Kisi = kullanici.Kisi;
+
+                    if (!kullanici.Kisi.Fotograflari.Any(m => m.ProfilFotografi))
+                        foto.ProfilFotografi = true;
+
+                    foto.DosyaAdi = dosyaAdi;
+                    kullanici.Kisi.Fotograflari.Add(foto);
+                    if (await repo.KaydetAsync())
+                        return CreatedAtRoute("KullaniciFotografiniAl", new { id = foto.Id }, foto.ToFotoOkuDto());
+                    
+                }
+                catch(Exception hata)
+                {
+                    return BadRequest("Fotoğraf eklenemedi!");
+                }
+                return BadRequest("Fotoğraf eklenemedi!");
+            });
         }
 
         private async Task<string> LokaldeKaydet(FotografYazDto dto)
@@ -124,49 +140,55 @@ namespace Psg.Api.Controllers
         [HttpPost("{id}/asilYap")]
         public async Task<IActionResult> AsilFotoYap(int kullaniciNo, int id)
         {
-            if (kullaniciNo != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                Unauthorized();
-            var dbdekiKayit = await repo.FotografBulAsync(id);
-            if (dbdekiKayit == null)
-                return NotFound("Fotoğraf bulunamadı!");
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
+            {
 
-            if (dbdekiKayit.ProfilFotografi)
-                return BadRequest("Bu fotoğraf zaten asıl fotoğraf!");
-            var suankiAsilFoto = await repo.KullanicininAsilFotosunuGetirAsync(kullaniciNo);
-            if (suankiAsilFoto != null)
-                suankiAsilFoto.ProfilFotografi = false;
-            dbdekiKayit.ProfilFotografi = true;
-            if (await repo.KaydetAsync())
-                return NoContent();
-            return BadRequest("Asıl foto yapılamadı!");
+                var dbdekiKayit = await repo.FotografBulAsync(id);
+                if (dbdekiKayit == null)
+                    return NotFound("Fotoğraf bulunamadı!");
+
+                if (dbdekiKayit.ProfilFotografi)
+                    return BadRequest("Bu fotoğraf zaten asıl fotoğraf!");
+                var suankiAsilFoto = await repo.KullanicininAsilFotosunuGetirAsync(kullaniciNo);
+                if (suankiAsilFoto != null)
+                    suankiAsilFoto.ProfilFotografi = false;
+                dbdekiKayit.ProfilFotografi = true;
+                if (await repo.KaydetAsync())
+                    return NoContent();
+                return BadRequest("Asıl foto yapılamadı!");
+            });
+
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Sil(int kullaniciNo, int id)
         {
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
+               {
+                   if (kullaniciNo != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                       Unauthorized();
+                   var dbdekiKayit = await repo.FotografBulAsync(id);
+                   if (dbdekiKayit == null)
+                       return NotFound("Fotoğraf bulunamadı!");
 
-            if (kullaniciNo != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                Unauthorized();
-            var dbdekiKayit = await repo.FotografBulAsync(id);
-            if (dbdekiKayit == null)
-                return NotFound("Fotoğraf bulunamadı!");
+                   if (dbdekiKayit.ProfilFotografi)
+                       return BadRequest("Asıl fotoğrafı silemezsiniz!");
+                   if (dbdekiKayit.PublicId != null)
+                   {
 
-            if (dbdekiKayit.ProfilFotografi)
-                return BadRequest("Asıl fotoğrafı silemezsiniz!");
-            if (dbdekiKayit.PublicId != null)
-            {
+                       var deleteParams = new DeletionParams(dbdekiKayit.PublicId);
+                       var result = cloudinary.Destroy(deleteParams);
+                       if (result.Result == "ok")
+                           repo.Sil(dbdekiKayit);
+                   }
+                   if (dbdekiKayit.PublicId == null)
+                       repo.Sil(dbdekiKayit);
 
-                var deleteParams = new DeletionParams(dbdekiKayit.PublicId);
-                var result = cloudinary.Destroy(deleteParams);
-                if (result.Result == "ok")
-                    repo.Sil(dbdekiKayit);
-            }
-            if (dbdekiKayit.PublicId == null)
-                repo.Sil(dbdekiKayit);
+                   if (await repo.KaydetAsync())
+                       return Ok();
+                   else
+                       return BadRequest("Fotoğraf silinemedi");
 
-            if (await repo.KaydetAsync())
-                return Ok();
-            else
-                return BadRequest("Fotoğraf silinemedi");
+               });
 
         }
 
