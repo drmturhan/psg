@@ -27,7 +27,7 @@ import { KullaniciListesiComponent } from './kullanicilar/kullanici-listesi/kull
 import { HttpClientModule } from '@angular/common/http';
 import { KullaniciKartiComponent } from './kullanicilar/kullanici-karti/kullanici-karti.component';
 import { KullaniciDetayComponent } from './kullanicilar/kullanici-detay/kullanici-detay.component';
-import { TabsModule, BsDropdownModule, TooltipModule } from 'ngx-bootstrap';
+import { TabsModule, BsDropdownModule, TooltipModule, PaginationModule } from 'ngx-bootstrap';
 import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-resolver';
 import { KullaniciDuzeltComponent } from './kullanicilar/kullanici-duzelt/kullanici-duzelt.component';
 import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/veri-yuklenemedi.component';
@@ -53,6 +53,7 @@ import { DataService } from './_services/data.service';
 import { TokenInterceptor, TokenInterceptorProvider } from './_interceptors/token.interceptor';
 import { ErrorInterceptorProvider } from './_interceptors/error.interceptor';
 import { ProfilimComponent } from './uyelik/profilim/profilim.component';
+import { ArkadaslikService } from './_services/arkadaslik.service';
 
 defineLocale('tr', tr);
 
@@ -87,6 +88,7 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     TooltipModule.forRoot(),
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    PaginationModule.forRoot(),
     HttpClientModule,
     JwtModule.forRoot({
       config: {
@@ -123,8 +125,9 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     KullaniciListesiResolver,
     ProfilimResolver,
     ArkadaslarimResolver,
-    KullanicidakiDegisikliklerKaybolsunmuGuard
-    
+    KullanicidakiDegisikliklerKaybolsunmuGuard,
+    ArkadaslikService
+
   ],
   bootstrap: [AppComponent]
 })

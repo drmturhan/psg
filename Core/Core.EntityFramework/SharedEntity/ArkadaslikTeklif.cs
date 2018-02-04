@@ -6,7 +6,7 @@ namespace Core.EntityFramework.SharedEntity
     public class ArkadaslikTeklif<TKey> : EBase, IEntity<TKey> where TKey : IEquatable<TKey>
     {
         public TKey Id { get; set; }
-        public int ArkadaslikIsteyenNo { get; set; }
+        public int TeklifEdenNo { get; set; }
 
         public int TeklifEdilenNo { get; set; }
 

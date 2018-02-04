@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Identity.DataAccess.Migrations.MTIdentity
 {
-    public partial class MTIdentityDbContext_Baslangic : Migration
+    public partial class Baslangic : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -166,7 +166,7 @@ namespace Identity.DataAccess.Migrations.MTIdentity
                     PhoneNumber = table.Column<string>(nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
                     SecurityStamp = table.Column<string>(nullable: true),
-                    SonAktifOlmaTarihi = table.Column<DateTime>(nullable: false),
+                    SonAktifOlmaTarihi = table.Column<DateTime>(nullable: true),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     YaratilmaTarihi = table.Column<DateTime>(nullable: false),
@@ -189,7 +189,7 @@ namespace Identity.DataAccess.Migrations.MTIdentity
                 schema: "Yetki",
                 columns: table => new
                 {
-                    ArkadaslikIsteyenNo = table.Column<int>(nullable: false),
+                    TeklifEdenNo = table.Column<int>(nullable: false),
                     TeklifEdilenNo = table.Column<int>(nullable: false),
                     CevapTarihi = table.Column<DateTime>(nullable: true),
                     Id = table.Column<int>(nullable: false),
@@ -199,10 +199,10 @@ namespace Identity.DataAccess.Migrations.MTIdentity
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ArkadaslikTeklifleri", x => new { x.ArkadaslikIsteyenNo, x.TeklifEdilenNo });
+                    table.PrimaryKey("PK_ArkadaslikTeklifleri", x => new { x.TeklifEdenNo, x.TeklifEdilenNo });
                     table.ForeignKey(
-                        name: "FK_ArkadaslikTeklifleri_Kullanicilar_ArkadaslikIsteyenNo",
-                        column: x => x.ArkadaslikIsteyenNo,
+                        name: "FK_ArkadaslikTeklifleri_Kullanicilar_TeklifEdenNo",
+                        column: x => x.TeklifEdenNo,
                         principalSchema: "Yetki",
                         principalTable: "Kullanicilar",
                         principalColumn: "Id",
@@ -329,10 +329,10 @@ namespace Identity.DataAccess.Migrations.MTIdentity
                 column: "MedeniHalNo");
 
             migrationBuilder.CreateIndex(
-                name: "KisiAdSoyadSogumTarihiIndeks",
+                name: "KisiAdSoyadDogumTarihiCinsiyetIndeks",
                 schema: "Kisi",
                 table: "Kisiler",
-                columns: new[] { "Ad", "Soyad", "DogumTarihi" },
+                columns: new[] { "Ad", "Soyad", "DogumTarihi", "CinsiyetNo" },
                 unique: true,
                 filter: "[Ad] IS NOT NULL AND [Soyad] IS NOT NULL");
 

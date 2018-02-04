@@ -2,7 +2,7 @@
 {
     public class KullaniciListeDto : KullaniciBaseDto
     {
-        public string CinsiyetAdi { get; set; }
+        
     }
 }
 

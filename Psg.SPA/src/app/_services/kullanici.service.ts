@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DataService } from './data.service';
 import { ListeSonuc, KayitSonuc } from '../_models/sonuc';
-import { ArkadaslikListe } from '../_models/arkadaslik-liste';
 import { Observable } from 'rxjs/Observable';
 import { Kullanici, KullaniciYaz } from '../_models/kullanici';
 import { environment } from '../../environments/environment';
@@ -34,13 +33,7 @@ export class KullaniciService {
   mailAdresiKullanimda(eposta: string) {
     return this.dataService.get(`${this.url}kullanicilar/epostakullanimda?eposta=${eposta}`);
   }
-  arkadasliklariGetir(): Observable<ListeSonuc<ArkadaslikListe>> {
-    return this.dataService.get<ListeSonuc<ArkadaslikListe>>(`${this.url}arkadasliklar`)
-      .map(
-      response => {
-        return <ListeSonuc<ArkadaslikListe>>response;
-      });
-  }
+
   kullaniciBul(id: number): Observable<KayitSonuc<Kullanici>> {
     return this.dataService.get<KayitSonuc<Kullanici>>(`${this.url}kullanicilar/${id}`)
       .map(

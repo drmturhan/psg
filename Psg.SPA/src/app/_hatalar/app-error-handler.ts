@@ -14,10 +14,12 @@ export class MTAppErrorHandler implements ErrorHandler {
             this.uyarici.error((<BadInputError>error).orjinalHata);
 
         } else {
-            this.uyarici.warning(error);
+            if (error['error']) {
+                this.uyarici.warning(error.error);
+            } else {
+                console.log(error);
+            }
         }
-
-
     }
 }
 

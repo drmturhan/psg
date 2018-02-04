@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
-namespace Identity.DataAccess.migrations.MTIdentity
+namespace Identity.DataAccess.Migrations.MTIdentity
 {
     [DbContext(typeof(MTIdentityDbContext))]
-    [Migration("20180202074239_IdentityDb_KisiADSoyadDogumTarihiIndeksi_Cinsiyet_Eklendi")]
-    partial class IdentityDb_KisiADSoyadDogumTarihiIndeksi_Cinsiyet_Eklendi
+    [Migration("20180203222140_Baslangic")]
+    partial class Baslangic
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace Identity.DataAccess.migrations.MTIdentity
 
             modelBuilder.Entity("Identity.DataAccess.ArkadaslikTeklif", b =>
                 {
-                    b.Property<int>("ArkadaslikIsteyenNo");
+                    b.Property<int>("TeklifEdenNo");
 
                     b.Property<int>("TeklifEdilenNo");
 
@@ -38,7 +38,7 @@ namespace Identity.DataAccess.migrations.MTIdentity
 
                     b.Property<int>("Kimlik");
 
-                    b.HasKey("ArkadaslikIsteyenNo", "TeklifEdilenNo");
+                    b.HasKey("TeklifEdenNo", "TeklifEdilenNo");
 
                     b.HasIndex("TeklifEdilenNo");
 
@@ -309,10 +309,10 @@ namespace Identity.DataAccess.migrations.MTIdentity
                 {
                     b.HasOne("Identity.DataAccess.Kullanici", "TeklifEdilen")
                         .WithMany("YapilanTeklifler")
-                        .HasForeignKey("ArkadaslikIsteyenNo")
+                        .HasForeignKey("TeklifEdenNo")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Identity.DataAccess.Kullanici", "ArkadaslikIsteyen")
+                    b.HasOne("Identity.DataAccess.Kullanici", "TeklifEden")
                         .WithMany("GelenTeklifler")
                         .HasForeignKey("TeklifEdilenNo")
                         .OnDelete(DeleteBehavior.Restrict);

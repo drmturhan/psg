@@ -1,34 +1,30 @@
-<div *ngIf="arkadasliklarim.donenListe?.length>0">
-    <div class="container">
+<div class="container">
+
+    <div *ngIf="arkadasliklarim.donenListe?.length>0">
+
+        <div class="container">
+            <div class="row">
+                <div class="btn-group">
+                    <button class="btn btn-primary" [(ngModel)]="filtre" btnRadio="gelenTeklifler" (click)="filtrele()">Bana yapılan teklifler</button>
+                    <button class="btn btn-primary" [(ngModel)]="filtre" btnRadio="gidenTeklifler" (click)="filtrele()">Teklif Ettiklerim</button>
+                </div>
+            </div>
+        </div>
         <div class="row equal">
-            <h3>Liste</h3>
-            <div *ngFor="let teklif of arkadasliklarim.donenListe" class="col-lg-2 col-md-3 sm-col-6">
-                <p>{{teklif.arkadaslikIsteyen.tamAdi}} </p>
-                <p>{{teklif.teklifEdilen.tamAdi}} </p>
-                <p>{{teklif.istekTarihi}} </p>
-                <p>{{teklif.cevapTarihi}} </p>
-                <p>{{teklif.karar}} </p>
+            <div *ngFor="let teklif of gosterilenArkadasliklarim.donenListe" class="col-lg-2 col-md-3 col-sm-6">
+                <app-kullanici-karti [kullanici]="teklif.teklifEden" ngDefaultControl></app-kullanici-karti>
             </div>
         </div>
     </div>
 
-
-    <div class="container">
-        <div class="row">
-            <div class="btn-group">
-                <button class="btn btn-primary" [(ngModel)]="aramaParametreleri" btnRadio="TeklifEdenler" (click)="yukle()">Arkadaşlık Teklif Edenler</button>
-                <button class="btn btn-primary" [(ngModel)]="aramaParametreleri" btnRadio="TeklifEttiklerimr" (click)="yukle()">Arkadaşlık Teklif Ettiklerim</button>
-            </div>
-        </div>
-        <h2>{{aramaParametreleri==='TeklifEdenler' ? 'Benimle arkadaş olmak isteyenler':'Benim arkadaş olmak istediklerim'}}</h2>
-    </div>
-    <div class="row equal">
-        <div *ngFor="let teklif of arkadasliklarim.donenListe" class="col-lg-2 col-md-3 col-sm-6">
-            <mt-kullanici-karti [kullanici]="teklif.arkadaslikIsteyen"></mt-kullanici-karti>
-        </div>
+    <div *ngIf="!arkadasliklarim.donenListe || arkadasliklarim.donenListe?.length==0">
+        <h3>Hiç arkadaşlığınız yok!</h3>
     </div>
 </div>
-
-<div *ngIf="!arkadasliklarim.donenListe || arkadasliklarim.donenListe?.length==0">
-    <h3>Hiç arkadaşlığınız yok!</h3>
+<div class="text-center">
+    <div class="col-xs-12 col-12">
+        <pagination [boundaryLinks]="true" [totalItems]="arkadasliklarim.kayitSayisi" [(ngModel)]="arkadasliklarim.sayfa" [itemsPerPage]="arkadasliklarim.sayfaBuyuklugu" 
+        (pageCahanged)="pageChanged($event)" class="pagination-sm"
+                    previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"></pagination>
+        </div>
 </div>

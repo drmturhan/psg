@@ -9,7 +9,7 @@ import { AppError } from '../../_hatalar/app-error';
 import { BadInputError } from '../../_hatalar/bad-input';
 
 @Component({
-  selector: 'mt-kullanici-karti',
+  selector: 'app-kullanici-karti',
   templateUrl: './kullanici-karti.component.html',
   styleUrls: ['./kullanici-karti.component.css']
 })

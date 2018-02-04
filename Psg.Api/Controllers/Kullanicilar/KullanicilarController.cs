@@ -185,7 +185,7 @@ namespace Psg.Api.Controllers
 
             ArkadaslikTeklif yeniTeklif = new ArkadaslikTeklif
             {
-                ArkadaslikIsteyenNo = isteyenId,
+                TeklifEdenNo= isteyenId,
                 TeklifEdilenNo = cevaplayanId,
                 IstekTarihi = DateTime.Now
             };

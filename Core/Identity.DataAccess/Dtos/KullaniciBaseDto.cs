@@ -20,5 +20,6 @@ namespace Identity.DataAccess.Dtos
         public ICollection<FotoDetayDto> Fotograflari { get; set; } = new List<FotoDetayDto>();
         public string TamAdi { get; set; }
     }
+    
 }
 

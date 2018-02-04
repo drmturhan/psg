@@ -18,14 +18,14 @@ namespace Psg.Api.Controllers
     [Produces("application/json")]
     [Route("api/arkadasliklar")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ArkadasliklarController : MTController
+    public class ArkadaslikliklarimController : MTController
     {
         private readonly IArkadaslikRepository arkadaslikRepo;
         private readonly IUrlHelper urlHelper;
         private readonly IPropertyMappingService propertyMappingService;
         private readonly ITypeHelperService typeHelperService;
 
-        public ArkadasliklarController(
+        public ArkadaslikliklarimController(
             IArkadaslikRepository arkdaslikRepo,
             IUrlHelper urlHelper,
             IPropertyMappingService propertyMappingService,
@@ -40,7 +40,7 @@ namespace Psg.Api.Controllers
         }
 
 
-        [HttpGet(Name = "ArkadasliklarListesi")]
+        [HttpGet()]
         public async Task<IActionResult> Get(ArkadaslikSorgusu sorgu)
         {
 
@@ -56,7 +56,8 @@ namespace Psg.Api.Controllers
                     var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
                     if (currentUserId <= 0)
                         return Unauthorized();
-                    sorgu.TeklifEdenKullaniciNo = currentUserId;
+                    //En az biri aktif kullanici degilse problem var!
+                    //if (sorgu.TeklifEdenKullaniciNo != currentUserId && sorgu.CevapVerecekKullaniciNo != currentUserId) return Unauthorized();
                     var kayitlar = await arkadaslikRepo.ListeGetirTekliflerAsync(sorgu);
                     var sby = new StandartSayfaBilgiYaratici(sorgu, "ArkadasliklarListesi", urlHelper);
                     Response.Headers.Add("X-Pagination", kayitlar.SayfalamaMetaDataYarat<ArkadaslikTeklif>(sby));
