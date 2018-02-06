@@ -13,42 +13,74 @@ import { AuthService } from '../../_services/auth.service';
   styleUrls: ['./arkadaslarim.component.css']
 })
 export class ArkadaslarimComponent implements OnInit {
-  sorgu: ArkadaslikSorgusu = {};
-  filtre: any;
-  constructor(private route: ActivatedRoute, private arkadaslikService: ArkadaslikService, private authService: AuthService) { }
-  arkadasliklarim: ListeSonuc<ArkadasliklarimListe> = new ListeSonuc<ArkadasliklarimListe>();
+  sorgu: ArkadaslikSorgusu;
+  constructor(private route: ActivatedRoute,
+    private arkadaslikService: ArkadaslikService, public authService: AuthService) {
+    this.sorgu = new ArkadaslikSorgusu();
+    this.sorgu.sayfaBuyuklugu = 10;
+  }
   gosterilenArkadasliklarim: ListeSonuc<ArkadasliklarimListe> = new ListeSonuc<ArkadasliklarimListe>();
   kullaniciNumaram: number;
   ngOnInit() {
     this.kullaniciNumaram = this.authService.suankiKullanici.id;
     this.route.data.subscribe((data: ListeSonuc<ArkadasliklarimListe>) => {
-
       const kullaniciVeriSeti = data['arkadaslarim'];
       if (kullaniciVeriSeti && kullaniciVeriSeti.basarili) {
-        this.arkadasliklarim = kullaniciVeriSeti;
-        this.filtre = {
-          gelenTeklifler: true,
-          gidenTeklifler: false
-        };
-        this.filtrele();
+        this.gosterilenArkadasliklarim = kullaniciVeriSeti;
+        this.sorguyuAyarla(this.gosterilenArkadasliklarim);
       }
     });
   }
-  pageChanged(event: any): void {
+  sorguyuAyarla(sonuc: ListeSonuc<ArkadasliklarimListe>) {
+    this.sorgu.sayfaBuyuklugu = sonuc.sayfaBuyuklugu;
+    this.sorgu.sayfa = sonuc.sayfa;
+    this.sorgu.sayfaSayisi = sonuc.sayfaSayisi;
+    this.sorgu.kayitSayisi = sonuc.kayitSayisi;
+  }
+  teklifEdilenler() {
+    if (this.sorgu.teklifEdilenler === true) {
+      this.sorgu.teklifEdenler = false;
+    }
+    this.yukle();
+  }
+  teklifEdenler() {
+    if (this.sorgu.teklifEdenler === true) {
+      this.sorgu.teklifEdilenler = false;
+    }
+    this.yukle();
+  }
+  kabulEdilenler() {
+    if (this.sorgu.kabulEdilenler === true) {
+      this.sorgu.cevapBeklenenler = false;
+    }
+    this.yukle();
+  }
+  cevaplananlar() {
+    if (this.sorgu.cevaplananlar === true) {
+      this.sorgu.cevapBeklenenler = false;
+    }
+    this.yukle();
+  }
+  cevapBekleyenler() {
+    if (this.sorgu.cevapBeklenenler === true) {
+      this.sorgu.kabulEdilenler = false;
+      this.sorgu.cevaplananlar = false;
+    }
+    this.yukle();
+  }
 
-    this.arkadaslikService.arkadasliklariGetir(this.sorgu).subscribe((sonuc: ListeSonuc<ArkadasliklarimListe>) => {
-      this.arkadasliklarim = sonuc;
+  yukle() {
+    this.arkadaslikService.arkadasliklariGetir(this.sorgu).subscribe((kayitlar: ListeSonuc<ArkadasliklarimListe>) => {
+      this.gosterilenArkadasliklarim = kayitlar;
+      this.sorguyuAyarla(this.gosterilenArkadasliklarim);
     });
-  }
-  filtrele() {
-    if (this.filtre.gelenTeklifler) {
-      this.gosterilenArkadasliklarim.donenListe = this.arkadasliklarim
-        .donenListe.filter(f => f.teklifEdilen != null && f.teklifEdilen.id === this.kullaniciNumaram);
-    }
-    if (this.filtre.gidenTeklifler) {
-      this.gosterilenArkadasliklarim.donenListe = this.arkadasliklarim
-        .donenListe.filter(f => f.teklifEden != null && f.teklifEden.id === this.kullaniciNumaram);
-    }
-  }
 
+  }
+  pageChanged(event: any): void {
+    this.sorgu.sayfa = event.page;
+    this.yukle();
+  }
+  listeyiYenile(durum) {
+    this.yukle();
+  }
 }

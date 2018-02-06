@@ -16,27 +16,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/arkadasliklar")]
+    [Route("api/arkadasliklarim")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ArkadaslikliklarimController : MTController
     {
         private readonly IArkadaslikRepository arkadaslikRepo;
         private readonly IUrlHelper urlHelper;
-        private readonly IPropertyMappingService propertyMappingService;
-        private readonly ITypeHelperService typeHelperService;
 
         public ArkadaslikliklarimController(
             IArkadaslikRepository arkdaslikRepo,
-            IUrlHelper urlHelper,
-            IPropertyMappingService propertyMappingService,
-            ITypeHelperService typeHelperService) : base("Arkadaşlıklar")
+            IUrlHelper urlHelper) : base("Arkadaşlıklar")
         {
             this.arkadaslikRepo = arkdaslikRepo;
             this.urlHelper = urlHelper;
-            this.propertyMappingService = propertyMappingService;
-            this.typeHelperService = typeHelperService;
-            propertyMappingService.AddMap<ArkadaslarimListeDto, ArkadaslikTeklif>(ArkadaslikTeklifPropertyMap.Values);
-
         }
 
 
@@ -46,16 +38,13 @@ namespace Psg.Api.Controllers
 
             return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
             {
-                if (!propertyMappingService.ValidMappingsExistsFor<ArkadaslarimListeDto, ArkadaslikTeklif>(sorgu.SiralamaCumlesi))
-                    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "ArkadaşListesi", Tanim = "Sıralama bilgisi yanlış!" } }));
 
-                if (!typeHelperService.TryHastProperties<ArkadaslarimListeDto>(sorgu.Alanlar))
-                    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "ArkadaşListesi", Tanim = "Gösterilmek istenen alanlar hatalı!" } }));
                 try
                 {
                     var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
                     if (currentUserId <= 0)
                         return Unauthorized();
+                    sorgu.KullaniciNo = currentUserId;
                     //En az biri aktif kullanici degilse problem var!
                     //if (sorgu.TeklifEdenKullaniciNo != currentUserId && sorgu.CevapVerecekKullaniciNo != currentUserId) return Unauthorized();
                     var kayitlar = await arkadaslikRepo.ListeGetirTekliflerAsync(sorgu);
@@ -71,6 +60,84 @@ namespace Psg.Api.Controllers
                     return BadRequest(hata.Message);
                 }
             });
+        }
+        [HttpPost("{isteyenId}/teklif/{cevaplayanId}")]
+        public async Task<IActionResult> TeklifEt(int isteyenId, int cevaplayanId)
+        {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            if (currentUserId != isteyenId)
+                return Unauthorized();
+            if (isteyenId == cevaplayanId)
+                return BadRequest("Kendinize arkadaşlık teklif edemezsiniz!!!");
+            var teklifZatenVar = await arkadaslikRepo.TeklifiBulAsync(isteyenId, cevaplayanId);
+
+            if (teklifZatenVar != null)
+                return BadRequest("Bu kullanıcıya zaten arkadaşlık teklif ettiniz");
+            var banaTeklifEtti = await arkadaslikRepo.TeklifiBulAsync(cevaplayanId, isteyenId);
+            if (banaTeklifEtti != null)
+                return BadRequest("Bu kullanıcı size zaten arkadaşlık teklif etti. Lütfen cevap verin...");
+            if (await arkadaslikRepo.KullaniciBulAsync(cevaplayanId) == null)
+                return NotFound();
+
+            ArkadaslikTeklif yeniTeklif = new ArkadaslikTeklif
+            {
+                TeklifEdenNo = isteyenId,
+                TeklifEdilenNo = cevaplayanId,
+                IstekTarihi = DateTime.Now
+            };
+            await arkadaslikRepo.EkleAsync<ArkadaslikTeklif>(yeniTeklif);
+            if (await arkadaslikRepo.KaydetAsync())
+                return Ok();
+            return BadRequest("Arkadaşlık teklifi yapılamad!");
+
+
+        }
+        [HttpPost("{isteyenId}/teklifiptal/{cevaplayanId}")]
+        public async Task<IActionResult> TeklifIptalEt(int isteyenId, int cevaplayanId)
+        {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+
+
+            var teklif = await arkadaslikRepo.TeklifiBulAsync(isteyenId, cevaplayanId);
+            if (teklif == null)
+                return NotFound("Arkadaşlık bilgisine ulaşılamadı");
+            if (await arkadaslikRepo.KullaniciBulAsync(cevaplayanId) == null)
+                return NotFound();
+
+            if (teklif.IptalEdildi == true)
+                return BadRequest("Teklif zaten iptal edilmiş durumda!");
+            teklif.IptalEdildi = true;
+            teklif.IptalEdenKullaniciNo = currentUserId;
+            teklif.IptalTarihi = DateTime.Now;
+
+            if (await arkadaslikRepo.KaydetAsync())
+                return Ok();
+            return BadRequest("Arkadaşlık teklifi iptal edilemedi!");
+
+        }
+        [HttpPost("{isteyenId}/kararver/{cevaplayanId}")]
+        public async Task<IActionResult> TeklifeKararVer(int isteyenId, int cevaplayanId, [FromBody] bool karar)
+        {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+
+
+            var teklif = await arkadaslikRepo.TeklifiBulAsync(isteyenId, cevaplayanId);
+            if (teklif == null)
+                return NotFound("Arkadaşlık bilgisine ulaşılamadı");
+            if (await arkadaslikRepo.KullaniciBulAsync(cevaplayanId) == null)
+                return NotFound();
+
+            if (teklif.IptalEdildi == true)
+                return BadRequest("Teklif zaten iptal edilmiş durumda!");
+            teklif.Karar = karar;
+            teklif.CevapTarihi = DateTime.Now;
+
+            if (await arkadaslikRepo.KaydetAsync())
+                return Ok();
+            return BadRequest("Arkadaşlık teklifi kararı kaydedilemedi!");
+
         }
     }
 

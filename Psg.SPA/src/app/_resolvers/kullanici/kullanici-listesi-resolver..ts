@@ -7,6 +7,7 @@ import 'rxjs/add/operator/map';
 import { KullaniciService } from './../../_services/kullanici.service';
 import { Kullanici, KullanicilarVeriSeti } from '../../_models/kullanici';
 import { ListeSonuc } from '../../_models/sonuc';
+import { KullaniciSorgusu } from '../../_models/sorgular/kullanici-sorgusu';
 
 
 
@@ -19,6 +20,7 @@ export class KullaniciListesiResolver implements Resolve<KullanicilarVeriSeti> {
   ) { }
   donecekVeriSeti: KullanicilarVeriSeti = new KullanicilarVeriSeti();
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<KullanicilarVeriSeti> {
+    
     const veriKaynaklari = [
       this.kullaniciService.listeGetirKullanicilar()
     ];

@@ -12,7 +12,7 @@ namespace Identity.DataAccess.Repositories
 {
 
 
- 
+
     public interface IKullaniciRepository : IRepository
     {
         Task<bool> KullaniciAdiKullanimdaAsync(string kullaniciAdi);
@@ -26,19 +26,29 @@ namespace Identity.DataAccess.Repositories
     }
     public class KullaniciSorgu : SorguBase
     {
-
+        public KullaniciSorgu()
+        {
+            SiralamaCumlesi = "AdSoyad";
+        }
     }
 
     public class KullaniciRepository : IKullaniciRepository
     {
         private readonly MTIdentityDbContext db;
         private readonly IPropertyMappingService propertyMappingService;
+        private readonly ITypeHelperService typeHelperService;
 
-        public KullaniciRepository(MTIdentityDbContext db, IPropertyMappingService propertyMappingService)
+        public KullaniciRepository(MTIdentityDbContext db, IPropertyMappingService propertyMappingService, ITypeHelperService typeHelperService)
         {
             this.db = db;
             this.propertyMappingService = propertyMappingService;
+            this.typeHelperService = typeHelperService;
             propertyMappingService.AddMap<KullaniciListeDto, Kullanici>(KullaniciPropertyMap.Values);
+            
+
+            Sorgu = db.Users.Include(kul => kul.Kisi)
+                    .ThenInclude(k => k.Cinsiyeti)
+                    .Include(kul => kul.Kisi).ThenInclude(kul => kul.Fotograflari);
         }
 
         public async Task<Kullanici> BulAsync(int id)
@@ -69,17 +79,39 @@ namespace Identity.DataAccess.Repositories
             var sonuc = await db.SaveChangesAsync();
             return sonuc > 0;
         }
-        public IQueryable<Kullanici> Sorgu
-        {
-            get
-            {
-                return db.Users.Include(kul => kul.Kisi)
-                    .ThenInclude(k => k.Cinsiyeti)
-                    .Include(kul => kul.Kisi).ThenInclude(kul => kul.Fotograflari);
-            }
-        }
+
+        public IQueryable<Kullanici> Sorgu { get; set; }
+
         public async Task<SayfaliListe<Kullanici>> ListeGetirKullanicilarTumuAsync(KullaniciSorgu sorguNesnesi)
         {
+
+            if (!propertyMappingService.ValidMappingsExistsFor<KullaniciListeDto, Kullanici>(sorguNesnesi.SiralamaCumlesi))
+                throw new ArgumentException("Sıralama bilgisi yanlış!");
+
+            if (!typeHelperService.TryHastProperties<KullaniciListeDto>(sorguNesnesi.Alanlar))
+                throw new ArgumentException("Gösterilmek istenen alanlar hatalı!");
+
+            
+            if (!string.IsNullOrEmpty(sorguNesnesi.AramaCumlesi))
+            {
+                var anahtarKelimeler = sorguNesnesi.AramaCumlesi.Split(' ');
+                if (anahtarKelimeler.Length > 0)
+                {
+                    switch (anahtarKelimeler.Length)
+                    {
+                        case 1:
+                            Sorgu = Sorgu.Where(k => k.Kisi.Ad.Contains(anahtarKelimeler[0]) ||k.Kisi.Soyad.Contains(anahtarKelimeler[0]));
+                            break;
+                        case 2:
+                            Sorgu = Sorgu.Where(k => k.Kisi.Ad.Contains(anahtarKelimeler[0]) && k.Kisi.Soyad.Contains(anahtarKelimeler[1]));
+                            break;
+                        case 3:
+                            Sorgu = Sorgu.Where(k => k.Kisi.Ad.Contains(anahtarKelimeler[0]) && k.Kisi.DigerAd.Contains(anahtarKelimeler[1]) && k.Kisi.Soyad.Contains(anahtarKelimeler[2]));
+                            break;
+                    }
+
+                }
+            }
             var siralamaBilgisi = propertyMappingService.GetPropertyMapping<KullaniciListeDto, Kullanici>();
             var siralanmisSorgu = Sorgu.SiralamayiAyarla(sorguNesnesi.SiralamaCumlesi, siralamaBilgisi);
             var sonuc = await SayfaliListe<Kullanici>.SayfaListesiYarat(siralanmisSorgu, sorguNesnesi.Sayfa, sorguNesnesi.SayfaBuyuklugu);
@@ -96,7 +128,7 @@ namespace Identity.DataAccess.Repositories
 
         public Task<bool> KullaniciAdiKullanimdaAsync(string kullaniciAdi)
         {
-            return db.Users.AnyAsync(k => k.UserName== kullaniciAdi);
+            return db.Users.AnyAsync(k => k.UserName == kullaniciAdi);
         }
         public Task<bool> EpostaKullanimdaAsync(string eposta)
         {
@@ -110,7 +142,8 @@ namespace Identity.DataAccess.Repositories
         public static Dictionary<string, PropertyMappingValue> Values = new Dictionary<string, PropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
         {
             { "Id",new PropertyMappingValue(new List<string>{"Id" })},
-            { "AdSoyad",new PropertyMappingValue(new List<string>{"Ad","Soyad"})}
+            { "AdSoyad",new PropertyMappingValue(new List<string>{"Kisi.Ad","Kisi.Soyad"})},
+            { "Yas",new PropertyMappingValue(new List<string>{"Kisi.DogumTarihi" })},
         };
 
     }

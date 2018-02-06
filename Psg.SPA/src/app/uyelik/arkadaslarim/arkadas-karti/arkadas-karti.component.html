@@ -1,0 +1,72 @@
+<div *ngIf="arkadaslik.teklifEdilen.id==sahipKullaniciNo " class="panel panel-default ">
+  <div class="panel-body ">
+    <div class="panel-image ">
+      <div class="arkadaslikDurumu">
+        <i *ngIf="arkadaslik.karar===true" class="fa fa-check-circle"></i>
+        <i *ngIf="arkadaslik.karar===false" class="fa fa-thumbs-o-down"></i>
+        <i *ngIf="arkadaslik.karar===null" class="fa fa-coffee"></i>
+      </div>
+      <img src="{{arkadaslik.teklifEden.profilFotoUrl?arkadaslik.teklifEden.profilFotoUrl:bosFotoUrl}} " alt="{{arkadaslik.teklifEden.tamAdi}} ">
+      <ul class="list-inline kullanici-ikonlari text-center animate ">
+        <li>
+          <button class="btn btn-primary " [routerLink]="['/kullanicilar/',arkadaslik.teklifEden.id] ">
+            <i class="fa fa-user "></i>
+          </button>
+        </li>
+        <li>
+          <button class="btn btn-primary" type="button" (click)="teklifIptalEt(arkadaslik)" *ngIf="arkadaslik.karar!==null ">
+            <i class="fa fa-times"></i>
+          </button>
+        </li>
+        <li>
+          <button class="btn btn-primary " *ngIf="arkadaslik.karar===null " (click)="teklifiKabulEt(arkadaslik)">
+            <i class="fa  fa-thumbs-o-up"></i>
+          </button>
+        </li>
+        <li>
+          <button class="btn btn-primary " *ngIf="arkadaslik.karar===null " (click)="teklifiReddet(arkadaslik)">
+            <i class="fa  fa-thumbs-o-down"></i>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div class="text-center banateklifedilenler">
+      <small>{{arkadaslik.teklifEden.tamAdi}} </small>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="arkadaslik.teklifEden.id==sahipKullaniciNo" class="panel panel-default">
+  <div class="panel-body">
+    <div class="panel-image">
+      <div class="arkadaslikDurumu">
+        <i *ngIf="arkadaslik.karar===true" class="fa fa-check-circle"></i>
+        <i *ngIf="arkadaslik.karar===false" class="fa fa-thumbs-o-down"></i>
+        <i *ngIf="arkadaslik.karar===null" class="fa fa-coffee"></i>
+      </div>
+      <img src="{{arkadaslik.teklifEdilen.profilFotoUrl?arkadaslik.teklifEdilen.profilFotoUrl:bosFotoUrl}}" alt="{{arkadaslik.teklifEdilen.tamAdi}}">
+      <ul class="list-inline kullanici-ikonlari text-center animate">
+        <li>
+          <button class="btn btn-primary" [routerLink]="['/kullanicilar/',arkadaslik.teklifEdilen.id]">
+            <i class="fa fa-user"></i>
+          </button>
+        </li>
+        <li>
+          <button class="btn btn-primary" type="button" (click)="teklifIptalEt(arkadaslik)">
+            <i class="fa fa-times"></i>
+          </button>
+        </li>
+        <li>
+          <!-- <button class="btn btn-primary" *ngIf="arkadaslik.karar===null" >
+            <i class="fa  fa-thumbs-o-up"></i>
+          </button> -->
+        </li>
+      </ul>
+    </div>
+    <div class="text-center teklifettiklerim">
+      <small>{{arkadaslik.teklifEdilen.tamAdi}} </small>
+    </div>
+  </div>
+</div>

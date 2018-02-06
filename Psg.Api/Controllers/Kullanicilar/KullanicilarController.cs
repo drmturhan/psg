@@ -23,24 +23,23 @@ namespace Psg.Api.Controllers
     public class KullanicilarController : MTController
     {
         private readonly IKullaniciRepository kullaniciRepo;
-        private readonly IArkadaslikRepository arkadaslikRepo;
+        
         private readonly IUrlHelper urlHelper;
-        private readonly IPropertyMappingService propertyMappingService;
-        private readonly ITypeHelperService typeHelperService;
+        //private readonly IPropertyMappingService propertyMappingService;
+        //private readonly ITypeHelperService typeHelperService;
 
         public KullanicilarController(
             IKullaniciRepository kullaniciRepo,
-            IArkadaslikRepository arkdaslikRepo,
-            IUrlHelper urlHelper,
-            IPropertyMappingService propertyMappingService,
-            ITypeHelperService typeHelperService) : base("Kullanıcı")
+            IUrlHelper urlHelper
+            //,IPropertyMappingService propertyMappingService,
+            //ITypeHelperService typeHelperService
+            ) : base("Kullanıcı")
         {
             this.kullaniciRepo = kullaniciRepo;
-            this.arkadaslikRepo = arkdaslikRepo;
             this.urlHelper = urlHelper;
-            this.propertyMappingService = propertyMappingService;
-            this.typeHelperService = typeHelperService;
-            propertyMappingService.AddMap<KullaniciListeDto, Kullanici>(KullaniciPropertyMap.Values);
+            //this.propertyMappingService = propertyMappingService;
+            //this.typeHelperService = typeHelperService;
+            //propertyMappingService.AddMap<KullaniciListeDto, Kullanici>(KullaniciPropertyMap.Values);
         }
 
         [HttpGet(Name = "Kullanicilar")]
@@ -48,11 +47,11 @@ namespace Psg.Api.Controllers
         {
             return await KullaniciVarsaCalistir<Task<IActionResult>>(async () =>
             {
-                if (!propertyMappingService.ValidMappingsExistsFor<KullaniciListeDto, Kullanici>(sorgu.SiralamaCumlesi))
-                    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Sıralama bilgisi yanlış!" } }));
+                //if (!propertyMappingService.ValidMappingsExistsFor<KullaniciListeDto, Kullanici>(sorgu.SiralamaCumlesi))
+                //    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Sıralama bilgisi yanlış!" } }));
 
-                if (!typeHelperService.TryHastProperties<KullaniciListeDto>(sorgu.Alanlar))
-                    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Gösterilmek istenen alanlar hatalı!" } }));
+                //if (!typeHelperService.TryHastProperties<KullaniciListeDto>(sorgu.Alanlar))
+                //    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Gösterilmek istenen alanlar hatalı!" } }));
 
                 var kayitlar = await kullaniciRepo.ListeGetirKullanicilarTumuAsync(sorgu);
 
@@ -108,7 +107,7 @@ namespace Psg.Api.Controllers
                     return NotFound();
                 if (neden == "yaz")
                 {
-                    
+
                     var yazSonucDto = KayitSonuc<KullaniciYazDto>.IslemTamam(kayit.ToDto());
                     return Ok(yazSonucDto.ShapeData(alanlar));
                 }
@@ -169,34 +168,8 @@ namespace Psg.Api.Controllers
             }
             return BadRequest("Kullanıcı silinemedi!");
         }
-        [HttpPost("{isteyenId}/teklif/{cevaplayanId}")]
-        public async Task<IActionResult> TeklifEt(int isteyenId, int cevaplayanId)
-        {
-            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            if (currentUserId != isteyenId)
-                return Unauthorized();
-            if (isteyenId == cevaplayanId)
-                return BadRequest("Kendinize arkadaşlık teklif edemezsiniz!!!");
-            var teklifZatenVar = await arkadaslikRepo.TeklifiBulAsync(isteyenId, cevaplayanId);
-            if (teklifZatenVar != null)
-                return BadRequest("Bu kullanıcıya zaten arkadaşlık teklif ettiniz");
-            if (await arkadaslikRepo.KullaniciBulAsync(cevaplayanId) == null)
-                return NotFound();
-
-            ArkadaslikTeklif yeniTeklif = new ArkadaslikTeklif
-            {
-                TeklifEdenNo= isteyenId,
-                TeklifEdilenNo = cevaplayanId,
-                IstekTarihi = DateTime.Now
-            };
-            await arkadaslikRepo.EkleAsync<ArkadaslikTeklif>(yeniTeklif);
-            if (await arkadaslikRepo.KaydetAsync())
-                return Ok();
-            return BadRequest("Arkadaşlık teklifi yapılamad!");
-
-
-        }
+        
     }
- 
+
 
 }

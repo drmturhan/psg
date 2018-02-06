@@ -94,8 +94,8 @@ namespace Identity.DataAccess
             {
                 entity.ToTable("ArkadaslikTeklifleri");
                 entity.HasKey(e => new { e.TeklifEdenNo, e.TeklifEdilenNo });
-                entity.HasOne(e => e.TeklifEden).WithMany(m => m.GelenTeklifler).HasForeignKey(fk => fk.TeklifEdilenNo).OnDelete(DeleteBehavior.Restrict);
-                entity.HasOne(e => e.TeklifEdilen).WithMany(m => m.YapilanTeklifler).HasForeignKey(fk => fk.TeklifEdenNo).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.TeklifEden).WithMany(m => m.GelenTeklifler).HasForeignKey(fk => fk.TeklifEdenNo).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.TeklifEdilen).WithMany(m => m.YapilanTeklifler).HasForeignKey(fk => fk.TeklifEdilenNo).OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

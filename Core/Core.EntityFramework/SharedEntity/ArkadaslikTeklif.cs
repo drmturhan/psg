@@ -3,9 +3,9 @@ using System;
 
 namespace Core.EntityFramework.SharedEntity
 {
-    public class ArkadaslikTeklif<TKey> : EBase, IEntity<TKey> where TKey : IEquatable<TKey>
+    public class ArkadaslikTeklifBase 
     {
-        public TKey Id { get; set; }
+
         public int TeklifEdenNo { get; set; }
 
         public int TeklifEdilenNo { get; set; }
@@ -13,6 +13,9 @@ namespace Core.EntityFramework.SharedEntity
         public DateTime IstekTarihi { get; set; }
         public DateTime? CevapTarihi { get; set; }
         public bool? Karar { get; set; }
-        public TKey Kimlik { get { return Id; } set { Id = value; } }
+
+        public DateTime? IptalTarihi { get; set; }
+        public int? IptalEdenKullaniciNo { get; set; }
+        public bool? IptalEdildi { get; set; }
     }
 }

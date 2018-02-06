@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\MTIdentity\20180206000919_ArkadaslikTablosuna_teklifeden_edilen_hatasi_duzeltildi.cs" />
+    <Compile Remove="Migrations\MTIdentity\20180206001000_ArkadaslikTablosuna_teklifeden_edilen_hatasi_duzeltildi.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="JsonVeriler\Cinsiyetler.json" />
     <None Remove="JsonVeriler\MedeniHaller.json" />
   </ItemGroup>

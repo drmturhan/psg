@@ -3,3 +3,19 @@
     flex-flow: row wrap;
     align-content: flex-end;
 }
+#aramaFormu {
+left:50px;
+margin-bottom: 30px;
+
+}
+#aramaCumlesi{
+width:  250px;
+
+}
+.toplamSayfa{
+    color:red;
+}
+
+ .aktifSayfa{
+    color:blue;
+}

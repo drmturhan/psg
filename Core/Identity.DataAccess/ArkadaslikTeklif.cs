@@ -2,7 +2,7 @@
 
 namespace Identity.DataAccess
 {
-    public class ArkadaslikTeklif : ArkadaslikTeklif<int>
+    public class ArkadaslikTeklif : ArkadaslikTeklifBase
     {
         public Kullanici TeklifEden { get; set; }
 

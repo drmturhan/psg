@@ -35,12 +35,9 @@ export class ArkadaslarimResolver implements Resolve<ListeSonuc<ArkadasliklarimL
             const mesajlar: string[] = ['Aktif kullanıcı yok!', 'Arkadaşlarını görmek için önce giriş yapmalısınız!'];
             this.router.navigate(['/yuklemeHatasi', mesajlar]);
         }
-        const sorgu = new ArkadaslikSorgusu();
-        sorgu.sayfa = 1;
-        sorgu.teklifEdenKullaniciNo = this.authService.suankiKullanici.id;
 
         const veriKaynaklari = [
-            this.arkadaslikService.arkadasliklariGetir(sorgu)
+            this.arkadaslikService.arkadasliklariGetir()
         ];
         return forkJoin(veriKaynaklari).map(data => {
             this.donecekVeriSeti = data[0];

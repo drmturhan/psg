@@ -4,14 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
 namespace Identity.DataAccess.Migrations.MTIdentity
 {
     [DbContext(typeof(MTIdentityDbContext))]
-    partial class MTIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180205230052_ArkadaslikTablosuna_IptalBilgileriKoyuldu")]
+    partial class ArkadaslikTablosuna_IptalBilgileriKoyuldu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,30 +1,36 @@
 <div class="container">
+    <div class="row">
+        <form novalidate #form="ngForm" class="form-inline" (submit)="yukle()">
+            <div class="form-group">
 
-    <div *ngIf="arkadasliklarim.donenListe?.length>0">
-
-        <div class="container">
-            <div class="row">
-                <div class="btn-group">
-                    <button class="btn btn-primary" [(ngModel)]="filtre" btnRadio="gelenTeklifler" (click)="filtrele()">Bana yapılan teklifler</button>
-                    <button class="btn btn-primary" [(ngModel)]="filtre" btnRadio="gidenTeklifler" (click)="filtrele()">Teklif Ettiklerim</button>
+                <div class="btn-group " id="teklifEdilenler">
+                    <button class="btn btn-primary btn-med" (click)="teklifEdilenler()" [(ngModel)]="sorgu.teklifEdilenler" btnCheckbox
+                        name="teklifEdilenler">Teklifler</button>
+                    <button class="btn btn-primary btn-med" (click)="teklifEdenler()" [(ngModel)]="sorgu.teklifEdenler" btnCheckbox name="teklifEdenler">Gelen Teklifler</button>
+                    <button class="btn btn-primary btn-med" (click)="kabulEdilenler()" [(ngModel)]="sorgu.kabulEdilenler" btnCheckbox
+                        name="kabulEdilenler">Kabul Edilenler</button>
+                    <button class="btn btn-primary btn-med" (click)="cevaplananlar()" [(ngModel)]="sorgu.cevaplananlar" btnCheckbox name="cevaplananlar">Cevaplananlar</button>
+                    <button class="btn btn-primary btn-med" (click)="cevapBekleyenler()" [(ngModel)]="sorgu.cevapBeklenenler" btnCheckbox
+                        name="cevapBeklenenler">Cevap Bekleyenler</button>
                 </div>
             </div>
-        </div>
-        <div class="row equal">
-            <div *ngFor="let teklif of gosterilenArkadasliklarim.donenListe" class="col-lg-2 col-md-3 col-sm-6">
-                <app-kullanici-karti [kullanici]="teklif.teklifEden" ngDefaultControl></app-kullanici-karti>
-            </div>
-        </div>
-    </div>
 
-    <div *ngIf="!arkadasliklarim.donenListe || arkadasliklarim.donenListe?.length==0">
-        <h3>Hiç arkadaşlığınız yok!</h3>
+        </form>
+
+    </div>
+</div>
+
+<div class="container" id="arkadasliklarim">
+    <div class="row">
+        <div *ngFor="let arkadaslik of gosterilenArkadasliklarim.donenListe" class="col-xs-4 col-md-2">
+            <app-arkadas-karti [arkadaslik]="arkadaslik" [sahipKullaniciNo]="authService.suankiKullanici.id" (listeyiYenile)="listeyiYenile($event)" ></app-arkadas-karti>
+        </div>
     </div>
 </div>
 <div class="text-center">
     <div class="col-xs-12 col-12">
-        <pagination [boundaryLinks]="true" [totalItems]="arkadasliklarim.kayitSayisi" [(ngModel)]="arkadasliklarim.sayfa" [itemsPerPage]="arkadasliklarim.sayfaBuyuklugu" 
-        (pageCahanged)="pageChanged($event)" class="pagination-sm"
-                    previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"></pagination>
-        </div>
+        <pagination [boundaryLinks]="true" [totalItems]="gosterilenArkadasliklarim.kayitSayisi" [(ngModel)]="gosterilenArkadasliklarim.sayfa"
+            [itemsPerPage]="gosterilenArkadasliklarim.sayfaBuyuklugu" (pageCahanged)="pageChanged($event)" class="pagination-sm"
+            previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"></pagination>
+    </div>
 </div>

@@ -27,7 +27,7 @@ import { KullaniciListesiComponent } from './kullanicilar/kullanici-listesi/kull
 import { HttpClientModule } from '@angular/common/http';
 import { KullaniciKartiComponent } from './kullanicilar/kullanici-karti/kullanici-karti.component';
 import { KullaniciDetayComponent } from './kullanicilar/kullanici-detay/kullanici-detay.component';
-import { TabsModule, BsDropdownModule, TooltipModule, PaginationModule } from 'ngx-bootstrap';
+import { TabsModule, BsDropdownModule, ButtonsModule, TooltipModule, PaginationModule } from 'ngx-bootstrap';
 import { KullaniciDetayResolver } from './_resolvers/kullanici/kullanici-detay-resolver';
 import { KullaniciDuzeltComponent } from './kullanicilar/kullanici-duzelt/kullanici-duzelt.component';
 import { VeriYuklenemediComponent } from './ortak/components/veri-yuklenemedi/veri-yuklenemedi.component';
@@ -54,6 +54,8 @@ import { TokenInterceptor, TokenInterceptorProvider } from './_interceptors/toke
 import { ErrorInterceptorProvider } from './_interceptors/error.interceptor';
 import { ProfilimComponent } from './uyelik/profilim/profilim.component';
 import { ArkadaslikService } from './_services/arkadaslik.service';
+import { ArkadasKartiComponent } from './uyelik/arkadaslarim/arkadas-karti/arkadas-karti.component';
+
 
 defineLocale('tr', tr);
 
@@ -79,12 +81,14 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     ArkadaslarimComponent,
     TimeAgoPipe,
     EpostaOnaylandiComponent,
-    YenidenAktiflestirComponent
+    YenidenAktiflestirComponent,
+    ArkadasKartiComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoot),
     TabsModule.forRoot(),
+    ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),

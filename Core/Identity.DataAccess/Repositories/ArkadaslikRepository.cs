@@ -9,21 +9,17 @@ using System.Threading.Tasks;
 
 namespace Identity.DataAccess.Repositories
 {
-    public enum ArkadaslikListeTipleri
-    {
 
-        Tumu = 0,
-        SadeceKabulEdilenler = 1,
-        SadeceReddedilenler = 2,
-        SadeceCevapBeklenenler = 3,
-        SadeceCevapVerilenler = 4
-    }
 
     public class ArkadaslikSorgusu : SorguBase
     {
-        public int? TeklifEdenKullaniciNo { get; set; }
-        public int? CevapVerecekKullaniciNo { get; set; }
-        public ArkadaslikListeTipleri ListeTipi { get; set; }
+        public int? KullaniciNo { get; set; }
+        public bool? TeklifEdilenler { get; set; }
+        public bool? TeklifEdenler { get; set; }
+        public bool? KabulEdilenler { get; set; }
+        public bool? CevapBeklenenler { get; set; }
+        public bool? Cevaplananlar { get; set; }
+
     }
     public interface IArkadaslikRepository : IRepository
     {
@@ -39,11 +35,16 @@ namespace Identity.DataAccess.Repositories
     {
         private readonly MTIdentityDbContext db;
         private readonly IPropertyMappingService propertyMappingService;
+        private readonly ITypeHelperService typeHelperService;
 
-        public ArkadaslikRepository(MTIdentityDbContext db, IPropertyMappingService propertyMappingService)
+        public ArkadaslikRepository(MTIdentityDbContext db, IPropertyMappingService propertyMappingService, ITypeHelperService typeHelperService)
         {
             this.db = db;
             this.propertyMappingService = propertyMappingService;
+            this.typeHelperService = typeHelperService;
+
+
+            propertyMappingService.AddMap<ArkadaslarimListeDto, ArkadaslikTeklif>(ArkadaslikTeklifPropertyMap.Values);
             propertyMappingService.AddMap<ArkadaslarimListeDto, ArkadaslikTeklif>(ArkadaslikTeklifPropertyMap.Values);
 
             sorgu = db.ArkadaslikTeklifleri
@@ -78,17 +79,33 @@ namespace Identity.DataAccess.Repositories
 
         public async Task<SayfaliListe<ArkadaslikTeklif>> ListeGetirTekliflerAsync(ArkadaslikSorgusu sorguNesnesi)
         {
+            if (!propertyMappingService.ValidMappingsExistsFor<ArkadaslarimListeDto, ArkadaslikTeklif>(sorguNesnesi.SiralamaCumlesi))
+                throw new ArgumentException("Sıralama bilgisi yanlış!");
+
+            if (!typeHelperService.TryHastProperties<ArkadaslarimListeDto>(sorguNesnesi.Alanlar))
+                throw new ArgumentException("Gösterilmek istenen alanlar hatalı!");
+
+
             var siralamaBilgisi = propertyMappingService.GetPropertyMapping<ArkadaslarimListeDto, ArkadaslikTeklif>();
-            var siralanmisSorgu = sorgu.SiralamayiAyarla(sorguNesnesi.SiralamaCumlesi, siralamaBilgisi);
 
+            sorgu = sorgu.SiralamayiAyarla(sorguNesnesi.SiralamaCumlesi, siralamaBilgisi);
 
-            if (sorguNesnesi.TeklifEdenKullaniciNo.HasValue)
-                sorgu = sorgu.Where(teklif => teklif.TeklifEdenNo == sorguNesnesi.TeklifEdenKullaniciNo.Value);
-            if (sorguNesnesi.CevapVerecekKullaniciNo.HasValue)
-                sorgu = sorgu.Where(teklif => teklif.TeklifEdilenNo == sorguNesnesi.CevapVerecekKullaniciNo.Value);
-            if (sorguNesnesi.ListeTipi != ArkadaslikListeTipleri.Tumu)
-                sorgu = ListetipiniBelirle(sorgu, sorguNesnesi);
-            var sonuc = await SayfaliListe<ArkadaslikTeklif>.SayfaListesiYarat(siralanmisSorgu, sorguNesnesi.Sayfa, sorguNesnesi.SayfaBuyuklugu);
+            sorgu = sorgu.Where(teklif => teklif.TeklifEdenNo == sorguNesnesi.KullaniciNo || teklif.TeklifEdilenNo == sorguNesnesi.KullaniciNo);
+
+            if (sorguNesnesi.KabulEdilenler == true)
+                sorgu = sorgu.Where(teklif => teklif.Karar == true);
+            if (sorguNesnesi.TeklifEdenler == true)
+                sorgu = sorgu.Where(teklif => teklif.TeklifEdilenNo == sorguNesnesi.KullaniciNo);
+            if (sorguNesnesi.TeklifEdilenler == true)
+                sorgu = sorgu.Where(teklif => teklif.TeklifEdenNo == sorguNesnesi.KullaniciNo);
+            if (sorguNesnesi.CevapBeklenenler == true)
+                sorgu = sorgu.Where(teklif => teklif.Karar == null);
+            if (sorguNesnesi.Cevaplananlar == true)
+                sorgu = sorgu.Where(teklif => teklif.Karar != null);
+
+            sorgu = sorgu.Where(ark => ark.IptalEdildi == null || ark.IptalEdildi.Value != true);
+
+            var sonuc = await SayfaliListe<ArkadaslikTeklif>.SayfaListesiYarat(sorgu, sorguNesnesi.Sayfa, sorguNesnesi.SayfaBuyuklugu);
             return sonuc;
         }
         public async Task<List<Kullanici>> ListeGetirKullanicilarAsync()
@@ -96,26 +113,7 @@ namespace Identity.DataAccess.Repositories
             return await db.Users.ToListAsync();
         }
 
-        private IQueryable<ArkadaslikTeklif> ListetipiniBelirle(IQueryable<ArkadaslikTeklif> query, ArkadaslikSorgusu sorgu)
-        {
 
-            switch (sorgu.ListeTipi)
-            {
-
-                case ArkadaslikListeTipleri.SadeceKabulEdilenler:
-                    return query.Where(t => t.Karar.Value);
-
-                case ArkadaslikListeTipleri.SadeceReddedilenler:
-                    return query.Where(t => !t.Karar.Value);
-
-                case ArkadaslikListeTipleri.SadeceCevapBeklenenler:
-                    return query.Where(t => t.Karar == null);
-                case ArkadaslikListeTipleri.SadeceCevapVerilenler:
-                    return query.Where(t => t.Karar != null);
-
-            }
-            return query;
-        }
 
         public async Task<Foto> ProfilFotografiniAlAsync(int kullaniciNo)
         {
@@ -139,7 +137,12 @@ namespace Identity.DataAccess.Repositories
 
         public static Dictionary<string, PropertyMappingValue> Values = new Dictionary<string, PropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
         {
-            { "Id",new PropertyMappingValue(new List<string>{"Id" })}
+            { "Id",new PropertyMappingValue(new List<string>{"Id" })},
+            { "TeklifEdenAdSoyad",new PropertyMappingValue(new List<string>{"TeklifEden.Kisi.Ad","TeklifEden.Kisi.Soyad" })},
+            { "TeklifEdilenAdSoyad",new PropertyMappingValue(new List<string>{"TeklifEdilen.Kisi.Ad","TeklifEdilen.Kisi.Soyad" })},
+            { "Karar",new PropertyMappingValue(new List<string>{"Karar" })},
+            { "TeklifTarihi",new PropertyMappingValue(new List<string>{"IstekTarihi" })},
+            { "CevapTarihi",new PropertyMappingValue(new List<string>{"CevapTarihi" })}
         };
 
     }

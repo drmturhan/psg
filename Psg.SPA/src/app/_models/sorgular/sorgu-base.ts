@@ -4,4 +4,6 @@ export class SorguBase {
     siralamaCumlesi?: string;
     sayfa?: number;
     sayfaBuyuklugu?: number;
+    sayfaSayisi?: number;
+    kayitSayisi?: number;
 }

@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { AlertifyService } from '../../_services/alertify.service';
 import { AppError } from '../../_hatalar/app-error';
 import { BadInputError } from '../../_hatalar/bad-input';
+import { ArkadaslikService } from '../../_services/arkadaslik.service';
 
 @Component({
   selector: 'app-kullanici-karti',
@@ -16,14 +17,14 @@ import { BadInputError } from '../../_hatalar/bad-input';
 export class KullaniciKartiComponent implements OnInit {
   @Input() kullanici: Kullanici;
   bosFotoUrl: string = environment.bosFotoUrl;
-  constructor(public authService: AuthService, private kullaniciService: KullaniciService,
+  constructor(public authService: AuthService, private arkadaslikService: ArkadaslikService,
     private uyarici: AlertifyService
   ) { }
   ngOnInit() {
 
   }
   teklifEt(id: number) {
-    this.kullaniciService.arkadaslikteklifEt(this.authService.suankiKullanici.id, id)
+    this.arkadaslikService.arkadaslikteklifEt(this.authService.suankiKullanici.id, id)
       .subscribe(data => {
         this.uyarici.success(`${this.kullanici.tamAdi} adlı kullanıcıya arkadaşlık isteği gönderildi!`);
       },
