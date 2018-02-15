@@ -5,7 +5,7 @@ declare let alertify: any;
 export class AlertifyService {
 
   constructor() { }
-  confirm(message: string, okCallback: () => any, title?: string, evet?: string, iptal?: string) {
+  confirm(message: string, okCallback: () => any, cancelCallback?: () => any, title?: string, evet?: string, iptal?: string) {
     let evetStr = 'Evet';
     let iptalStr = 'iptal';
     if (evet) {

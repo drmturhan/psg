@@ -4,14 +4,15 @@ import { ActivatedRoute } from '@angular/router';
 import { KullaniciYaz } from '../../_models/kullanici';
 import { AlertifyService } from '../../_services/alertify.service';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap';
-import { defineLocale } from 'ngx-bootstrap/bs-moment';
-import { tr } from 'ngx-bootstrap/locale';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import {trLocale } from 'ngx-bootstrap/locale';
 import { ListeSonuc } from './../../_models/sonuc';
 import { Cinsiyet, KisiFoto } from './../../_models/foto';
 import { AuthService } from './../../_services/auth.service';
 import { KullaniciService } from './../../_services/kullanici.service';
 import * as _ from 'underscore';
 import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-kullanici-duzelt',
   templateUrl: './kullanici-duzelt.component.html',
@@ -22,7 +23,7 @@ export class KullaniciDuzeltComponent implements OnInit {
   @ViewChild('editForm') duzenlemeFormu;
   bsConfig: Partial<BsDatepickerConfig>;
   kullanici: KullaniciYaz;
-  saveUrl= '';
+  saveUrl = '';
   cinsiyetler: Cinsiyet[];
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
@@ -37,8 +38,8 @@ export class KullaniciDuzeltComponent implements OnInit {
     private _localeService: BsLocaleService) { }
 
   ngOnInit() {
-    
-    defineLocale('tr', tr);
+
+    defineLocale('tr',trLocale);
     this._localeService.use('tr');
     this.bsConfig = { containerClass: 'theme-red' };
     this.route.data.subscribe(data => {
@@ -96,10 +97,10 @@ export class KullaniciDuzeltComponent implements OnInit {
         this.kullanici.fotograflari.splice(_.findIndex(this.kullanici.fotograflari, { id: id }), 1);
         this.uyarici.success('Fotoğraf silindi!');
       },
-      hata => this.uyarici.error('Fotoğraf silinemedi!')
+        hata => this.uyarici.error('Fotoğraf silinemedi!')
       );
   }
-  profilFotografiYap(foto: KisiFoto) {
+profilFotografiYap(foto: KisiFoto) {
 
     this.kullaniciService.asilFotoYap(this.kullanici.id, foto.id)
       .subscribe(() => {
@@ -108,7 +109,7 @@ export class KullaniciDuzeltComponent implements OnInit {
         foto.profilFotografi = true;
         this.uyarici.success('Asıl foto yapıldı.');
       },
-      hata => this.uyarici.error('Asıl foto yapılırken bir hata oluştu!'));
+        hata => this.uyarici.error('Asıl foto yapılırken bir hata oluştu!'));
   }
 
 }

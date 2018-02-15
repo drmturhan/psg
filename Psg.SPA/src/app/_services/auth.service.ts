@@ -21,9 +21,11 @@ import { KisiFoto } from '../_models/foto';
 @Injectable()
 export class AuthService {
   baseUrl = environment.apiUrl;
+  altUrl = 'account';
   userToken: any;
   decodedToken: any;
   suankiKullanici: Kullanici;
+  hataliGirisSayisi = 0;
   private fotoUrl = new BehaviorSubject<string>(environment.bosFotoUrl);
   suankiFotoUrl = this.fotoUrl.asObservable();
   constructor(private authHttp: HttpClient, private jwtHelperService: JwtHelperService, private router: Router) { }
@@ -37,7 +39,7 @@ export class AuthService {
 
   login(model: any) {
 
-    return this.authHttp.post<AuthUser>(this.baseUrl + 'account/girisyap', model,
+    return this.authHttp.post<AuthUser>(`${this.baseUrl}${this.altUrl}/girisyap`, model,
       {
         headers: new HttpHeaders().set('Content-Type', 'application/json')
       }).map(gelenNesne => {
@@ -46,6 +48,17 @@ export class AuthService {
         this.kullaniciAyarlariYap(gelenNesne.tokenString, gelenNesne.kullanici);
       });
   }
+  logout() {
+    return this.authHttp.post(`${this.baseUrl}${this.altUrl}/cikisyap`, {}).map(() => {
+      this.userToken = null;
+      this.decodedToken = null;
+      this.suankiKullanici = null;
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('kullanici');
+      this.router.navigate(['/']);
+    });
+  }
+
   public kullaniciAyarlariYap(token = null, kullanici = null) {
 
     if (token == null) {
@@ -110,27 +123,6 @@ export class AuthService {
   }
 
 
-  logout() {
-    this.userToken = null;
-    this.decodedToken = null;
-    this.suankiKullanici = null;
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('kullanici');
-    this.router.navigate(['/']);
-  }
-  hataYonetici(hata: any) {
-    const uygulamaHatasi = hata.headers.get('Uygulama-Hatasi');
-    if (uygulamaHatasi) {
-      return Observable.throw(uygulamaHatasi);
-    }
-    const serverHatalari = hata.json();
-    let modelDurumHatalari = '';
-    if (serverHatalari) {
-      for (const key in serverHatalari) {
-        if (serverHatalari[key]) {
-          modelDurumHatalari += serverHatalari[key] + '\n';
-        }
-      }
-    }
-  }
+
+
 }

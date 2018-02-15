@@ -23,5 +23,34 @@ namespace Identity.DataAccess.Dtos
         public string TamAdi { get; set; }
 
     }
+    public class MesajYaratmaDto
+    {
+
+        public int GonderenNo { get; set; }
+        public int AlanNo { get; set; }
+        public string Icerik { get; set; }
+        public DateTime? GonderilmeZamani { get; set; }
+
+        public MesajYaratmaDto()
+        {
+            GonderilmeZamani = DateTime.Now;
+        }
+    }
+
+    public class MesajListeDto
+    {
+        public int MesajId { get; set; }
+        public int GonderenNo { get; set; }
+        public string GonderenTamAdi { get; set; }
+        public string GonderenProfilFotoUrl { get; set; }
+        public string AlanTamAdi { get; set; }
+        public string AlanProfilFotoUrl { get; set; }
+        public int AlanNo { get; set; }
+        public string Icerik { get; set; }
+        public bool Okundu { get; set; }
+        public DateTime? GonderilmeZamani { get; set; }
+        public DateTime? OkunmaZamani { get; set; }
+
+    }
 }
 

@@ -2,8 +2,8 @@ import { ArkadaslarimResolver } from './_resolvers/kullanici/arkadaslarim-resolv
 import { ArkadaslarimComponent } from './uyelik/arkadaslarim/arkadaslarim.component';
 
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { defineLocale } from 'ngx-bootstrap/bs-moment';
-import { tr } from 'ngx-bootstrap/locale';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { trLocale  } from 'ngx-bootstrap/locale';
 import { KullaniciService } from './_services/kullanici.service';
 import { AlertifyService } from './_services/alertify.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -55,11 +55,14 @@ import { ErrorInterceptorProvider } from './_interceptors/error.interceptor';
 import { ProfilimComponent } from './uyelik/profilim/profilim.component';
 import { ArkadaslikService } from './_services/arkadaslik.service';
 import { ArkadasKartiComponent } from './uyelik/arkadaslarim/arkadas-karti/arkadas-karti.component';
+import { MesajlasmaService } from './_services/mesajlasma.service';
+import { KullaniciMesajlariResolver } from './_resolvers/kullanici/kullanici-mesajlari-resolver';
+import { KullaniciMesajComponent } from './kullanicilar/kullanici-mesaj/kullanici-mesaj.component';
 
 
-defineLocale('tr', tr);
-
+defineLocale('tr', trLocale);
 registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -82,7 +85,8 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     TimeAgoPipe,
     EpostaOnaylandiComponent,
     YenidenAktiflestirComponent,
-    ArkadasKartiComponent
+    ArkadasKartiComponent,
+    KullaniciMesajComponent
   ],
   imports: [
     BrowserModule,
@@ -130,7 +134,9 @@ registerLocaleData(localeTr, 'tr-TR', localeTrExtra);
     ProfilimResolver,
     ArkadaslarimResolver,
     KullanicidakiDegisikliklerKaybolsunmuGuard,
-    ArkadaslikService
+    ArkadaslikService,
+    MesajlasmaService,
+    KullaniciMesajlariResolver
 
   ],
   bootstrap: [AppComponent]

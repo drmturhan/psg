@@ -9,8 +9,6 @@ using Core.Base;
 using Identity.DataAccess.Dtos;
 using Identity.DataAccess.Mappers;
 using Identity.DataAccess.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -21,15 +19,15 @@ namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProfilimController : MTController
+    
+    public class ProfilimController : MTSController
     {
         private readonly KullaniciRepository repo;
         private readonly FotografAyarlari fotografAyarlari;
         private readonly IHostingEnvironment host;
         private readonly IOptions<CloudinarySettings> cloudinaryConfig;
         private readonly Cloudinary cloudinary;
-        public ProfilimController(KullaniciRepository repo, IOptions<FotografAyarlari> fotografAyarlari, IHostingEnvironment host, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig) : base("Kullanıcı fotoğrafları")
+        public ProfilimController(KullaniciRepository repo, IOptions<FotografAyarlari> fotografAyarlari, IHostingEnvironment host, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig) 
         {
             this.repo = repo;
             this.fotografAyarlari = fotografAyarlari.Value;

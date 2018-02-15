@@ -8,6 +8,4 @@ namespace Identity.DataAccess
 
         public Kullanici TeklifEdilen { get; set; }
     }
-
-    
 }

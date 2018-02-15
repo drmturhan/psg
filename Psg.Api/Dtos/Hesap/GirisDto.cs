@@ -13,4 +13,10 @@ namespace Psg.Api.Dtos
         [Display(Name = "Şifre")]
         public string Sifre { get; set; }
     }
+
+    public class SifreKurtarDto
+    {
+        [Required]
+        public string Eposta { get; set; }
+    }
 }

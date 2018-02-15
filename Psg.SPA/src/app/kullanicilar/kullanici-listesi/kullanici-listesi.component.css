@@ -1,3 +1,8 @@
+
+.kullaniciListesi {
+
+    margin-top:20px;
+}
 .esit {
     display: flex;
     flex-flow: row wrap;
@@ -9,7 +14,7 @@ margin-bottom: 30px;
 
 }
 #aramaCumlesi{
-width:  250px;
+width:  150px;
 
 }
 .toplamSayfa{

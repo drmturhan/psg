@@ -14,6 +14,4 @@ export class KullanicidakiDegisikliklerKaybolsunmuGuard implements CanDeactivate
         }
         return true;
     }
-
-
 }

@@ -21,6 +21,7 @@ import { UyelikBasariliComponent } from './uyelik/akis/uyelik-basarili/uyelik-ba
 import { YenidenAktiflestirComponent } from './uyelik/akis/yeniden-aktiflestir/yeniden-aktiflestir.component';
 import { EpostaOnaylandiComponent } from './uyelik/akis/eposta-onay/eposta-onaylandi.component';
 import { ProfilimComponent } from './uyelik/profilim/profilim.component';
+import { KullaniciMesajlariResolver } from './_resolvers/kullanici/kullanici-mesajlari-resolver';
 export const appRoot: Routes = [
     { path: '', redirectTo: 'anasayfa', pathMatch: 'full' },
     { path: 'yuklemeHatasi', component: VeriYuklenemediComponent },
@@ -40,7 +41,7 @@ export const appRoot: Routes = [
                 canDeactivate: [KullanicidakiDegisikliklerKaybolsunmuGuard], resolve: { kullaniciVeriSeti: ProfilimResolver }
             },
             { path: 'arkadasliklarim', component: ArkadaslarimComponent, resolve: { arkadaslarim: ArkadaslarimResolver } },
-            { path: 'mesajlar', component: MesajlarComponent },
+            { path: 'mesajlarim', component: MesajlarComponent, resolve: { mesajlarim: KullaniciMesajlariResolver } },
             { path: 'bul', component: BulComponent },
             { path: 'yukle', component: YukleComponent },
             { path: 'randevu', component: RandevuComponent }

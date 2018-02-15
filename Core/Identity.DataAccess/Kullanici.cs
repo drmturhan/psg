@@ -20,6 +20,8 @@ namespace Identity.DataAccess
 
         public ICollection<ArkadaslikTeklif> YapilanTeklifler { get; set; } = new List<ArkadaslikTeklif>();
         public ICollection<ArkadaslikTeklif> GelenTeklifler { get; set; } = new List<ArkadaslikTeklif>();
+        public ICollection<Mesaj> GonderdigiMesajlar { get; set; } = new List<Mesaj>();
+        public ICollection<Mesaj> AldigiMesajlar { get; set; } = new List<Mesaj>();
 
         [NotMapped]
         public string AdSoyad

@@ -1,0 +1,78 @@
+<div class="panel panel-primary">
+  <div class="panel-body">
+    <div *ngIf="mesajlar?.kayitSayisi===0">
+      <p>
+        Bu kullanıcı ile hiç mesajınız yok!
+      </p>
+    </div>
+    <ul class="chat" *ngIf="mesajlar?.kayitSayisi>0">
+      <li *ngFor="let mesaj of mesajlar.donenListe">
+        <!-- Gonderilenler -->
+        <table class="table table-striped" *ngIf="mesaj.gonderenNo==kullaniciNo">
+          <tbody>
+            <tr>
+              <th style="width: 60px">
+                <img src="{{mesaj.gonderenProfilFotoUrl}}" class="img-circle">
+              </th>
+              <th>
+                <span class="gonderen text-muted" >
+                  {{mesaj.gonderenTamAdi}}
+                  <br>
+                  <small >
+                    <span class="fa fa-clock-o"> {{mesaj.gonderilmeZamani|timeAgo}}</span>
+                  </small>
+                </span>
+                <div class="gelen-mesaj">
+                  {{mesaj.icerik}}
+                </div>
+              </th>
+              <th style="width: 60px">
+
+              </th>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <!-- Gelenler -->
+        <table class="table table-striped" *ngIf="mesaj.gonderenNo!=kullaniciNo">
+          <tbody>
+            <tr>
+              <th style="width: 70px">
+              </th>
+              <th>
+                <span class="gonderen text-muted">
+                  <div style="float:right">
+                    {{mesaj.gonderenTamAdi}}
+                    <br>
+                    <small>
+                      <span class="fa fa-clock-o">{{mesaj.gonderilmeZamani|timeAgo}}</span>
+                      <span *ngIf="!mesaj.okundu" class="tex-muted text-danger"> (okunmadı)</span>
+                      <span *ngIf="mesaj.okundu" class="tex-muted text-success"> (okundu {{mesaj.okunmaZamani |timeAgo}})</span>
+                    </small>
+                  </div>
+                </span>
+                <div class="giden-mesaj">
+                    {{mesaj.icerik}}
+                  </div>
+              </th>
+              <th style="width: 60px">
+                <img src="{{mesaj.gonderenProfilFotoUrl}}" class="img-circle">
+              </th>
+            </tr>
+           
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </div>
+
+  <div class="panel-footer">
+    <form #mesajFormu="ngForm" (ngSubmit)="mesajFormu.valid&&mesajGonder()">
+      <div class="input-group">
+        <input type="text" class="form-control input-sm" required name="icerik" [(ngModel)]="yeniMesaj.icerik" placeholder="Özel mesaj gönder">
+        <button class="btn btn-primary btn-sm" type="submit" [disabled]="!mesajFormu.valid">Gönder</button>
+      </div>
+    </form>
+  </div>
+</div>

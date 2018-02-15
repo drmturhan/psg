@@ -113,8 +113,6 @@ namespace Identity.DataAccess.Repositories
             return await db.Users.ToListAsync();
         }
 
-
-
         public async Task<Foto> ProfilFotografiniAlAsync(int kullaniciNo)
         {
             return await db.KisiFotograflari.Where(f => f.Kisi.Kullanicilari.Count(k => k.Id == kullaniciNo) == 1).FirstOrDefaultAsync(p => p.ProfilFotografi);

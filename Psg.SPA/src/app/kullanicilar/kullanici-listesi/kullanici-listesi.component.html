@@ -1,32 +1,33 @@
-<div class="container">
-    <div class="row">
-        <form class="form-inline" novalidate #form="ngForm" (submit)="kullanicilariYukle()" id="aramaFormu">
-            <div class="form-group">
-                <label for="kullaniciAdi">Ad Soyad</label>
-                <input type="text" placeholder="Adı, soyadı ..." class="form-control>" id="aramaCumlesi" name="aramaCumlesi" [(ngModel)]="sorgu.aramaCumlesi">
+<div class="container kullaniciListesi">
+    <form class="form-inline" novalidate #form="ngForm" (submit)="kullanicilariYukle()" id="aramaFormu">
+        <div class="form-group">
+            <input type="text" id="adsoyad" placeholder="Adı, soyadı ..." class="form-control-sm mx-sm-3>" id="aramaCumlesi" name="aramaCumlesi"
+                [(ngModel)]="sorgu.aramaCumlesi">
+            <button class="btn btn-primary btn-sm" type="submit">Ara</button>
+            <button class="btn btn-default btn-sm" type="button" (click)="tumKullanicilariYukle()"> Hepsini Göster</button>
+        </div>
+        <div class="form-group mx-2">
+            <label id="kullaniciSiralama">Sırala</label>
+            <div class="btn-group mx-1">
+                <button class="btn btn-primary btn-sm" [(ngModel)]="sorgu.siralamaCumlesi" btnRadio="AdSoyad" type="button" name='siralamaCumlesi'
+                    (click)="kullanicilariYukle()">Adı soyadına göre</button>
+                <button class="btn btn-primary btn-sm" [(ngModel)]="sorgu.siralamaCumlesi" btnRadio="Yas" type="button" name='siralamaCumlesi'
+                    (click)="kullanicilariYukle()">Yaşa göre</button>
             </div>
-            <div class="form-group">
-                <label for="sayfaBuyuklugu">Sayfa büyüklüğü</label>
-                <select id="sayfaBuyuklugu" class="form-control" name="sayfaBuyuklugu" [(ngModel)]="sorgu.sayfaBuyuklugu" (change)="kullanicilariYukle($event)">
+        </div>
+        <div class="form-group">
+                <select id="sayfaBuyuklugu" class="form-control-sm mx-2" name="sayfaBuyuklugu" [(ngModel)]="sorgu.sayfaBuyuklugu" (change)="kullanicilariYukle($event)">
                     <option value="1">1</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="40">40</option>
                     <option value="80">80</option>
-
                 </select>
-            </div>
-            <button class="btn btn-primary btn-med" type="submit">Aramayı Başlat</button>
-            <button class="btn btn-default btn-med" type="button" (click)="tumKullanicilariYukle()"> Hepsini Göster</button>
-            <div class="pull-right">
-                <label id="kullaniciSiralama">Sırala:</label>
-                <div class="btn-group">
-                    <button class="btn btn-primary" [(ngModel)]="sorgu.siralamaCumlesi" btnRadio="AdSoyad" type="button" name='siralamaCumlesi' (click)="kullanicilariYukle()" >Adı soyadına göre</button>
-                    <button class="btn btn-primary" [(ngModel)]="sorgu.siralamaCumlesi" btnRadio="Yas" type="button" name='siralamaCumlesi' (click)="kullanicilariYukle()">Yaşa göre</button>
-                </div>
-            </div>
-        </form>
-    </div>
+                kayıt göster
+        </div>
+
+    </form>
+
 </div>
 
 
@@ -37,7 +38,7 @@
         </div>
     </div>
 </div>
-<div class="text-center">
+<div class="container justify-content-center">
     <pagination [boundaryLinks]="true" [totalItems]="kullanicilar.kayitSayisi" [(ngModel)]="sorgu.sayfa" [itemsPerPage]="sorgu.sayfaBuyuklugu"
         (pageChanged)="pageChanged($event)" class="pagination-sm" previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;"
         lastText="&raquo;"></pagination>

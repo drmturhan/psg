@@ -17,28 +17,24 @@ namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/arkadasliklarim")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ArkadaslikliklarimController : MTController
+    public class ArkadaslikliklarimController : MTSController
     {
         private readonly IArkadaslikRepository arkadaslikRepo;
         private readonly IUrlHelper urlHelper;
 
         public ArkadaslikliklarimController(
             IArkadaslikRepository arkdaslikRepo,
-            IUrlHelper urlHelper) : base("Arkadaşlıklar")
+            IUrlHelper urlHelper)
         {
             this.arkadaslikRepo = arkdaslikRepo;
             this.urlHelper = urlHelper;
         }
 
-
         [HttpGet()]
         public async Task<IActionResult> Get(ArkadaslikSorgusu sorgu)
         {
-
-            return await HataKontrolluCalistir<Task<IActionResult>>(async () =>
+            return await HataKontrolluDondur<Task<IActionResult>>(async () =>
             {
-
                 try
                 {
                     var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -66,18 +62,34 @@ namespace Psg.Api.Controllers
         {
             var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (currentUserId != isteyenId)
-                return Unauthorized();
+                throw new UnauthorizedError("Güvenlik nedeniyle bu işlem yapılamaz!");
             if (isteyenId == cevaplayanId)
-                return BadRequest("Kendinize arkadaşlık teklif edemezsiniz!!!");
+                throw new BadRequestError("Kendinize arkadaşlık teklif edemezsiniz!!!");
+
+            if (await arkadaslikRepo.KullaniciBulAsync(cevaplayanId) == null)
+                throw new NotFoundError("Teklifi cevaplayacak kullanıcı bilgisi yok!");
+
             var teklifZatenVar = await arkadaslikRepo.TeklifiBulAsync(isteyenId, cevaplayanId);
 
+            if (teklifZatenVar != null && teklifZatenVar.IptalEdenKullaniciNo != isteyenId)
+                throw new BadRequestError("Bu kullanıcıya zaten arkadaşlık teklif ettiniz!");
+
+            if (teklifZatenVar==null)
+                teklifZatenVar = await arkadaslikRepo.TeklifiBulAsync(cevaplayanId, isteyenId);
+
+            if (teklifZatenVar != null && teklifZatenVar.IptalEdenKullaniciNo != isteyenId)
+                throw new BadRequestError("Bu kullanıcı zaten size arkadaşlık teklif etmiş!");
+
             if (teklifZatenVar != null)
-                return BadRequest("Bu kullanıcıya zaten arkadaşlık teklif ettiniz");
-            var banaTeklifEtti = await arkadaslikRepo.TeklifiBulAsync(cevaplayanId, isteyenId);
-            if (banaTeklifEtti != null)
-                return BadRequest("Bu kullanıcı size zaten arkadaşlık teklif etti. Lütfen cevap verin...");
-            if (await arkadaslikRepo.KullaniciBulAsync(cevaplayanId) == null)
-                return NotFound();
+            {
+                teklifZatenVar.IptalTarihi = null;
+                teklifZatenVar.IptalEdildi = false;
+                teklifZatenVar.IptalEdenKullaniciNo = null;
+                if (await arkadaslikRepo.KaydetAsync())
+                    return Ok();
+                else
+                    throw new InternalServerError("Teklif kaydedilirken bir hata oluştu. Lütfen sonra tekrar deneyin...");
+            }
 
             ArkadaslikTeklif yeniTeklif = new ArkadaslikTeklif
             {

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Core.Base.Helpers;
 using Identity.DataAccess.Dtos;
 
@@ -28,7 +29,7 @@ namespace Identity.DataAccess.Mappers
 
         private void CreateResourceToEntityMap()
         {
-            
+
         }
     }
 }

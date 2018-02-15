@@ -20,7 +20,6 @@ export class KullaniciListesiResolver implements Resolve<KullanicilarVeriSeti> {
   ) { }
   donecekVeriSeti: KullanicilarVeriSeti = new KullanicilarVeriSeti();
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<KullanicilarVeriSeti> {
-    
     const veriKaynaklari = [
       this.kullaniciService.listeGetirKullanicilar()
     ];

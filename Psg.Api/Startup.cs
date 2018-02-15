@@ -92,6 +92,8 @@ namespace Psg.Api
 
             services.AddScoped<ICinsiyetRepository, CinsiyetRepository>();
             services.AddScoped<IArkadaslikRepository, ArkadaslikRepository>();
+            services.AddScoped<IMesajlasmaRepository, MesajlasmaRepository>();
+            
             services.AddScoped<IUykuTestRepository, UykuTestRepository>();
             var uygulamaAyarlari = sp.GetService<IOptions<UygulamaAyarlari>>().Value;
 

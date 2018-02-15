@@ -2,6 +2,7 @@
 using Core.EntityFramework;
 using Core.EntityFramework.SharedEntity;
 using Identity.DataAccess.Dtos;
+using System.Collections.Generic;
 
 namespace Identity.DataAccess.Mappers
 {
@@ -24,9 +25,6 @@ namespace Identity.DataAccess.Mappers
             return entity == null ? null : Mapper.Map<KullaniciYazDto>(entity);
         }
 
-        
-       
-
         public static Kullanici ToEntity(this KullaniciDetayDto resource)
 
         {
@@ -37,6 +35,16 @@ namespace Identity.DataAccess.Mappers
 
         {
             return resource == null ? null : Mapper.Map<Kullanici>(resource);
+        }
+        public static Kullanici ToEntity(this KullaniciBilgi resource)
+
+        {
+            return resource == null ? null : Mapper.Map<Kullanici>(resource);
+        }
+        public static KullaniciBilgi ToKullaniciBilgi(this Kullanici resource)
+
+        {
+            return resource == null ? null : Mapper.Map<KullaniciBilgi>(resource);
         }
         public static Kullanici ToEntity(this UyelikYaratDto resource)
 
@@ -70,7 +78,7 @@ namespace Identity.DataAccess.Mappers
         {
             return entity == null ? null : Mapper.Map<ArkadaslarimListeDto>(entity);
         }
-       
+
 
         public static ListeSonuc<ArkadaslarimListeDto> ToDto(this ListeSonuc<ArkadaslikTeklif> entitySonuc)
         {
@@ -102,6 +110,76 @@ namespace Identity.DataAccess.Mappers
         {
             return dto == null ? null : Mapper.Map<KisiFoto>(dto);
         }
-        
+
+    }
+    public static class MesajMappers
+    {
+        internal static IMapper Mapper { get; }
+        static MesajMappers()
+        {
+            Mapper = new MapperConfiguration(cfg => cfg.AddProfile<MesajProfile>()).CreateMapper();
+        }
+        public static Mesaj ToEntity(this MesajYaratmaDto dto)
+        {
+            return dto == null ? null : Mapper.Map<Mesaj>(dto);
+        }
+        public static MesajListeDto ToListeDto(this Mesaj entity)
+        {
+            return entity == null ? null : Mapper.Map<MesajListeDto>(entity);
+        }
+        public static ListeSonuc<MesajListeDto> ToMesajListeDto(this ListeSonuc<Mesaj> entitySonuc)
+        {
+            return entitySonuc == null ? null : Mapper.Map<ListeSonuc<MesajListeDto>>(entitySonuc);
+        }
+    }
+
+    public static class CinsiyetMappers
+    {
+        internal static IMapper Mapper { get; }
+        static CinsiyetMappers()
+        {
+            Mapper = new MapperConfiguration(cfg => cfg.AddProfile<CinsiyetProfile>()).CreateMapper();
+        }
+        public static Cinsiyet ToEntity(this CinsiyetDto dto) {
+
+            return dto == null ? null : Mapper.Map<Cinsiyet>(dto);
+        }
+        public static CinsiyetDto ToDto(this Cinsiyet entityList)
+        {
+
+            return entityList == null ? null : Mapper.Map<CinsiyetDto>(entityList);
+        }
+        public static IEnumerable<Cinsiyet> ToEntity(this IEnumerable<CinsiyetDto> dtoListe)
+        {
+
+            return dtoListe == null ? null : Mapper.Map<IEnumerable<Cinsiyet>>(dtoListe);
+        }
+        public static IEnumerable<CinsiyetDto> ToDto(this IEnumerable<Cinsiyet> entityList)
+        {
+
+            return entityList == null ? null : Mapper.Map<IEnumerable<CinsiyetDto>>(entityList);
+        }
+
+
+        public static KisiCinsiyet ToKisiCinsiyet(this CinsiyetDto dto)
+        {
+
+            return dto == null ? null : Mapper.Map<KisiCinsiyet>(dto);
+        }
+        public static CinsiyetDto ToDto(this KisiCinsiyet entityList)
+        {
+
+            return entityList == null ? null : Mapper.Map<CinsiyetDto>(entityList);
+        }
+        public static IEnumerable<KisiCinsiyet> ToKisiCinsiyet(this IEnumerable<CinsiyetDto> dtoListe)
+        {
+
+            return dtoListe == null ? null : Mapper.Map<IEnumerable<KisiCinsiyet>>(dtoListe);
+        }
+        public static IEnumerable<CinsiyetDto> ToDto(this IEnumerable<KisiCinsiyet> entityList)
+        {
+
+            return entityList == null ? null : Mapper.Map<IEnumerable<CinsiyetDto>>(entityList);
+        }
     }
 }

@@ -14,15 +14,23 @@ import {
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import { AppError } from '../_hatalar/app-error';
-import { BadInputError } from '../_hatalar/bad-input';
+import { BadInputError, InternetBaglantisiError } from '../_hatalar/bad-input';
 
 Injectable();
 
 export class ErrorInterceptor implements HttpInterceptor {
+
+
+
     intercept(req: HttpRequest<any>, next: HttpHandler):
         Observable<HttpSentEvent | HttpHeaderResponse | HttpProgressEvent | HttpResponse<any> | HttpUserEvent<any>> {
         return next.handle(req).catch(hata => {
+
             if (hata instanceof HttpErrorResponse) {
+
+                if (hata.status === 0) {
+                    return Observable.throw(new InternetBaglantisiError('İnternet bağlantısı olmayabilir'));
+                }
                 const appError = hata.headers.get('Application-Error');
                 if (appError) {
                     return Observable.throw(new AppError(appError));

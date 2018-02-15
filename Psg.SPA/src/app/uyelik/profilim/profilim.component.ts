@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { KullaniciYaz } from '../../_models/kullanici';
 import { AlertifyService } from '../../_services/alertify.service';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap';
-import { defineLocale } from 'ngx-bootstrap/bs-moment';
-import { tr } from 'ngx-bootstrap/locale';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { trLocale } from 'ngx-bootstrap/locale';
 import { ListeSonuc } from './../../_models/sonuc';
 import { Cinsiyet, KisiFoto } from './../../_models/foto';
 import { AuthService } from './../../_services/auth.service';
@@ -38,7 +38,7 @@ export class ProfilimComponent implements OnInit {
 
   ngOnInit() {
     this.authService.suankiFotoUrl.subscribe(fotoUrl => this.fotoUrl = fotoUrl);
-    defineLocale('tr', tr);
+    defineLocale('tr', trLocale);
     this._localeService.use('tr');
     this.bsConfig = { containerClass: 'theme-red' };
     this.route.data.subscribe(data => {
@@ -114,7 +114,7 @@ export class ProfilimComponent implements OnInit {
       this.authService.profilFotografiDegisti(foto.url);
     }
   }
-  fotograSil(id: number) {
+  fotografSil(id: number) {
     this.authService.fotografSil(id)
       .subscribe(() => {
         this.kullanici.fotograflari.splice(_.findIndex(this.kullanici.fotograflari, { id: id }), 1);

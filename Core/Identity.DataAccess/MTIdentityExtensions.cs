@@ -31,7 +31,11 @@ namespace Identity.DataAccess
 
             services.AddScoped<IPasswordHasher<Kullanici>, PasswordHasher<Kullanici>>();
             services.AddTransient<IUserClaimsPrincipalFactory<Kullanici>, MTClaimsPrincipalFactory>();
-
+            services.Configure<DataProtectionTokenProviderOptions>(o =>
+            {
+                o.Name = "Default";
+                o.TokenLifespan = TimeSpan.FromMinutes(15);
+            });
             services.AddIdentity<Kullanici, Rol>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -43,6 +47,9 @@ namespace Identity.DataAccess
 
                 options.User.RequireUniqueEmail = true;
 
+                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+
+
                 options.SignIn.RequireConfirmedEmail = true;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
                 
@@ -53,7 +60,7 @@ namespace Identity.DataAccess
                     AllowedForNewUsers=true,
                     MaxFailedAccessAttempts = 3
                 };
-
+                
             })
             .AddEntityFrameworkStores<MTIdentityDbContext>()
             .AddDefaultTokenProviders()

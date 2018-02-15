@@ -1,51 +1,45 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-expand-md navbar-dark navbar-toggleable-md bg-dark justify-content-between">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-                aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" [routerLink]="['/anasayfa']">Polisomnografiler</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav" *ngIf="this.authService.loggedIn()">
-                <li routerLinkActive="active">
-                    <a [routerLink]="['/yukle']">PSG Yükle </a>
-                </li>
-                <li routerLinkActive="active">
-                    <a [routerLink]="['/bul']">Hasta Bul </a>
-                </li>
-                <li routerLinkActive="active">
-                    <a [routerLink]="['/randevu']">Randevu </a>
-                </li>
-                <li routerLinkActive="active">
-                    <a [routerLink]="['/mesajlar']">Mesajlar </a>
-                </li>
-                <li routerLinkActive="active">
-                    <a [routerLink]="['/kullanicilar']">Kullanıcı Listesi </a>
-                </li>
-            </ul>
-            <form *ngIf="this.authService.loggedIn()===false" #loginForm="ngForm" class="navbar-form navbar-right" (ngSubmit)="login()">
-                <div class="form-group">
-                    <input type="text" placeholder="Kullanıcı adı" class="form-control" name="kullaniciadi" [(ngModel)]="model.kullaniciadi"
-                        required>
-                </div>
-                <div class="form-group">
-                    <input type="password" placeholder="Şifre" class="form-control" name="sifre" [(ngModel)]="model.sifre" required>
-                </div>
-                <button type="submit" class="btn btn-success" [disabled]="!loginForm.valid">Giriş Yap</button>
-            </form>
-            <ul *ngIf="this.authService.loggedIn()" class="nav navbar-nav navbar-right">
-                <li>
-                    <img src="{{authService.suankiFotoUrl|async}}" alt="{{authService.suankiKullanici?.kullaniciAdi}}">
-                </li>
-                <li class="dropdown" dropdown>
-                    <a class="dropdown-toggle" dropdownToggle>{{this.authService.suankiKullanici?.tamAdi }}
-                        <span class="caret"></span>
+        <a class="navbar-brand" [routerLink]="['/anasayfa']">PSG</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto my-2" *ngIf="this.authService.loggedIn()">
+                <li class="nav-item">
+                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/anasayfa']">Ana Sayfa
+                        <span class="sr-only">(current)</span>
                     </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" [routerLink]="['/yukle']" routerLinkActive="active">PSG Yükle </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" [routerLink]="['/bul']" routerLinkActive="active">Hasta Bul </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" [routerLink]="['/randevu']" routerLinkActive="active">Randevu </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" [routerLink]="['/kullanicilar']" routerLinkActive="active">Kullanıcılar </a>
+                </li>
+
+            </ul>
+
+            <ul class="nav navbar-nav justify-content-end" *ngIf="this.authService.loggedIn()">
+                <li>
+                    <img src="{{authService.suankiFotoUrl|async}}" alt="{{authService.suankiKullanici?.kullaniciAdi}}" class="img-fluid rounded mx-1">
+                </li>
+
+                <div class="btn-group" dropdown *ngIf="this.authService.loggedIn()">
+
+                    <button dropdownToggle type="button" class="btn btn-secondary dropdown-toggle">
+                        <span *ngIf="this.authService.loggedIn()">{{this.authService.suankiKullanici?.tamAdi }} </span>
+                        <span class="caret"></span>
+                    </button>
+
                     <ul *dropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
                         <li role="menuitem">
                             <a class="dropdown-item" [routerLink]="['/profilim']">Profilim</a>
@@ -53,12 +47,47 @@
                         <li role="menuitem">
                             <a class="dropdown-item" [routerLink]="['/arkadasliklarim']">Arkadaşlıklarım</a>
                         </li>
+                        <li role="menuitem">
+                            <a class="dropdown-item" [routerLink]="['/mesajlarim']">Mesajlarım</a>
+                        </li>
                         <li class="divider dropdown-divider "></li>
                         <li role="menuitem ">
                             <a class="dropdown-item " (click)="logout() ">Çıkış Yap</a>
                         </li>
                     </ul>
+                </div>
             </ul>
+            <div class="nav navbar-nav ml-auto w-100 justify-content-end" *ngIf="!this.authService.loggedIn()">
+
+                <form *ngIf="girisFormuGorunsun && sifreKurtarmaGorunsun===false" #loginForm="ngForm" class="form-inline" (ngSubmit)="login()">
+                    <input type="text" placeholder="Kullanıcı adı" class="form-control-sm mr-1" name="kullaniciadi" [(ngModel)]="model.kullaniciadi"
+                        required>
+                    <input type="password" placeholder="Şifre" class="form-control-sm mr-1" name="sifre" [(ngModel)]="model.sifre" required>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success btn-sm" [disabled]="!loginForm.valid">Giriş Yap</button>
+                        <button dropdownToggle type="button" class="btn btn-danger btn-sm" (click)="girisFormuGorunsun=false" *ngIf="girisFormuGorunsun===true">
+                            İptal
+                        </button>
+                        <button type="button" class="btn btn-info btn-sm" *ngIf="authService.hataliGirisSayisi>0" (click)="sifremiUnuttumEkraniAc()">Şifremi Unuttum</button>
+
+                    </div>
+                </form>
+
+                <form *ngIf="sifreKurtarmaGorunsun===true" #sifreKurtarForm="ngForm" class="form-inline" (ngSubmit)="sifreKurtar()">
+                    <div class="form-group">
+                        <input type="text" placeholder="Kullanıcı adı" class="form-control-sm" name="kullaniciadi" [(ngModel)]="sifreKurtarModel.kullaniciadi"
+                            required>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success btn-sm" [disabled]="!sifreKurtarForm.valid">Şifre Kurtarmayı Başlat</button>
+                        <button type="button" class="btn btn-danger btn-sm" *ngIf="authService.hataliGirisSayisi>0" (click)="sifreKurtarmaGorunsun=false">İptal</button>
+                    </div>
+                </form>
+                <button dropdownToggle type="button" class="btn btn-secondary " (click)="girisFormuGorunsun=true" *ngIf="!this.authService.loggedIn() && girisFormuGorunsun===false">
+                    Giriş
+                </button>
+
+            </div>
         </div>
     </div>
 </nav>

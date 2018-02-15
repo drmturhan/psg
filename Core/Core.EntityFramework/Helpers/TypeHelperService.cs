@@ -35,6 +35,8 @@ namespace Core.EntityFramework
             Console.WriteLine($"{logBaslik} ekleniyor...");
             try
             {
+                if (!File.Exists(dosyaYolu)) return;
+
                 var json = File.ReadAllText(dosyaYolu);
                 var veriler = JsonConvert.DeserializeObject<IEnumerable<TEntity>>(json);
 
@@ -52,10 +54,11 @@ namespace Core.EntityFramework
             {
 
             }
-            finally {
+            finally
+            {
                 Console.WriteLine($"{logBaslik} eklendi.");
             }
-            
+
         }
 
         public static void KompleksVeriEkle<TEntity>(DbContext db, string logBaslik, string dosyaYolu, params string[] tabloAdlari) where TEntity : class

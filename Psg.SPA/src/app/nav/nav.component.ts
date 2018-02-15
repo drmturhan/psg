@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { AlertifyService } from '../_services/alertify.service';
 import { AuthService } from '../_services/auth.service';
+import { InternetBaglantisiError } from '../_hatalar/bad-input';
 
 
 @Component({
@@ -12,7 +13,9 @@ import { AuthService } from '../_services/auth.service';
 })
 export class NavComponent implements OnInit {
   model: any = {};
-
+  sifreKurtarModel: any = {};
+  sifreKurtarmaGorunsun = false;
+  girisFormuGorunsun = false;
 
   constructor(public authService: AuthService, private uyarici: AlertifyService, private router: Router) { }
 
@@ -21,17 +24,34 @@ export class NavComponent implements OnInit {
   }
   login() {
     this.authService.login(this.model).subscribe(data => {
-      this.uyarici.success('Giriş başarılı');
+      this.uyarici.success('Giriş başarılı.');
       this.model = {};
+      this.authService.hataliGirisSayisi = 0;
+      this.girisFormuGorunsun = false;
     },
-      error => this.uyarici.warning('Giriş başarısız!'),
-      () => this.router.navigate(['/uyeler'])
+      error => {
+        this.authService.hataliGirisSayisi++;
+        throw error;
+      }
     );
   }
   logout() {
-    this.authService.logout();
-
+    this.authService.logout().subscribe(() => {
+      this.uyarici.success('Çıkış yapıldı.');
+      this.girisFormuGorunsun = true;
+    },
+      error => {
+        this.uyarici.warning('Çıkış işlemleri tamamlanmadı. Lütfen tekrar deneyiniz.');
+        this.uyarici.warning('Tam çıkış yapmazsanız güvenlik açığı oluşabilir!');
+        if (error instanceof InternetBaglantisiError) {
+          throw error;
+        }
+      });
   }
+  sifremiUnuttumEkraniAc() {
+    this.sifreKurtarmaGorunsun = true;
+  }
+  sifreKurtar() {
 
-
+  };
 }

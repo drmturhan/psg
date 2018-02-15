@@ -1,5 +1,5 @@
 import { AlertifyService } from './../../_services/alertify.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Kullanici } from '../../_models/kullanici';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery';
@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import { KullaniciService } from '../../_services/kullanici.service';
 import { NotFoundError } from '../../_hatalar/not-found-error';
 import { AppError } from '../../_hatalar/app-error';
+import { TabsetComponent } from 'ngx-bootstrap';
 @Component({
   selector: 'app-kullanici-detay',
   templateUrl: './kullanici-detay.component.html',
@@ -15,6 +16,7 @@ import { AppError } from '../../_hatalar/app-error';
 })
 export class KullaniciDetayComponent implements OnInit {
 
+  @ViewChild('kullaniciDefteri') kullaniciDefteri: TabsetComponent;
   kullanici: Kullanici;
   profilFotoUrl: string;
   galleryOptions: NgxGalleryOptions[];
@@ -27,6 +29,11 @@ export class KullaniciDetayComponent implements OnInit {
     private router: Router
   ) { }
 
+  selectTab(tabIndeks: number) {
+
+    this.kullaniciDefteri.tabs[tabIndeks > 0 ? tabIndeks : 0].active = true;
+
+  }
   ngOnInit() {
     this.acRoute.data.subscribe(data => {
       if (data['kullanici'].basarili) {
@@ -37,6 +44,12 @@ export class KullaniciDetayComponent implements OnInit {
         } else {
           this.profilFotoUrl = environment.bosFotoUrl;
         }
+      }
+    });
+    this.acRoute.queryParams.subscribe(params => {
+      const selectedTab = +params['sayfa'];
+      if (selectedTab >= 0) {
+        this.selectTab(+params['sayfa']);
       }
     });
     this.galleryOptions = [{
@@ -69,7 +82,7 @@ export class KullaniciDetayComponent implements OnInit {
     this.uyarici.confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?',
       () => {
         this.sil(kullanici.id);
-      }, 'Emin misiniz?', 'Evet', 'Hayır'
+      }, null, 'Emin misiniz?', 'Evet', 'Hayır'
     );
   }
   sil(id: number) {
@@ -78,11 +91,11 @@ export class KullaniciDetayComponent implements OnInit {
         this.uyarici.success('Kullanıcı silindi!');
         this.router.navigate(['/kullanicilar']);
       },
-      (hata: AppError) => {
-        if (hata instanceof NotFoundError) {
-        } else {
-          throw hata;
-        }
-      });
+        (hata: AppError) => {
+          if (hata instanceof NotFoundError) {
+          } else {
+            throw hata;
+          }
+        });
   }
 }

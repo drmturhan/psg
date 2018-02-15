@@ -2,8 +2,8 @@
 {
     public class CinsiyetDto
     {
-        public int Id { get; set; }
-        public string Ad { get; set; }
+        public int CinsiyetId { get; set; }
+        public string CinsiyetAdi { get; set; }
 
     }
 }

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
 namespace Identity.DataAccess.Migrations.MTIdentity
@@ -196,6 +198,36 @@ namespace Identity.DataAccess.Migrations.MTIdentity
                     b.ToTable("MedeniHaller","Kisi");
                 });
 
+            modelBuilder.Entity("Identity.DataAccess.Mesaj", b =>
+                {
+                    b.Property<int>("MesajId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AlanNo");
+
+                    b.Property<bool>("AlanSildi");
+
+                    b.Property<int>("GonderenNo");
+
+                    b.Property<bool>("GonderenSildi");
+
+                    b.Property<DateTime?>("GonderilmeZamani");
+
+                    b.Property<string>("Icerik");
+
+                    b.Property<bool>("Okundu");
+
+                    b.Property<DateTime?>("OkunmaZamani");
+
+                    b.HasKey("MesajId");
+
+                    b.HasIndex("AlanNo");
+
+                    b.HasIndex("GonderenNo");
+
+                    b.ToTable("Mesajlasmalar");
+                });
+
             modelBuilder.Entity("Identity.DataAccess.Rol", b =>
                 {
                     b.Property<int>("Id")
@@ -306,13 +338,13 @@ namespace Identity.DataAccess.Migrations.MTIdentity
 
             modelBuilder.Entity("Identity.DataAccess.ArkadaslikTeklif", b =>
                 {
-                    b.HasOne("Identity.DataAccess.Kullanici", "TeklifEdilen")
-                        .WithMany("YapilanTeklifler")
+                    b.HasOne("Identity.DataAccess.Kullanici", "TeklifEden")
+                        .WithMany("GelenTeklifler")
                         .HasForeignKey("TeklifEdenNo")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Identity.DataAccess.Kullanici", "TeklifEden")
-                        .WithMany("GelenTeklifler")
+                    b.HasOne("Identity.DataAccess.Kullanici", "TeklifEdilen")
+                        .WithMany("YapilanTeklifler")
                         .HasForeignKey("TeklifEdilenNo")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
@@ -342,6 +374,19 @@ namespace Identity.DataAccess.Migrations.MTIdentity
                     b.HasOne("Identity.DataAccess.MedeniHal", "MedeniHali")
                         .WithMany("Kisileri")
                         .HasForeignKey("MedeniHalNo");
+                });
+
+            modelBuilder.Entity("Identity.DataAccess.Mesaj", b =>
+                {
+                    b.HasOne("Identity.DataAccess.Kullanici", "Alan")
+                        .WithMany("AldigiMesajlar")
+                        .HasForeignKey("AlanNo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Identity.DataAccess.Kullanici", "Gonderen")
+                        .WithMany("GonderdigiMesajlar")
+                        .HasForeignKey("GonderenNo")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

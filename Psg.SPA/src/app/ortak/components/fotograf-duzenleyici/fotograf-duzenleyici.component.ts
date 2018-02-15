@@ -83,7 +83,9 @@ export class FotografDuzenleyiciComponent implements OnInit {
     this.uyarici.confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?',
       () => {
         this.fotoSil.emit(foto.id);
-      }, 'Emin misiniz?', 'Evet', 'Hayır'
+      },
+      null,
+      'Emin misiniz?', 'Evet', 'Hayır'
     );
   }
 }

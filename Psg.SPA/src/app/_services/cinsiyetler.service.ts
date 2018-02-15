@@ -14,6 +14,6 @@ export class CinsiyetlerService {
         this.url = environment.apiUrl;
     }
     list() {
-        return this.dataService.get<Cinsiyet[]>(`${this.url}/cinsiyetler`);
+        return this.dataService.get<Cinsiyet[]>(`${this.url}cinsiyetler`);
     }
 }

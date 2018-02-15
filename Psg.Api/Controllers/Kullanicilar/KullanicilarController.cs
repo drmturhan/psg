@@ -15,31 +15,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Psg.Api.Controllers
 {
-    [ServiceFilter(typeof(KullaniciAktiviteleriniTakipEt))]
-
+    
     [Produces("application/json")]
     [Route("api/kullanicilar")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class KullanicilarController : MTController
+    public class KullanicilarController : MTSController
     {
         private readonly IKullaniciRepository kullaniciRepo;
-        
         private readonly IUrlHelper urlHelper;
-        //private readonly IPropertyMappingService propertyMappingService;
-        //private readonly ITypeHelperService typeHelperService;
 
         public KullanicilarController(
             IKullaniciRepository kullaniciRepo,
             IUrlHelper urlHelper
-            //,IPropertyMappingService propertyMappingService,
-            //ITypeHelperService typeHelperService
-            ) : base("Kullanıcı")
+            ) 
         {
             this.kullaniciRepo = kullaniciRepo;
             this.urlHelper = urlHelper;
-            //this.propertyMappingService = propertyMappingService;
-            //this.typeHelperService = typeHelperService;
-            //propertyMappingService.AddMap<KullaniciListeDto, Kullanici>(KullaniciPropertyMap.Values);
         }
 
         [HttpGet(Name = "Kullanicilar")]
@@ -47,57 +37,24 @@ namespace Psg.Api.Controllers
         {
             return await KullaniciVarsaCalistir<Task<IActionResult>>(async () =>
             {
-                //if (!propertyMappingService.ValidMappingsExistsFor<KullaniciListeDto, Kullanici>(sorgu.SiralamaCumlesi))
-                //    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Sıralama bilgisi yanlış!" } }));
-
-                //if (!typeHelperService.TryHastProperties<KullaniciListeDto>(sorgu.Alanlar))
-                //    return BadRequest(Sonuc.Basarisiz(new Hata[] { new Hata { Kod = "KullanicListesi", Tanim = "Gösterilmek istenen alanlar hatalı!" } }));
-
                 var kayitlar = await kullaniciRepo.ListeGetirKullanicilarTumuAsync(sorgu);
-
                 var sby = new StandartSayfaBilgiYaratici(sorgu, "Kullanicilar", urlHelper);
+
                 Response.Headers.Add("X-Pagination", kayitlar.SayfalamaMetaDataYarat<Kullanici>(sby));
 
                 var sonuc = ListeSonuc<Kullanici>.IslemTamam(kayitlar);
+
                 ListeSonuc<KullaniciListeDto> donecekListe = sonuc.ToKullaniciDetayDto();
                 return Ok(donecekListe.ShapeData(sorgu.Alanlar));
             });
         }
 
-        [AllowAnonymous]
-        [Route("kullaniciadikullanimda")]
-        [HttpGet()]
-        public async Task<IActionResult> KullaniciAdiKullaniliyormu([FromQuery]string kullaniciAdi)
-        {
-            return await HataKontrolluCalistir<IActionResult>(async () =>
-            {
-                if (string.IsNullOrEmpty(kullaniciAdi.Trim()))
-                    return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = "Kullanıcı adı boş olamaz!" } }));
-                var kullaniciVar = await kullaniciRepo.KullaniciAdiKullanimdaAsync(kullaniciAdi);
-
-                return Ok(kullaniciVar);
-            });
-        }
-        [AllowAnonymous]
-        [Route("epostakullanimda")]
-        [HttpGet()]
-        public async Task<IActionResult> EpostaKullaniliyormu([FromQuery]string eposta)
-        {
-            return await HataKontrolluCalistir<IActionResult>(async () =>
-            {
-                if (string.IsNullOrEmpty(eposta.Trim()))
-                    return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = "Kullanıcı adı boş olamaz!" } }));
-                var kullaniciVar = await kullaniciRepo.EpostaKullanimdaAsync(eposta);
-
-                return Ok(kullaniciVar);
-            });
-        }
-
+        
 
         [HttpGet("{id}", Name = "KullaniciGetir")]
         public async Task<IActionResult> Get(int id, [FromQuery] string neden, [FromQuery] string alanlar)
         {
-            return await HataKontrolluCalistir<IActionResult>(async () =>
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
             {
                 if (id <= 0)
                     return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = SonucMesajlari.Liste[MesajAnahtarlari.SifirdanBuyukDegerGerekli] } }));
@@ -120,7 +77,7 @@ namespace Psg.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] KullaniciYazDto yazDto)
         {
-            try
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -135,41 +92,61 @@ namespace Psg.Api.Controllers
                 if (await kullaniciRepo.KaydetAsync())
                     return NoContent();
                 else throw new Exception($"{id} numaralı kullanıcı bilgileri kaydedilemedi!");
-            }
-            catch (Exception hata)
-            {
-            }
-            return BadRequest(ModelState);
+            });
+            
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Sil(int id)
         {
-            if (id <= 0)
-                BadRequest("Silmek istediğiniz kullanıcı numarası yanlış!!");
-            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            if (currentUserId == id)
-                return BadRequest("Kendinizi silemezsiniz!!");
-            var dbdekiKullanici = await kullaniciRepo.BulAsync(id);
-            if (dbdekiKullanici == null)
-                NotFound("Silmek istediğiniz kullanıcı bulunamadı!");
-            kullaniciRepo.Sil<Kullanici>(dbdekiKullanici);
-            if (await kullaniciRepo.KaydetAsync())
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
             {
-                try
+                if (id <= 0)
+                    BadRequest("Silmek istediğiniz kullanıcı numarası yanlış!!");
+                var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                if (currentUserId == id)
+                    return BadRequest("Kendinizi silemezsiniz!!");
+                var dbdekiKullanici = await kullaniciRepo.BulAsync(id);
+                if (dbdekiKullanici == null)
+                    NotFound("Silmek istediğiniz kullanıcı bulunamadı!");
+                kullaniciRepo.Sil<Kullanici>(dbdekiKullanici);
+                if (await kullaniciRepo.KaydetAsync())
                 {
                     kullaniciRepo.KisileriniSil(dbdekiKullanici.Kisi);
                     await kullaniciRepo.KaydetAsync();
                     return NoContent();
                 }
-                catch
-                {
-                    return NoContent();
-                }
-            }
-            return BadRequest("Kullanıcı silinemedi!");
+                return BadRequest("Kullanıcı silinemedi!");
+            });
         }
-        
+
+
+        [AllowAnonymous]
+        [Route("kullaniciadikullanimda")]
+        [HttpGet()]
+        public async Task<IActionResult> KullaniciAdiKullaniliyormu([FromQuery]string kullaniciAdi)
+        {
+            return await HataKontrolluDondur<IActionResult>(async () =>
+            {
+                if (string.IsNullOrEmpty(kullaniciAdi.Trim()))
+                    return BadRequest("Kullanıcı adı boş olamaz!");
+                var kullaniciVar = await kullaniciRepo.KullaniciAdiKullanimdaAsync(kullaniciAdi);
+
+                return Ok(kullaniciVar);
+            });
+        }
+        [AllowAnonymous]
+        [Route("epostakullanimda")]
+        [HttpGet()]
+        public async Task<IActionResult> EpostaKullaniliyormu([FromQuery]string eposta)
+        {
+            return await HataKontrolluDondur<IActionResult>(async () =>
+            {
+                if (string.IsNullOrEmpty(eposta.Trim()))
+                    return BadRequest("Kullanıcı adı boş olamaz!");
+                var epostaVar = await kullaniciRepo.EpostaKullanimdaAsync(eposta);
+
+                return Ok(epostaVar);
+            });
+        }
     }
-
-
 }

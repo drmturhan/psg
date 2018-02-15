@@ -23,15 +23,15 @@ namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/kullanicilar/{kullaniciNo}/fotograflari")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class KullaniciFotograflariController : MTController
+    
+    public class KullaniciFotograflariController : MTSController
     {
         private readonly KullaniciRepository repo;
         private readonly FotografAyarlari fotografAyarlari;
         private readonly IHostingEnvironment host;
         private readonly IOptions<CloudinarySettings> cloudinaryConfig;
         private readonly Cloudinary cloudinary;
-        public KullaniciFotograflariController(KullaniciRepository repo, IOptions<FotografAyarlari> fotografAyarlari, IHostingEnvironment host, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig) : base("Kullanıcı fotoğrafları")
+        public KullaniciFotograflariController(KullaniciRepository repo, IOptions<FotografAyarlari> fotografAyarlari, IHostingEnvironment host, IMapper mapper, IOptions<CloudinarySettings> cloudinaryConfig)
         {
             this.repo = repo;
             this.fotografAyarlari = fotografAyarlari.Value;

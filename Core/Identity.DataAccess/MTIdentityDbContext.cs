@@ -17,6 +17,7 @@ namespace Identity.DataAccess
         public DbSet<MedeniHal> MedeniHaller { get; set; }
         public DbSet<KisiFoto> KisiFotograflari { get; set; }
         public DbSet<ArkadaslikTeklif> ArkadaslikTeklifleri { get; set; }
+        public DbSet<Mesaj> Mesajlasmalar{ get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -96,6 +97,13 @@ namespace Identity.DataAccess
                 entity.HasKey(e => new { e.TeklifEdenNo, e.TeklifEdilenNo });
                 entity.HasOne(e => e.TeklifEden).WithMany(m => m.GelenTeklifler).HasForeignKey(fk => fk.TeklifEdenNo).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(e => e.TeklifEdilen).WithMany(m => m.YapilanTeklifler).HasForeignKey(fk => fk.TeklifEdilenNo).OnDelete(DeleteBehavior.Restrict);
+            });
+            builder.Entity<Mesaj>(entity =>
+            {
+                entity.ToTable("Mesajlasmalar");
+                entity.HasKey(e => e.MesajId);
+                entity.HasOne(e => e.Gonderen).WithMany(m => m.GonderdigiMesajlar).HasForeignKey(fk => fk.GonderenNo).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.Alan).WithMany(m => m.AldigiMesajlar).HasForeignKey(fk => fk.AlanNo).OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

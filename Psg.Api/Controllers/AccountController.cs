@@ -16,16 +16,16 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Core.EntityFramework;
 using Identity.DataAccess.Dtos;
+using Identity.DataAccess.Mappers;
 
 namespace Psg.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/Account")]
-    public class AccountController : MTController
+    public class AccountController : MTSController
     {
         private readonly KullaniciYonetici userManager;
         private readonly SignInManager<Kullanici> signInManager;
-        private readonly IMapper mapper;
         private readonly IEmailSender postaci;
 
         public UygulamaAyarlari uygulamaAyarlari { get; }
@@ -33,14 +33,13 @@ namespace Psg.Api.Controllers
         public AccountController(
             KullaniciYonetici userManager,
             SignInManager<Kullanici> signInManager,
-            IMapper mapper,
+
             IEmailSender postaci,
             IOptions<UygulamaAyarlari> uygulamaAyarConfig
-            ) : base("Hesap")
+            ) 
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-            this.mapper = mapper;
             this.postaci = postaci;
             this.uygulamaAyarlari = uygulamaAyarConfig.Value;
         }
@@ -50,21 +49,61 @@ namespace Psg.Api.Controllers
         [Route("girisyap", Name = "GirisYap")]
         public async Task<IActionResult> GirisYap([FromBody] GirisDto girisBilgileri, string returnUrl)
         {
+            return await HataKontrolluDondur<Task<IActionResult>>(async () =>
+            {
+                var sonuc = await signInManager.PasswordSignInAsync(girisBilgileri.KullaniciAdi, girisBilgileri.Sifre, true, true);
+                if (sonuc.Succeeded)
+                    return await KullaniciBilgisiVeTokenYarat(girisBilgileri.KullaniciAdi);
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            var sonuc = await signInManager.PasswordSignInAsync(girisBilgileri.KullaniciAdi, girisBilgileri.Sifre, true, true);
-            if (sonuc.Succeeded)
-                return await KullaniciBilgisiVeTokenDondur(girisBilgileri.KullaniciAdi);
-
-            return Unauthorized();
+                return BadRequest("Kullanıcı adı ve/veya şifre yanlış");
+            });
 
         }
-        private async Task<IActionResult> KullaniciBilgisiVeTokenDondur(string kullaniciAdi)
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("sifrekurtar", Name = "SifreKurtar")]
+        public async Task<IActionResult> SifreKurtar([FromBody] SifreKurtarDto sifreKurtar, string returnUrl)
         {
-            var bulunanKullanici = await userManager.KullaniciyiGetirKullaniciAdinaGoreAsync(kullaniciAdi);
-            if (bulunanKullanici == null) return Unauthorized();
+            return await HataKontrolluDondur<Task<IActionResult>>(async () =>
+            {
 
-            var claims = new Claim[] {
+                var user = await userManager.FindByNameAsync(sifreKurtar.Eposta);
+                if (user == null || !(await userManager.IsEmailConfirmedAsync(user)))
+                {
+                    return Ok();
+                }
+
+                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                // Send an email with this link
+                var code = await userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                await postaci.SendEmailAsync(user.Email, "Şifre kurtarma",
+                   "Şifre kurtarnaya devam etmek için <a href=\"" + callbackUrl + "\">tıklayınız</a>");
+                return Ok();
+                
+            });
+
+        }
+        [Route("cikisyap", Name = "CikisYap")]
+        public async Task<IActionResult> CikisYap()
+        {
+            return await KullaniciVarsaCalistir<IActionResult>(async () =>
+            {
+                await signInManager.SignOutAsync();
+                return Ok();
+            });
+
+        }
+
+        private async Task<IActionResult> KullaniciBilgisiVeTokenYarat(string kullaniciAdi, string returnUrl = null)
+        {
+
+            try
+            {
+                var bulunanKullanici = await userManager.KullaniciyiGetirKullaniciAdinaGoreAsync(kullaniciAdi);
+                if (bulunanKullanici == null) return Unauthorized();
+
+                var claims = new Claim[] {
                         new Claim(ClaimTypes.NameIdentifier,bulunanKullanici.Id.ToString()),
                         new Claim(ClaimTypes.Name,bulunanKullanici.UserName),
                         new Claim(ClaimTypes.GivenName,bulunanKullanici.Kisi.Ad),
@@ -73,20 +112,28 @@ namespace Psg.Api.Controllers
                         new Claim(ClaimTypes.Email,bulunanKullanici.Email),
                         new Claim(ClaimTypes.Gender,bulunanKullanici.Kisi.Cinsiyeti.CinsiyetAdi),
                         new Claim("kisiNo",bulunanKullanici.KisiNo.ToString()),
-            };
+                };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(uygulamaAyarlari.JwtKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                uygulamaAyarlari.JwtIssuer,
-                uygulamaAyarlari.JwtIssuer,
-                claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
-            string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            var kullanici = mapper.Map<KullaniciBilgi>(bulunanKullanici);
-            return Ok(new { tokenString, kullanici });
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(uygulamaAyarlari.JwtKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                    uygulamaAyarlari.JwtIssuer,
+                    uygulamaAyarlari.JwtIssuer,
+                    claims,
+                    expires: DateTime.Now.AddMinutes(30),
+                    signingCredentials: creds);
+                string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+                var kullanici = bulunanKullanici.ToKullaniciBilgi();
+                return Ok(new { tokenString, kullanici, returnUrl });
+            }
+            catch
+            {
+
+                return Unauthorized();
+            }
 
         }
 
@@ -95,38 +142,42 @@ namespace Psg.Api.Controllers
         [AllowAnonymous]
         [Route("uyelikbaslat")]
         public async Task<IActionResult> UyelikBaslat([FromBody]UyelikYaratDto model)
+
         {
-
-            if (ModelState.IsValid)
+            return await HataKontrolluDondur<Task<IActionResult>>(async () =>
             {
-
-                var user = mapper.Map<Kullanici>(model);
-                user.YaratilmaTarihi = DateTime.Now;
-                IdentityResult result = null;
-
-                try
+                if (ModelState.IsValid)
                 {
-                    result = await userManager.CreateAsync(user, model.Sifre);
-                    if (result.Succeeded)
+
+                    var user = model.ToEntity();
+                    user.YaratilmaTarihi = DateTime.Now;
+                    IdentityResult result = null;
+
+                    try
                     {
-                        await EPostaAktivasyonKoduPostala(user);
+                        result = await userManager.CreateAsync(user, model.Sifre);
+                        if (result.Succeeded)
+                        {
+                            await EPostaAktivasyonKoduPostala(user);
 
-                        return Ok();
+                            return Ok();
+                        }
                     }
-                }
-                catch (Exception hata)
-                {
+                    catch (Exception hata)
+                    {
+                        return BadRequest(hata);
+                    }
+
+                    AddErrors(result);
                 }
 
-                AddErrors(result);
-            }
-
-            // If we got this far, something failed, redisplay form
-            return BadRequest(ModelState);
+                throw new BadRequestError("Üyelik başlatılamadı!");
+            });
         }
 
         private async Task EPostaAktivasyonKoduPostala(Kullanici user)
         {
+
             var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.EmailConfirmationLink(user.Id.ToString(), code, Request.Scheme);
             await postaci.SendEmailAsync(user.Email, "Kullanıcı eposta aktivasyonu", string.Format("<a href=\"{0}\">Kullanıcıyı onayla</a>", callbackUrl));
@@ -136,7 +187,7 @@ namespace Psg.Api.Controllers
         [HttpGet()]
         public async Task<IActionResult> GuvenlikKoduDogrumu([FromQuery]string kod)
         {
-            return await HataKontrolluCalistir<IActionResult>(async () =>
+            return await HataKontrolluDondur<IActionResult>(async () =>
             {
                 if (string.IsNullOrEmpty(kod.Trim()))
                     return BadRequest("Kod boş olamaz!");
@@ -154,29 +205,31 @@ namespace Psg.Api.Controllers
         [Route("tekrarepostaonaykodupostala")]
         public async Task<IActionResult> YenidenKodGoner(string kullaniciAdi, string eposta)
         {
-            if (string.IsNullOrEmpty(kullaniciAdi) || string.IsNullOrEmpty(eposta))
+            return await HataKontrolluDondur<Task<IActionResult>>(async () =>
             {
-                return BadRequest("Kullanici adı ve/veya epostası yanlış!");
-            }
-            Kullanici user = null;
-            user = await userManager.FindByNameAsync(kullaniciAdi);
-            if (user == null)
-            {
-                return BadRequest("Kullanıcı adına uyan kayıt yok!");
-            }
-            if (user.Email != eposta)
-                return BadRequest("Kullanici adı ve/veya epostası yanlış!");
-            try
-            {
-                await EPostaAktivasyonKoduPostala(user);
+                if (string.IsNullOrEmpty(kullaniciAdi) || string.IsNullOrEmpty(eposta))
+                {
+                    return BadRequest("Kullanici adı ve/veya epostası yanlış!");
+                }
+                Kullanici user = null;
+                user = await userManager.FindByNameAsync(kullaniciAdi);
+                if (user == null)
+                {
+                    return BadRequest("Kullanıcı adına uyan kayıt yok!");
+                }
+                if (user.Email != eposta)
+                    return BadRequest("Kullanici adı ve/veya epostası yanlış!");
+                try
+                {
+                    await EPostaAktivasyonKoduPostala(user);
 
-                return Ok();
-            }
-            catch
-            {
-                return BadRequest("Email onayı yapılamadı");
-            }
-
+                    return Ok();
+                }
+                catch
+                {
+                    throw new BadRequestError("Yeniden kod gönderilemedi");
+                }
+            });
         }
 
         [HttpGet]
@@ -184,41 +237,42 @@ namespace Psg.Api.Controllers
         [Route("kullaniciepostasinionayla")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
-            if (userId == null || code == null)
+            return await HataKontrolluDondur<Task<IActionResult>>(async () =>
             {
-                return BadRequest("Kullanici bilgisi ve/veya kod yok!");
-            }
-            var user = await userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return BadRequest("Kullanıcı ve koda uyan kayt yok!");
-            }
-            var result = await userManager.ConfirmEmailAsync(user, code);
-            if (result.Succeeded)
-                return RedirectPermanent(string.Format("http://localhost:4200/epostaonaylandi?kod={0}", user.SecurityStamp));
-            return BadRequest("Email onayı yapılamadı");
+                if (userId == null || code == null)
+                    return BadRequest("Kullanici bilgisi ve/veya kod yok!");
+
+                var user = await userManager.FindByIdAsync(userId);
+                if (user == null)
+                    return BadRequest("Kullanıcı ve koda uyan kayt yok!");
+
+                var result = await userManager.ConfirmEmailAsync(user, code);
+                if (result.Succeeded)
+                    return RedirectPermanent(string.Format("http://localhost:4200/epostaonaylandi?kod={0}", user.SecurityStamp));
+                throw new BadRequestError("Email onayı yapılamadı");
+            });
         }
         [HttpPost]
         [AllowAnonymous]
         [Route("sifreyisifirla")]
         public async Task<IActionResult> ResetPassword(SifreyiSifirlaDto model)
         {
-            if (!ModelState.IsValid)
+            return await HataKontrolluDondur<Task<IActionResult>>(async () =>
             {
+
+                var user = await userManager.FindByEmailAsync(model.Eposta);
+                if (user == null)
+                {
+                    return NotFound("Kullanıcı yok!");
+                }
+                var result = await userManager.ResetPasswordAsync(user, model.Kod, model.Sifre);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                AddErrors(result);
                 return BadRequest(ModelState);
-            }
-            var user = await userManager.FindByEmailAsync(model.Eposta);
-            if (user == null)
-            {
-                return NotFound("Kullanıcı yok!");
-            }
-            var result = await userManager.ResetPasswordAsync(user, model.Kod, model.Sifre);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-            AddErrors(result);
-            return BadRequest(ModelState);
+            });
         }
 
 
@@ -228,7 +282,7 @@ namespace Psg.Api.Controllers
         [HttpGet()]
         public async Task<IActionResult> Get([FromQuery]string kullaniciAdi)
         {
-            return await HataKontrolluCalistir<IActionResult>(async () =>
+            return await HataKontrolluDondur<IActionResult>(async () =>
             {
                 if (string.IsNullOrEmpty(kullaniciAdi.Trim()))
                     return BadRequest(Sonuc<KullaniciYazDto>.Basarisiz(new Hata[] { new Hata { Kod = "", Tanim = "Kullanıcı adı boş olamaz!" } }));
